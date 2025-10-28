@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@telegram-apps/telegram-ui": "^2.1.4",
-    "@tonconnect/ui-react": "^2.0.5",
     "@twa-dev/sdk": "^7.0.0",
     "@twa-dev/types": "^7.0.0",
     "eruda": "^3.0.1",
