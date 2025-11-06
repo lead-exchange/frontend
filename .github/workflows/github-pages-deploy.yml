@@ -59,7 +59,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    if: ${{ github.ref == 'main' }}
+    if: ${{ github.ref == 'main' || github.ref == 'ci-cd-test' }}
     name: Deploy to GitHub Pages
     environment:
       name: github-pages
