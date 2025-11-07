@@ -31,6 +31,8 @@ const Inner: FC = () => {
     if (debug) {
       import('eruda').then((lib) => lib.default.init());
     }
+
+    alert(import.meta.env.VITE_BACKEND_URL)
   }, [debug]);
 
   return (
