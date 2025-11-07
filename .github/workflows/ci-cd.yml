@@ -48,7 +48,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_BACKEND_URL: ${{ variables.BACKEND_URL }}
+          VITE_BACKEND_URL: ${{ vars.BACKEND_URL }}
         run: npm run build
 
       - name: Upload build artifacts
