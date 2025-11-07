@@ -32,7 +32,9 @@ const Inner: FC = () => {
       import('eruda').then((lib) => lib.default.init());
     }
 
-    alert(import.meta.env.VITE_BACKEND_URL)
+    fetch(import.meta.env.VITE_BACKEND_URL + "/test.json")
+      .then(resp => resp.json())
+      .then(json => alert(`Got ${json} from ${import.meta.env.VITE_BACKEND_URL}`));
   }, [debug]);
 
   return (
