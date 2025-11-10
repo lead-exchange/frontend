@@ -20,6 +20,30 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   </div>
 );
 
+const VersionBadge: FC = () => {
+  const mode = import.meta.env.MODE;
+  const baseUrl = import.meta.env.BASE_URL;
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        right: 8,
+        bottom: 8,
+        zIndex: 50,
+        background: 'rgba(0,0,0,0.6)',
+        color: '#fff',
+        borderRadius: 6,
+        padding: '4px 8px',
+        fontSize: 12,
+        lineHeight: 1.2,
+        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      }}
+    >
+      mode={mode} base={baseUrl}
+    </div>
+  );
+};
+
 const Inner: FC = () => {
   const debug = WebApp.initDataUnsafe.start_param === 'debug';
   const manifestUrl = useMemo(() => {
@@ -40,6 +64,7 @@ const Inner: FC = () => {
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
       <App/>
+      {debug && <VersionBadge/>}
     </TonConnectUIProvider>
   );
 };
