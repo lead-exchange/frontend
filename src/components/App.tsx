@@ -41,7 +41,7 @@ export const App: FC = () => (
     appearance={WebApp.colorScheme}
     platform={['macos', 'ios'].includes(WebApp.platform) ? 'ios' : 'base'}
   >
-    <BrowserRouter>
+    <BrowserRouter basename="/frontend">
       <BackButtonManipulator/>
       <Routes>
         {routes.map((route) => <Route key={route.path} {...route} />)}
