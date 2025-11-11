@@ -1,65 +1,89 @@
-import { Section, Cell, List } from '@telegram-apps/telegram-ui';
-import type { FC } from 'react';
+import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
+import { type FC, useEffect, useState } from 'react';
+import { User, ChevronRight, Building2 } from 'lucide-react';
 
 import { Link } from '@/components/Link/Link.tsx';
+import { fetchLeads, fetchObjects } from '@/services/entityService';
+import type { Lead, Object } from '@/types/entity';
 
+type TabType = 'leads' | 'objects';
 
 export const IndexPage: FC = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('leads');
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [objects, setObjects] = useState<Object[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === 'leads') {
+          const data = await fetchLeads();
+          setLeads(data);
+        } else {
+          const data = await fetchObjects();
+          setObjects(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [activeTab]);
+
   return (
     <>
-      <div
-        style={{
-          position: 'fixed',
-          top: '16px',
-          right: '16px',
-          zIndex: 1000,
-          pointerEvents: 'none',
-        }}
-      >
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 12px',
-            borderRadius: '20px',
-            background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
-            color: '#ffffff',
-            fontSize: '12px',
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            boxShadow: '0 4px 12px rgba(76, 175, 80, 0.4)',
-          }}
-        >
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#ffffff',
-              boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.3)',
-            }}
-          />
-          Работает
-        </span>
-      </div>
+      <TabsList>
+        <TabsList.Item
+          selected={activeTab === 'leads'}
+          onClick={() => setActiveTab('leads')}
+        >Лиды</TabsList.Item>
+        <TabsList.Item
+          selected={activeTab === 'objects'}
+          onClick={() => setActiveTab('objects')}
+        >Объекты</TabsList.Item>
+      </TabsList>
+      
       <List>
+        <Section
+          header={activeTab === 'leads' ? 'Лиды' : 'Объекты'}
+          footer={activeTab === 'leads' ? 'Список лидов' : 'Список объектов'}
+        >
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+              <Spinner size='m' />
+            </div>
+          ) : (
+            (activeTab === 'leads' ? leads : objects).map((item) => (
+              <Cell
+                key={item.id}
+                before={activeTab === 'leads' ? <User color="var(--button_color)" /> : <Building2 color="var(--button_color)" />}
+                after={<ChevronRight />}
+              >
+                {item.name}
+              </Cell>
+            ))
+          )}
+        </Section>
         <Section
           header='Application Launch Data'
           footer='These pages help developer to learn more about current launch information'
         >
-        <Link to='/init-data'>
-          <Cell subtitle='User data, chat information, technical data'>Init Data</Cell>
-        </Link>
-        <Link to='/launch-params'>
-          <Cell subtitle='Platform identifier, Mini Apps version, etc.'>Launch Parameters</Cell>
-        </Link>
-        <Link to='/theme-params'>
-          <Cell subtitle='Telegram application palette information'>Theme Parameters</Cell>
-        </Link>
-      </Section>
-    </List>
+          <Link to='/init-data'>
+            <Cell subtitle='User data, chat information, technical data'>Init Data</Cell>
+          </Link>
+          <Link to='/launch-params'>
+            <Cell subtitle='Platform identifier, Mini Apps version, etc.'>Launch Parameters</Cell>
+          </Link>
+          <Link to='/theme-params'>
+            <Cell subtitle='Telegram application palette information'>Theme Parameters</Cell>
+          </Link>
+        </Section>
+      </List>
     </>
   );
 };

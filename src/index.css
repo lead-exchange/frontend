@@ -1,3 +1,7 @@
+:root {
+  --button_color: #007AFF;
+}
+
 body {
   background: var(--tg-theme-secondary-bg-color, white);
   padding: 0;
