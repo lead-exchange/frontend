@@ -176,12 +176,12 @@ export const getObjectById = async (id: string): Promise<RealEstateObject | null
   return mockObjects.find(obj => obj.id === id) || null;
 };
 
-export const getObjectsForLead = async (_leadId: string): Promise<RealEstateObject[]> => {
+export const getObjectsForLead = async (): Promise<RealEstateObject[]> => {
   await new Promise(resolve => setTimeout(resolve, 500));
   return mockObjects.filter(obj => obj.status === 'ACTIVE');
 };
 
-export const getLeadsForObject = async (_objectId: string): Promise<Lead[]> => {
+export const getLeadsForObject = async (): Promise<Lead[]> => {
   await new Promise(resolve => setTimeout(resolve, 500));
   return mockLeads.filter(lead => lead.status === 'ACTIVE');
 };

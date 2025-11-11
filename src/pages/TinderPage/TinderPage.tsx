@@ -25,14 +25,14 @@ export const TinderPage: FC = () => {
           const lead = await getLeadById(id);
           setSourceEntity(lead);
           if (lead) {
-            const objects = await getObjectsForLead(id);
+            const objects = await getObjectsForLead();
             setMatchItems(objects);
           }
         } else {
           const object = await getObjectById(id);
           setSourceEntity(object);
           if (object) {
-            const leads = await getLeadsForObject(id);
+            const leads = await getLeadsForObject();
             setMatchItems(leads);
           }
         }
