@@ -1,17 +1,19 @@
 import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useState } from 'react';
 import { User, ChevronRight, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Link } from '@/components/Link/Link.tsx';
 import { fetchLeads, fetchObjects } from '@/services/entityService';
-import type { Lead, Object } from '@/types/entity';
+import type { Lead, RealEstateObject } from '@/types/entity';
 
 type TabType = 'leads' | 'objects';
 
 export const IndexPage: FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('leads');
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [objects, setObjects] = useState<Object[]>([]);
+  const [objects, setObjects] = useState<RealEstateObject[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +37,10 @@ export const IndexPage: FC = () => {
     loadData();
   }, [activeTab]);
 
+  const handleEntityClick = (item: Lead | RealEstateObject) => {
+    navigate(`/tinder/${item.type}/${item.id}`);
+  };
+
   return (
     <>
       <TabsList>
@@ -51,7 +57,7 @@ export const IndexPage: FC = () => {
       <List>
         <Section
           header={activeTab === 'leads' ? 'Лиды' : 'Объекты'}
-          footer={activeTab === 'leads' ? 'Список лидов' : 'Список объектов'}
+          footer={activeTab === 'leads' ? 'Нажмите на лид, чтобы начать подбор объектов' : 'Нажмите на объект, чтобы начать подбор лидов'}
         >
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
@@ -63,6 +69,7 @@ export const IndexPage: FC = () => {
                 key={item.id}
                 before={activeTab === 'leads' ? <User color="var(--button_color)" /> : <Building2 color="var(--button_color)" />}
                 after={<ChevronRight />}
+                onClick={() => handleEntityClick(item)}
               >
                 {item.name}
               </Cell>
