@@ -1,0 +1,104 @@
+.results-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--tgui--secondary_bg_color);
+}
+
+.results-page__header {
+  padding: 24px;
+  background: var(--tgui--bg_color);
+  border-bottom: 0.5px solid var(--tgui--divider_color);
+}
+
+.results-page__title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  margin: 0 0 8px 0;
+  color: var(--tgui--text_color);
+}
+
+.results-page__subtitle {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22px;
+  margin: 0;
+  color: var(--tgui--hint_color);
+}
+
+.results-page__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: var(--tgui--bg_color);
+  margin-bottom: 12px;
+}
+
+.results-page__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  background: var(--tgui--secondary_bg_color);
+  border-radius: 12px;
+}
+
+.results-page__stat--success {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.results-page__stat--warning {
+  background: rgba(255, 149, 0, 0.1);
+}
+
+.results-page__stat--danger {
+  background: rgba(255, 59, 48, 0.1);
+}
+
+.results-page__stat-value {
+  font-family: 'Roboto', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  color: var(--tgui--text_color);
+  margin-bottom: 4px;
+}
+
+.results-page__stat--success .results-page__stat-value {
+  color: #34c759;
+}
+
+.results-page__stat--warning .results-page__stat-value {
+  color: #ff9500;
+}
+
+.results-page__stat--danger .results-page__stat-value {
+  color: #ff3b30;
+}
+
+.results-page__stat-label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  text-align: center;
+  color: var(--tgui--hint_color);
+}
+
+.results-page__actions {
+  padding: 16px;
+  background: var(--tgui--bg_color);
+  border-top: 0.5px solid var(--tgui--divider_color);
+  margin-top: auto;
+}
+
+.results-page__actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
