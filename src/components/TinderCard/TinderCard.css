@@ -14,18 +14,93 @@
   gap: 15px;
 }
 
-.tinder-card__image {
+.tinder-card__slider {
+  position: relative;
   width: 100%;
-  max-height: 402px;
   overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 12px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(67, 120, 255, 0.2), rgba(0, 0, 0, 0.05));
+  aspect-ratio: 4 / 3;
+  touch-action: pan-y;
 }
 
-.tinder-card__image img {
+.tinder-card__slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.tinder-card__slider-slide {
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.tinder-card__slider-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+.tinder-card__slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.tinder-card__slider-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tinder-card__slider-nav--prev {
+  left: 12px;
+}
+
+.tinder-card__slider-nav--next {
+  right: 12px;
+}
+
+.tinder-card__slider-nav:active {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.tinder-card__slider-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tinder-card__slider-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 7px;
+  border: none;
+  background: rgba(255, 255, 255, 0.45);
+  opacity: 0.8;
+  transition: opacity 0.2s ease, width 0.2s ease;
+}
+
+.tinder-card__slider-dot--active {
+  width: 18px;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .tinder-card__info {
