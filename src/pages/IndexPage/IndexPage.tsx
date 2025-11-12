@@ -2,6 +2,7 @@ import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-
 import { type FC, useEffect, useState } from 'react';
 import { User, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
 import { fetchLeads, fetchObjects } from '@/services/entityService';
@@ -10,6 +11,8 @@ import type { Lead, RealEstateObject } from '@/types/entity';
 type TabType = 'leads' | 'objects';
 
 export const IndexPage: FC = () => {
+  const debug = WebApp.initDataUnsafe.start_param === 'debug';
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('leads');
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -76,7 +79,7 @@ export const IndexPage: FC = () => {
             ))
           )}
         </Section>
-        <Section
+        {debug && (<Section
           header='Application Launch Data'
           footer='These pages help developer to learn more about current launch information'
         >
@@ -89,7 +92,7 @@ export const IndexPage: FC = () => {
           <Link to='/theme-params'>
             <Cell subtitle='Telegram application palette information'>Theme Parameters</Cell>
           </Link>
-        </Section>
+        </Section>)}
       </List>
     </>
   );
