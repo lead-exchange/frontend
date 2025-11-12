@@ -1,5 +1,28 @@
 import type { Lead, RealEstateObject } from '@/types/entity';
 
+const arbatPhotos = [
+  new URL('../../assets/estate/arbat/arbat-1.jpg', import.meta.url).href,
+  new URL('../../assets/estate/arbat/arbat-2.jpg', import.meta.url).href,
+  new URL('../../assets/estate/arbat/arbat-3.jpg', import.meta.url).href,
+  new URL('../../assets/estate/arbat/arbat-4.jpg', import.meta.url).href,
+];
+
+const elizarovskayaPhotos = [
+  new URL('../../assets/estate/elizarovskaya/elizarovskaya-1.jpg', import.meta.url).href,
+  new URL('../../assets/estate/elizarovskaya/elizarovskaya-2.jpg', import.meta.url).href,
+  new URL('../../assets/estate/elizarovskaya/elizarovskya-3.jpg', import.meta.url).href,
+  new URL('../../assets/estate/elizarovskaya/elizarovskya-4.jpg', import.meta.url).href,
+];
+
+const leninskyPhotos = [
+  new URL('../../assets/estate/leninsky/leninsky-1.jpg', import.meta.url).href,
+  new URL('../../assets/estate/leninsky/leninsky-2.jpg', import.meta.url).href,
+  new URL('../../assets/estate/leninsky/leninsky-3.jpg', import.meta.url).href,
+  new URL('../../assets/estate/leninsky/leninsky-4.jpg', import.meta.url).href,
+];
+
+const rublevkaPhotos = leninskyPhotos;
+
 const mockLeads: Lead[] = [
   {
     id: '55555555-5555-5555-5555-555555555555',
@@ -85,7 +108,7 @@ const mockObjects: RealEstateObject[] = [
       propertyClass: 'Комфорт',
       marketType: ['Вторичка'],
       paymentType: ['Обмен', 'Ипотека'],
-      photos: [],
+      photos: elizarovskayaPhotos,
     },
     totalCommissionRate: 5.0,
     commissionShare: 30,
@@ -106,7 +129,7 @@ const mockObjects: RealEstateObject[] = [
       area: 145,
       bedrooms: 5,
       propertyClass: 'Премиум',
-      photos: [],
+      photos: rublevkaPhotos,
     },
     totalCommissionRate: 6.0,
     commissionShare: 35,
@@ -126,7 +149,7 @@ const mockObjects: RealEstateObject[] = [
       price: 35000000,
       area: 120,
       bedrooms: null,
-      photos: [],
+      photos: arbatPhotos,
     },
     totalCommissionRate: 7.0,
     commissionShare: 40,
@@ -146,7 +169,7 @@ const mockObjects: RealEstateObject[] = [
       price: 12500000,
       area: 52,
       bedrooms: 2,
-      photos: [],
+      photos: leninskyPhotos,
     },
     totalCommissionRate: 4.5,
     commissionShare: 25,
