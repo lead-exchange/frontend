@@ -1,4 +1,8 @@
 import type { Lead, RealEstateObject } from '@/types/entity';
+import { LeadClass, RealEstateObjectClass } from '@/types/entity';
+
+const BACKEND_URL = 'https://lead-exchange.ru';
+const USER_ID = '11111111-1111-1111-1111-111111111111';
 
 const arbatPhotos = [
   new URL('../../assets/estate/arbat/arbat-1.jpg', import.meta.url).href,
@@ -180,13 +184,41 @@ const mockObjects: RealEstateObject[] = [
 ];
 
 export const fetchLeads = async (): Promise<Lead[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockLeads.filter(lead => lead.status === 'ACTIVE');
+  try {
+    const response = await fetch(`${BACKEND_URL}/lead/${USER_ID}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    Array.isArray(data)
+      ? data.filter((lead: Lead) => lead.status === 'ACTIVE').map(lead => new LeadClass(lead))
+      : [];
+    return mockLeads.filter(lead => lead.status === 'ACTIVE');
+  } catch (error) {
+    console.warn('Failed to fetch leads from backend, using mock data:', error);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return mockLeads.filter(lead => lead.status === 'ACTIVE');
+  }
 };
 
 export const fetchObjects = async (): Promise<RealEstateObject[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockObjects.filter(obj => obj.status === 'ACTIVE');
+  try {
+    const response = await fetch(`${BACKEND_URL}/estate/${USER_ID}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    Array.isArray(data)
+      ? data.filter((obj: RealEstateObject) => obj.status === 'ACTIVE').map(obj => new RealEstateObjectClass(obj))
+      : [];
+    return mockObjects.filter(obj => obj.status === 'ACTIVE');
+  } catch (error) {
+    console.warn('Failed to fetch objects from backend, using mock data:', error);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return mockObjects.filter(obj => obj.status === 'ACTIVE');
+  }
 };
 
 export const getLeadById = async (id: string): Promise<Lead | null> => {

@@ -56,7 +56,7 @@ export const IndexPage: FC = () => {
           onClick={() => setActiveTab('objects')}
         >Объекты</TabsList.Item>
       </TabsList>
-      
+
       <List>
         <Section
           header={activeTab === 'leads' ? 'Лиды' : 'Объекты'}
