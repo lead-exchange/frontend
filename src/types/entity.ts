@@ -56,7 +56,7 @@ export interface RealEstateObject extends Entity {
 }
 
 export class LeadClass implements Lead {
-  type: 'lead' = 'lead';
+  type = 'lead' as const;
   id: string;
   name: string;
   userId: string;
@@ -88,7 +88,7 @@ export class LeadClass implements Lead {
 }
 
 export class RealEstateObjectClass implements RealEstateObject {
-  type: 'object' = 'object';
+  type = 'object' as const;
   id: string;
   name: string;
   userId: string;
