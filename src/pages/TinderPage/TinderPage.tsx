@@ -20,6 +20,7 @@ export const TinderPage: FC = () => {
       if (!type || !id) return;
 
       setLoading(true);
+      
       try {
         if (type === 'lead') {
           const lead = await getLeadById(id);

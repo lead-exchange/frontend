@@ -1,9 +1,11 @@
-import { type FC, useState, useRef, useEffect } from 'react';
-import { Button } from '@telegram-apps/telegram-ui';
-import { ThumbsDown, ThumbsUp, DollarSign } from 'lucide-react';
-import { TinderCard } from '../TinderCard/TinderCard';
-import type { Lead, RealEstateObject } from '@/types/entity';
-import './TinderSwiper.css';
+import { type FC, useState, useRef, useEffect } from "react";
+import { Button } from "@telegram-apps/telegram-ui";
+import { ThumbsDown, ThumbsUp, DollarSign } from "lucide-react";
+import type { Lead, RealEstateObject } from "@/types/entity";
+import { ObjectTinderCard } from "../TinderCard/ObjectTinderCard";
+import { LeadTinderCard } from "../TinderCard/LeadTinderCard";
+
+import "./TinderSwiper.css";
 
 interface TinderSwiperProps {
   items: (Lead | RealEstateObject)[];
@@ -21,7 +23,11 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
   onFinish,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
+
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,18 +36,18 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
     }
   }, [currentIndex, items.length, onFinish]);
 
-  const handleSwipe = (direction: 'left' | 'right' | 'up') => {
+  const handleSwipe = (direction: "left" | "right" | "up") => {
     const currentItem = items[currentIndex];
-    
-    if (direction === 'left' && onDislike) {
+
+    if (direction === "left" && onDislike) {
       onDislike(currentItem);
-    } else if (direction === 'right' && onLike) {
+    } else if (direction === "right" && onLike) {
       onLike(currentItem);
-    } else if (direction === 'up' && onCustomShare) {
+    } else if (direction === "up" && onCustomShare) {
       onCustomShare(currentItem);
     }
 
-    setCurrentIndex(prev => prev + 1);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -65,12 +71,12 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
 
     if (Math.abs(deltaX) > threshold) {
       if (deltaX > 0) {
-        handleSwipe('right');
+        handleSwipe("right");
       } else {
-        handleSwipe('left');
+        handleSwipe("left");
       }
     } else if (Math.abs(deltaY) > threshold && deltaY < 0) {
-      handleSwipe('up');
+      handleSwipe("up");
     }
 
     setTouchStart(null);
@@ -90,43 +96,50 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
   return (
     <div className="tinder-swiper">
       <div className="tinder-swiper__progress">
-        <div className="tinder-swiper__progress-bar" style={{ width: `${progressPercent}%` }} />
+        <div
+          className="tinder-swiper__progress-bar"
+          style={{ width: `${progressPercent}%` }}
+        />
       </div>
 
-      <div 
+      <div
         className="tinder-swiper__card-container"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         ref={cardRef}
       >
-        <TinderCard data={currentItem} />
+        {currentItem.type === "object" ? (
+          <ObjectTinderCard data={currentItem} />
+        ) : (
+          <LeadTinderCard data={currentItem} />
+        )}
       </div>
 
       <div className="tinder-swiper__controls">
         <Button
           mode="bezeled"
           size="m"
-          onClick={() => handleSwipe('left')}
+          onClick={() => handleSwipe("left")}
           className="tinder-swiper__control-button"
         >
           <ThumbsDown size={20} />
           <span>Дизлайк</span>
         </Button>
-        
+
         <Button
           mode="bezeled"
           size="m"
-          onClick={() => handleSwipe('up')}
+          onClick={() => handleSwipe("up")}
           className="tinder-swiper__control-button"
         >
           <DollarSign size={20} />
           <span>Своя доля</span>
         </Button>
-        
+
         <Button
           mode="bezeled"
           size="m"
-          onClick={() => handleSwipe('right')}
+          onClick={() => handleSwipe("right")}
           className="tinder-swiper__control-button"
         >
           <ThumbsUp size={20} />
