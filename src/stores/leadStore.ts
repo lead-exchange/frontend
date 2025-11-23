@@ -1,5 +1,5 @@
-import { Lead } from "@/types/entity";
-import { makeAutoObservable } from "mobx";
+import { Lead } from '@/types/entity';
+import { makeAutoObservable } from 'mobx';
 
 class LeadStore {
   leads: Lead[] = [];
@@ -13,7 +13,7 @@ class LeadStore {
   }
 
   getLeadById(id: string): Lead | undefined {
-    return this.leads.find((lead) => lead.id === id);
+    return this.leads.find(lead => lead.id === id);
   }
 
   getLeads(): Lead[] {

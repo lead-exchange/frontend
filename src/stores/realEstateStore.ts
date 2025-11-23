@@ -1,5 +1,5 @@
-import { RealEstateObject } from "@/types/entity";
-import { makeAutoObservable } from "mobx";
+import { RealEstateObject } from '@/types/entity';
+import { makeAutoObservable } from 'mobx';
 
 class RealEstateStore {
   objects: RealEstateObject[] = [];
@@ -13,7 +13,7 @@ class RealEstateStore {
   }
 
   getObjectById(id: string): RealEstateObject | undefined {
-    return this.objects.find((object) => object.id === id);
+    return this.objects.find(object => object.id === id);
   }
 
   getObjects(): RealEstateObject[] {
