@@ -21,6 +21,8 @@
     "@twa-dev/types": "^7.0.0",
     "eruda": "^3.0.1",
     "lucide-react": "^0.553.0",
+    "mobx": "^6.15.0",
+    "mobx-react-lite": "^4.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.0"
