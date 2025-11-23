@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner } from '@telegram-apps/telegram-ui';
 import { TinderSwiper } from '@/components/TinderSwiper/TinderSwiper';
 import { getLeadById, getObjectsForLead, getObjectById, getLeadsForObject } from '@/services/entityService';
-import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
+import type { Lead, RealEstateObject } from '@/types/entity';
 
 export const TinderPage: FC = () => {
-  const { type, id } = useParams<{ type: EntityType; id: string }>();
+  const { type, id } = useParams<{ type: 'lead' | 'object'; id: string }>();
   const navigate = useNavigate();
   const [sourceEntity, setSourceEntity] = useState<Lead | RealEstateObject | null>(null);
   const [matchItems, setMatchItems] = useState<(Lead | RealEstateObject)[]>([]);

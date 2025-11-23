@@ -6,6 +6,7 @@ import { LaunchParamsPage } from '@/pages/LaunchParamsPage/LaunchParamsPage.tsx'
 import { ThemeParamsPage } from '@/pages/ThemeParamsPage/ThemeParamsPage.tsx';
 import { TinderPage } from '@/pages/TinderPage/TinderPage';
 import { ResultsPage } from '@/pages/ResultsPage/ResultsPage';
+import { MatchPage } from '@/pages/MatchPage/MatchPage';
 
 interface Route {
   path: string;
@@ -17,6 +18,7 @@ interface Route {
 export const routes: Route[] = [
   { path: '/', Component: IndexPage },
   { path: '/tinder/:type/:id', Component: TinderPage },
+  { path: '/matches/:type/:id', Component: MatchPage },
   { path: '/results', Component: ResultsPage },
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },

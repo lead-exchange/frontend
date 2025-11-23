@@ -1,0 +1,17 @@
+.wait-for-answer {
+  margin-bottom: 24px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  /* color: var(--tgui--accent_text_color); */
+  color: var(--warning-color);
+}
+
+.declined {
+  margin-bottom: 24px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  /* color: var(--tgui--accent_text_color); */
+  color: var(--tgui--destructive_text_color);
+}

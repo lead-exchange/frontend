@@ -1,4 +1,4 @@
-import type { Lead, RealEstateObject } from '@/types/entity';
+import type { Lead, Match, RealEstateObject } from '@/types/entity';
 
 const BACKEND_URL = 'https://lead-exchange.ru';
 const USER_ID = '11111111-1111-1111-1111-111111111111';
@@ -221,6 +221,17 @@ export const fetchObjects = async (): Promise<RealEstateObject[]> => {
 export const getLeadById = async (id: string): Promise<Lead | null> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   return mockLeads.find(lead => lead.id === id) || null;
+};
+
+export const getMatchById = async (id: string): Promise<Match | null> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return {
+    id: id,
+    leadId: mockLeads[0].id,
+    estateId: mockObjects[0].id,
+    leadStatus: 'ACCEPTED',
+    estateStatus: 'ACCEPTED',
+  };
 };
 
 export const getObjectById = async (id: string): Promise<RealEstateObject | null> => {

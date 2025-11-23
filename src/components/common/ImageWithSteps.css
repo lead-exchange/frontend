@@ -1,0 +1,21 @@
+.image-w-steps {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.image-w-steps__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-w-steps__steps {
+  position: absolute;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
