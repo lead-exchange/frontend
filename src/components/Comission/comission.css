@@ -1,0 +1,60 @@
+.commission-display {
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.commission-display__yours {
+  color: var(--tgui--accent_text_color);
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.commission-display__theirs {
+  color: var(--tgui--toast_accent_color);
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.comission-bids-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comission-bids {
+  padding: 0px 24px 0px 24px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  max-width: 350px;
+}
+
+.comission-bids__yours {
+  display: flex;
+  color: var(--tgui--accent_text_color);
+}
+
+.comission-bids__theirs {
+  display: flex;
+  color: var(--warning-color);
+}
+
+.comission-bids__text {
+  flex: 2;
+}
+
+.comission-bids__value {
+  flex: 1;
+}
+
+.comission-modal__buttons {
+    display: flex;
+    justify-content: space-evenly;
+    padding-bottom: 5px;
+}

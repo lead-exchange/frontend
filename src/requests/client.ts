@@ -11,11 +11,17 @@ class ApiClient {
       path = '/' + path;
     }
 
-    return await fetch(`${this.#apiURL}${path}`, {
+    const resp = await fetch(`${this.#apiURL}${path}`, {
       method: method,
       body: jsonBody,
       headers: body && { 'Content-Type': 'application/json' },
     });
+
+    if (!resp.ok) {
+      throw new Error(`Expected 2xx response for ${path}, but got: ${resp.status}`);
+    }
+
+    return resp;
   }
 
   async get<T extends object>(path: string, params?: object): Promise<T> {
@@ -26,7 +32,7 @@ class ApiClient {
       }
     }
 
-    const resp = await this.do('GET', `${path}?${queryParams}`);
+    const resp = await this.do('GET', params ? `${path}?${queryParams}` : path);
     return resp.json();
   }
 

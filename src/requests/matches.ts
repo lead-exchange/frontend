@@ -31,6 +31,7 @@ interface UpdateMatchRequest {
   status: MatchStatus;
 }
 
-export const updateMatch = (req: UpdateMatchRequest): Promise<Response> => {
-  return apiClient.post(`/matches/${req.id}`, req);
+export const updateMatch = async (req: UpdateMatchRequest): Promise<Match> => {
+  const resp = await apiClient.put(`/matches/${req.id}`, req);
+  return await resp.json();
 };

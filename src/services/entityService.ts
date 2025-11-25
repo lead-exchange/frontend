@@ -1,4 +1,5 @@
 import type { Lead, RealEstateObject } from '@/types/entity';
+import type { Match, MatchLog } from '@/types/matching';
 
 const BACKEND_URL = 'https://lead-exchange.ru';
 export const USER_ID = '11111111-1111-1111-1111-111111111111';
@@ -221,6 +222,32 @@ export const fetchObjects = async (): Promise<RealEstateObject[]> => {
 export const getLeadById = async (id: string): Promise<Lead | null> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   return mockLeads.find(lead => lead.id === id) || null;
+};
+
+export const getMatchById = async (id: string): Promise<Match | null> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return {
+    id: id,
+    leadId: mockLeads[0].id,
+    estateId: mockObjects[0].id,
+    leadCommission: 30,
+    leadStatus: 'ACCEPTED',
+    estateStatus: 'ACCEPTED',
+    userType: '',
+  };
+};
+
+export const getMatchLogs = async (id: string): Promise<MatchLog[] | null> => {
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return [
+    {
+      matchId: id,
+      status: 'ACCEPTED',
+      leadCommission: 20,
+      userType: 'object',
+      createdAt: new Date(2025, 11, 23, 12, 0, 0, 0).toISOString(),
+    },
+  ];
 };
 
 export const getObjectById = async (id: string): Promise<RealEstateObject | null> => {

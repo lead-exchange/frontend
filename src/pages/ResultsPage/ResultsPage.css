@@ -90,15 +90,5 @@
 }
 
 .results-page__actions {
-  padding: 16px;
-  background: var(--tgui--bg_color);
-  border-top: 0.5px solid var(--tgui--divider_color);
-  margin-top: auto;
-}
-
-.results-page__actions button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  margin: auto 16px 16px 16px;
 }

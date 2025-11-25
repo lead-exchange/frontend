@@ -8,7 +8,7 @@ class MatchesByEntitiesStore {
     makeObservable(this, {
       matches: observable,
       setMatches: action,
-      addMatch: action,
+      putMatch: action,
     });
   }
 
@@ -16,7 +16,7 @@ class MatchesByEntitiesStore {
     this.matches.set(id, matches);
   }
 
-  addMatch(id: string, match: Match) {
+  putMatch(id: string, match: Match) {
     const entityMatches = this.matches.get(id) || [];
 
     const idx = entityMatches.findIndex(item => item.id === match.id);
@@ -31,6 +31,10 @@ class MatchesByEntitiesStore {
 
   getMatchesByEntity(id: string): Match[] {
     return this.matches.get(id) || [];
+  }
+
+  getMatchById(entityId: string, matchId: string): Match | undefined {
+    return this.getMatchesByEntity(entityId).find(match => match.id === matchId);
   }
 }
 

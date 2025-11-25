@@ -9,13 +9,7 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   <div>
     <p>An unhandled error occurred:</p>
     <blockquote>
-      <code>
-        {error instanceof Error
-          ? error.message
-          : typeof error === 'string'
-            ? error
-            : JSON.stringify(error)}
-      </code>
+      <code>{error instanceof Error ? error.message : typeof error === 'string' ? error : JSON.stringify(error)}</code>
     </blockquote>
   </div>
 );
@@ -53,24 +47,20 @@ const Inner: FC = () => {
   // Enable debug mode to see all the methods sent and events received.
   useEffect(() => {
     if (debug) {
-      import('eruda').then((lib) => lib.default.init());
+      import('eruda').then(lib => lib.default.init());
     }
-
-    fetch(import.meta.env.VITE_BACKEND_URL + "/api/v1/leads")
-      .then(resp => resp.json())
-      .then(json => console.log(`Got ${json} from ${import.meta.env.VITE_BACKEND_URL}`));
   }, [debug]);
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <App/>
-      {debug && <VersionBadge/>}
+      <App />
+      {debug && <VersionBadge />}
     </TonConnectUIProvider>
   );
 };
 
 export const Root: FC = () => (
   <ErrorBoundary fallback={ErrorBoundaryError}>
-    <Inner/>
+    <Inner />
   </ErrorBoundary>
 );

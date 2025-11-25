@@ -1,32 +1,26 @@
-import { type FC, useState, useRef, useEffect } from "react";
-import { Button } from "@telegram-apps/telegram-ui";
-import { ThumbsDown, ThumbsUp, DollarSign } from "lucide-react";
-import type { Lead, RealEstateObject } from "@/types/entity";
-import { ObjectTinderCard } from "../TinderCard/ObjectTinderCard";
-import { LeadTinderCard } from "../TinderCard/LeadTinderCard";
+import { type FC, useState, useRef, useEffect } from 'react';
+import type { Lead, RealEstateObject } from '@/types/entity';
+import { ObjectMatchCard } from '../MatchCard/ObjectMatchCard';
+import { LeadMatchCard } from '../MatchCard/LeadMatchCard';
 
-import "./TinderSwiper.css";
+import './TinderSwiper.css';
+import { MatchControls } from '../MatchControls/MatchControls';
+import { ComissionModal } from '../Comission/ComissionModal';
 
 interface TinderSwiperProps {
   items: (Lead | RealEstateObject)[];
   onLike?: (item: Lead | RealEstateObject) => void;
   onDislike?: (item: Lead | RealEstateObject) => void;
-  onCustomShare?: (item: Lead | RealEstateObject) => void;
+  onCustomShare?: (item: Lead | RealEstateObject, comission: number) => void;
   onFinish?: () => void;
 }
 
-export const TinderSwiper: FC<TinderSwiperProps> = ({
-  items,
-  onLike,
-  onDislike,
-  onCustomShare,
-  onFinish,
-}) => {
+export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const [isComissionModalOpen, setIsComissionModalOpen] = useState(false);
+
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -36,18 +30,19 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
     }
   }, [currentIndex, items.length, onFinish]);
 
-  const handleSwipe = (direction: "left" | "right" | "up") => {
+  const handleSwipe = (direction: 'left' | 'right' | 'up') => {
     const currentItem = items[currentIndex];
 
-    if (direction === "left" && onDislike) {
+    if (direction === 'left' && onDislike) {
       onDislike(currentItem);
-    } else if (direction === "right" && onLike) {
+    } else if (direction === 'right' && onLike) {
       onLike(currentItem);
-    } else if (direction === "up" && onCustomShare) {
-      onCustomShare(currentItem);
+    } else if (direction === 'up') {
+      setIsComissionModalOpen(true);
+      return;
     }
 
-    setCurrentIndex((prev) => prev + 1);
+    setCurrentIndex(prev => prev + 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -71,12 +66,12 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
 
     if (Math.abs(deltaX) > threshold) {
       if (deltaX > 0) {
-        handleSwipe("right");
+        handleSwipe('right');
       } else {
-        handleSwipe("left");
+        handleSwipe('left');
       }
     } else if (Math.abs(deltaY) > threshold && deltaY < 0) {
-      handleSwipe("up");
+      handleSwipe('up');
     }
 
     setTouchStart(null);
@@ -91,61 +86,39 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
   }
 
   const currentItem = items[currentIndex];
-  const progressPercent = ((currentIndex + 1) / items.length) * 100;
 
   return (
-    <div className="tinder-swiper">
-      <div className="tinder-swiper__progress">
+    <>
+      <ComissionModal
+        onOpenChange={open => setIsComissionModalOpen(open)}
+        open={isComissionModalOpen}
+        onComissionSubmit={async comission => {
+          if (onCustomShare) {
+            onCustomShare(currentItem, comission);
+            setCurrentIndex(prev => prev + 1);
+          }
+        }}
+      />
+      <div className="tinder-swiper">
         <div
-          className="tinder-swiper__progress-bar"
-          style={{ width: `${progressPercent}%` }}
+          className="tinder-swiper__card-container"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          ref={cardRef}
+        >
+          {currentItem.type === 'object' ? (
+            <ObjectMatchCard data={currentItem} displayComission={true} />
+          ) : (
+            <LeadMatchCard data={currentItem} displayComission={true} />
+          )}
+        </div>
+
+        <MatchControls
+          onLike={() => handleSwipe('right')}
+          onComission={() => handleSwipe('up')}
+          onDislike={() => handleSwipe('left')}
         />
       </div>
-
-      <div
-        className="tinder-swiper__card-container"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        ref={cardRef}
-      >
-        {currentItem.type === "object" ? (
-          <ObjectTinderCard data={currentItem} />
-        ) : (
-          <LeadTinderCard data={currentItem} />
-        )}
-      </div>
-
-      <div className="tinder-swiper__controls">
-        <Button
-          mode="bezeled"
-          size="m"
-          onClick={() => handleSwipe("left")}
-          className="tinder-swiper__control-button"
-        >
-          <ThumbsDown size={20} />
-          <span>Дизлайк</span>
-        </Button>
-
-        <Button
-          mode="bezeled"
-          size="m"
-          onClick={() => handleSwipe("up")}
-          className="tinder-swiper__control-button"
-        >
-          <DollarSign size={20} />
-          <span>Своя доля</span>
-        </Button>
-
-        <Button
-          mode="bezeled"
-          size="m"
-          onClick={() => handleSwipe("right")}
-          className="tinder-swiper__control-button"
-        >
-          <ThumbsUp size={20} />
-          <span>Лайк</span>
-        </Button>
-      </div>
-    </div>
+    </>
   );
 };

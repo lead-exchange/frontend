@@ -35,10 +35,7 @@ export const ResultsPage: FC = () => {
       <div className="results-page__header">
         <h2 className="results-page__title">Результаты подбора</h2>
         <p className="results-page__subtitle">
-          {isLead 
-            ? `Для лида: ${sourceEntity.name}`
-            : `Для объекта: ${sourceEntity.name}`
-          }
+          {isLead ? `Для лида: ${sourceEntity.name}` : `Для объекта: ${sourceEntity.name}`}
         </p>
       </div>
 
@@ -64,13 +61,16 @@ export const ResultsPage: FC = () => {
       <List>
         {liked.length > 0 && (
           <Section header="Понравились" footer="Эти варианты вам подходят">
-            {liked.map((item) => (
+            {liked.map(item => (
               <Cell
                 key={item.id}
                 before={<ThumbsUp size={20} color="var(--tgui--link_color)" />}
-                subtitle={item.type === 'lead' 
-                  ? `${(item as Lead).requirements.minPrice.toLocaleString()} - ${(item as Lead).requirements.maxPrice.toLocaleString()} ₽`
-                  : `${(item as RealEstateObject).attributes.price.toLocaleString()} ₽`
+                subtitle={
+                  item.type === 'lead'
+                    ? `${(item as Lead).requirements.minPrice.toLocaleString()} - ${(
+                        item as Lead
+                      ).requirements.maxPrice.toLocaleString()} ₽`
+                    : `${(item as RealEstateObject).attributes.price.toLocaleString()} ₽`
                 }
               >
                 {item.name}
@@ -81,13 +81,14 @@ export const ResultsPage: FC = () => {
 
         {customShare.length > 0 && (
           <Section header="Своя доля комиссии" footer="Вы предложили свои условия">
-            {customShare.map((item) => (
+            {customShare.map(item => (
               <Cell
                 key={item.id}
                 before={<DollarSign size={20} color="#ff9500" />}
-                subtitle={item.type === 'lead' 
-                  ? `Комиссия покупателя: ${(item as Lead).commissionShare}%`
-                  : `Комиссия покупателя: ${(item as RealEstateObject).commissionShare}%`
+                subtitle={
+                  item.type === 'lead'
+                    ? `Комиссия покупателя: ${(item as Lead).commissionShare}%`
+                    : `Комиссия покупателя: ${(item as RealEstateObject).commissionShare}%`
                 }
               >
                 {item.name}
@@ -98,26 +99,17 @@ export const ResultsPage: FC = () => {
 
         {disliked.length > 0 && (
           <Section header="Не подошли" footer="Эти варианты вам не понравились">
-            {disliked.map((item) => (
-              <Cell
-                key={item.id}
-                before={<ThumbsDown size={20} color="#ff3b30" />}
-              >
+            {disliked.map(item => (
+              <Cell key={item.id} before={<ThumbsDown size={20} color="#ff3b30" />}>
                 {item.name}
               </Cell>
             ))}
           </Section>
         )}
       </List>
-
       <div className="results-page__actions">
-        <Button
-          size="l"
-          stretched
-          onClick={() => navigate('/')}
-        >
-          <Home size={20} />
-          <span>Вернуться на главную</span>
+        <Button before={<Home size={20} />} size="l" stretched onClick={() => navigate('/')}>
+          Вернуться на главную
         </Button>
       </div>
     </div>
