@@ -2,18 +2,22 @@ import { ComissionBids } from '@/components/Comission/ComissionBids';
 import { LeadMatchCard } from '@/components/MatchCard/LeadMatchCard';
 import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
-import { getLeadById, getMatchById, getObjectById, getMatchLogs } from '@/services/entityService';
 import { EntityType, Lead, RealEstateObject } from '@/types/entity';
-import { Match } from '@/types/matching';
+import { Match, MatchStatus } from '@/types/matching';
 import { Button, Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './MatchPage.css';
-import { matchStore } from '@/stores/matchStore';
 import { matchLogStore } from '@/stores/matchLogStore';
 import { observer } from 'mobx-react-lite';
+import { ComissionModal } from '@/components/Comission/ComissionModal';
+import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
+import { userStore } from '@/stores/userStore';
+import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
+import { leadStore } from '@/stores/leadStore';
+import { realEstateStore } from '@/stores/realEstateStore';
 
-enum MatchStatus {
+enum MatchStatusEnum {
   OK,
   BIDS,
   WAIT_FOR_ANSWER,
@@ -22,18 +26,18 @@ enum MatchStatus {
 
 const getMatchStatus = (type: EntityType, match: Match) => {
   if (match?.leadStatus == 'UNDEFINED' && type == 'object') {
-    return MatchStatus.WAIT_FOR_ANSWER;
+    return MatchStatusEnum.WAIT_FOR_ANSWER;
   }
 
   if (match?.estateStatus == 'UNDEFINED' && type == 'lead') {
-    return MatchStatus.WAIT_FOR_ANSWER;
+    return MatchStatusEnum.WAIT_FOR_ANSWER;
   }
 
   if (
     (match?.leadStatus == 'COMMISSION' && match.estateStatus == 'ACCEPTED') ||
     (match.leadStatus == 'ACCEPTED' && match.estateStatus == 'COMMISSION')
   ) {
-    return MatchStatus.OK;
+    return MatchStatusEnum.OK;
   }
 
   if (
@@ -42,10 +46,10 @@ const getMatchStatus = (type: EntityType, match: Match) => {
     match.leadStatus == 'DECLINED' ||
     match.estateStatus == 'DECLINED'
   ) {
-    return MatchStatus.DECLINED;
+    return MatchStatusEnum.DECLINED;
   }
 
-  return MatchStatus.BIDS;
+  return MatchStatusEnum.BIDS;
 };
 
 const getActualComissionValues = (
@@ -89,7 +93,11 @@ export const MatchPage: FC = observer(() => {
 
   const [sourceEntity, setSourceEntity] = useState<Lead | RealEstateObject | null>(null);
 
+  const [isComissionModalOpen, setIsComissionModalOpen] = useState(false);
+
   const [loading, setLoading] = useState(true);
+
+  const matchesStore = type === 'lead' ? leadMatchesStore : objectMatchesStore;
 
   useEffect(() => {
     const loadData = async () => {
@@ -100,16 +108,22 @@ export const MatchPage: FC = observer(() => {
       try {
         const matchResp = await getMatchById(id);
 
-        matchStore.addMatch(matchResp);
+        matchesStore.putMatch(type === 'lead' ? matchResp?.leadId : matchResp?.estateId, matchResp);
 
         const matchLogs = await getMatchLogs(id);
         matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'lead') {
-          const lead = await getLeadById(matchResp!.leadId);
+          const lead = leadStore.getLeadById(matchResp!.leadId);
+          if (!lead) {
+            return;
+          }
           setSourceEntity(lead);
         } else {
-          const object = await getObjectById(matchResp!.estateId);
+          const object = realEstateStore.getObjectById(matchResp!.estateId);
+          if (!object) {
+            return;
+          }
           setSourceEntity(object);
         }
       } catch (error) {
@@ -122,7 +136,7 @@ export const MatchPage: FC = observer(() => {
     loadData();
   }, [type, id]);
 
-  if (loading || !id || !sourceEntity || !type) {
+  if (loading || !id || !type) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Spinner size="l" />
@@ -130,40 +144,92 @@ export const MatchPage: FC = observer(() => {
     );
   }
 
-  const match = matchStore.getMatchById(id);
+  if (!sourceEntity) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <p>Сущность не найдена</p>
+      </div>
+    );
+  }
 
-  const matchStatus = getMatchStatus(type, match!);
+  const match = matchesStore.getMatchById(sourceEntity.id, id);
+
+  if (!match) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <p>Сущность не найдена</p>
+      </div>
+    );
+  }
+
+  const matchStatus = getMatchStatus(type, match);
+
+  const otherStatus = type === 'lead' ? match.estateStatus : match.leadStatus;
 
   const { leadUserComission, objectUserComission } = getActualComissionValues(id, sourceEntity);
 
+  const updateMatchAction = async (status: MatchStatus, commission?: number) => {
+    const match = await updateMatch({
+      id: id,
+      status: status,
+      leadCommission: sourceEntity.type === 'lead' ? commission : commission && 100 - commission,
+      updatedBy: userStore.user!.id,
+    });
+
+    matchesStore.putMatch(sourceEntity.id, match);
+  };
+
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ flex: 1 }}>
-        {sourceEntity!.type === 'object' ? (
-          <ObjectMatchCard data={sourceEntity as RealEstateObject} displayComission={matchStatus !== MatchStatus.BIDS} />
-        ) : (
-          <LeadMatchCard data={sourceEntity as Lead} displayComission={matchStatus !== MatchStatus.BIDS} />
+    <>
+      <ComissionModal
+        onOpenChange={open => setIsComissionModalOpen(open)}
+        open={isComissionModalOpen}
+        onComissionSubmit={async comission => {
+          updateMatchAction('COMMISSION', comission);
+        }}
+      />
+
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ flex: 1 }}>
+          {sourceEntity!.type === 'object' ? (
+            <ObjectMatchCard
+              data={sourceEntity as RealEstateObject}
+              displayComission={matchStatus !== MatchStatusEnum.BIDS}
+            />
+          ) : (
+            <LeadMatchCard data={sourceEntity as Lead} displayComission={matchStatus !== MatchStatusEnum.BIDS} />
+          )}
+
+          {matchStatus === MatchStatusEnum.BIDS && (
+            <ComissionBids
+              yours={sourceEntity.type === 'object' ? leadUserComission! : objectUserComission!}
+              theirs={sourceEntity.type === 'lead' ? leadUserComission! : objectUserComission!}
+            />
+          )}
+        </div>
+
+        {matchStatus === MatchStatusEnum.OK && (
+          <Button mode="filled" size="l" style={{ marginBottom: 12 }} onClick={() => {}}>
+            Перейти в чат с риэлтором
+          </Button>
         )}
 
-        {matchStatus === MatchStatus.BIDS && (
-          <ComissionBids
-            yours={sourceEntity.type === 'object' ? leadUserComission! : objectUserComission!}
-            theirs={sourceEntity.type === 'lead' ? leadUserComission! : objectUserComission!}
+        {matchStatus === MatchStatusEnum.WAIT_FOR_ANSWER && <div className="wait-for-answer">Ждем ответа от риэлтора</div>}
+
+        {matchStatus === MatchStatusEnum.DECLINED && <div className="declined">Риэлтор отказался от сделки</div>}
+
+        {matchStatus === MatchStatusEnum.BIDS && (
+          <MatchControls
+            onLike={() => {
+              updateMatchAction(otherStatus === 'COMMISSION' ? 'ACCEPTED' : 'LIKED');
+            }}
+            onComission={() => setIsComissionModalOpen(true)}
+            onDislike={() => {
+              updateMatchAction(otherStatus === 'COMMISSION' ? 'DECLINED' : 'DISLIKE');
+            }}
           />
         )}
       </div>
-
-      {matchStatus === MatchStatus.OK && (
-        <Button mode="filled" size="l" style={{ marginBottom: 12 }} onClick={() => {}}>
-          Перейти в чат с риэлтором
-        </Button>
-      )}
-
-      {matchStatus === MatchStatus.WAIT_FOR_ANSWER && <div className="wait-for-answer">Ждем ответа от риэлтора</div>}
-
-      {matchStatus === MatchStatus.DECLINED && <div className="declined">Риэлтор отказался от сделки</div>}
-
-      {matchStatus === MatchStatus.BIDS && <MatchControls onLike={() => {}} onComission={() => {}} onDislike={() => {}} />}
-    </div>
+    </>
   );
 });

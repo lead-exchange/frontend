@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
-import { fetchLeads, fetchObjects, USER_ID } from '@/services/entityService';
+import { USER_ID } from '@/services/entityService';
 import type { Lead, RealEstateObject } from '@/types/entity';
 import { observer } from 'mobx-react-lite';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
 import { getUserByTgId } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
+import { getLeads, getRealEstateObjects } from '@/requests/entities';
 
 type TabType = 'leads' | 'objects';
 
@@ -34,10 +35,10 @@ export const IndexPage: FC = observer(() => {
 
       try {
         if (activeTab === 'leads') {
-          const data = await fetchLeads();
+          const data = await getLeads(user.id);
           leadStore.setLeads(data);
         } else {
-          const data = await fetchObjects();
+          const data = await getRealEstateObjects(user.id);
           realEstateStore.setObjects(data);
         }
       } catch (error) {

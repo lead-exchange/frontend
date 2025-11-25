@@ -88,11 +88,11 @@ export const TinderPage: FC = () => {
       leadId: item.type === 'lead' ? item.id : sourceEntity.id,
       estateId: item.type === 'object' ? item.id : sourceEntity.id,
       status: status,
-      leadCommission: item.type === 'lead' ? commission : commission && 100 - commission,
+      leadCommission: sourceEntity.type === 'lead' ? commission : commission && 100 - commission,
       updatedBy: userStore.user!.id,
     });
 
-    matchesStore.addMatch(sourceEntity.id, match);
+    matchesStore.putMatch(sourceEntity.id, match);
   };
 
   const handleLike = async (item: Lead | RealEstateObject) => {
