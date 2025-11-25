@@ -1,11 +1,14 @@
 import { RealEstateObject } from '@/types/entity';
-import { makeAutoObservable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 
 class RealEstateStore {
   objects: RealEstateObject[] = [];
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      objects: observable,
+      setObjects: action,
+    });
   }
 
   setObjects(objects: RealEstateObject[]) {
@@ -14,10 +17,6 @@ class RealEstateStore {
 
   getObjectById(id: string): RealEstateObject | undefined {
     return this.objects.find(object => object.id === id);
-  }
-
-  getObjects(): RealEstateObject[] {
-    return this.objects;
   }
 }
 

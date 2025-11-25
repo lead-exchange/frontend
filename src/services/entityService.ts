@@ -1,7 +1,7 @@
 import type { Lead, RealEstateObject } from '@/types/entity';
 
 const BACKEND_URL = 'https://lead-exchange.ru';
-const USER_ID = '11111111-1111-1111-1111-111111111111';
+export const USER_ID = '11111111-1111-1111-1111-111111111111';
 
 const arbatPhotos = [
   new URL('../../assets/estate/arbat/arbat-1.jpg', import.meta.url).href,
