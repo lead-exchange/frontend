@@ -3,6 +3,11 @@ import { type FC, useEffect, useState } from 'react';
 import { User, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
+import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
+import { type FC, useEffect, useState } from 'react';
+import { User, ChevronRight, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
 import { USER_ID } from '@/services/entityService';
@@ -22,7 +27,6 @@ export const IndexPage: FC = observer(() => {
   const tgUserId = WebApp.initDataUnsafe.user?.id;
 
   const navigate = useNavigate();
-
   const [activeTab, setActiveTab] = useState<TabType>('leads');
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +39,7 @@ export const IndexPage: FC = observer(() => {
 
       try {
         if (activeTab === 'leads') {
-          const data = await getLeads(user.id);
+          const data = await fetchLeads();
           leadStore.setLeads(data);
         } else {
           const data = await getRealEstateObjects(user.id);
