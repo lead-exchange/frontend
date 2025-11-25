@@ -5,16 +5,20 @@ import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
-import { fetchLeads, fetchObjects } from '@/services/entityService';
+import { fetchLeads, fetchObjects, USER_ID } from '@/services/entityService';
 import type { Lead, RealEstateObject } from '@/types/entity';
 import { observer } from 'mobx-react-lite';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
+import { userStore } from '@/stores/userStore';
+import { getUserByTgId } from '@/requests/user';
 
 type TabType = 'leads' | 'objects';
 
 export const IndexPage: FC = observer(() => {
   const debug = WebApp.initDataUnsafe.start_param === 'debug';
+
+  const tgUserId = WebApp.initDataUnsafe.user?.id;
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('leads');
@@ -23,6 +27,10 @@ export const IndexPage: FC = observer(() => {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+
+      const user = tgUserId ? await getUserByTgId(tgUserId) : { id: USER_ID };
+      userStore.setUser(user);
+
       try {
         if (activeTab === 'leads') {
           const data = await fetchLeads();
@@ -76,7 +84,7 @@ export const IndexPage: FC = observer(() => {
               <Spinner size="m" />
             </div>
           ) : (
-            (activeTab === 'leads' ? leadStore.getLeads() : realEstateStore.getObjects()).map(item => (
+            (activeTab === 'leads' ? leadStore.leads : realEstateStore.objects).map(item => (
               <Cell
                 key={item.id}
                 before={

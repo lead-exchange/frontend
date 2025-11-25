@@ -54,3 +54,5 @@ export interface RealEstateObject extends Entity {
   createdAt: string;
   updatedAt: string;
 }
+
+export type EntityType = 'lead' | 'object';

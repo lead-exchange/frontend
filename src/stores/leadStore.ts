@@ -1,11 +1,14 @@
 import { Lead } from '@/types/entity';
-import { makeAutoObservable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 
 class LeadStore {
   leads: Lead[] = [];
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      leads: observable,
+      setLeads: action,
+    });
   }
 
   setLeads(leads: Lead[]) {
@@ -14,10 +17,6 @@ class LeadStore {
 
   getLeadById(id: string): Lead | undefined {
     return this.leads.find(lead => lead.id === id);
-  }
-
-  getLeads(): Lead[] {
-    return this.leads;
   }
 }
 
