@@ -1,36 +1,39 @@
-import {
-  Section,
-  Cell,
-  List,
-  Spinner,
-  TabsList,
-} from "@telegram-apps/telegram-ui";
-import { type FC, useEffect, useState } from "react";
-import { User, ChevronRight, Building2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import WebApp from "@twa-dev/sdk";
+import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
+import { type FC, useEffect, useState } from 'react';
+import { User, ChevronRight, Building2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import WebApp from '@twa-dev/sdk';
 
-import { Link } from "@/components/Link/Link.tsx";
-import { fetchLeads, fetchObjects } from "@/services/entityService";
-import type { Lead, RealEstateObject } from "@/types/entity";
-import { observer } from "mobx-react-lite";
-import { leadStore } from "@/stores/leadStore";
-import { realEstateStore } from "@/stores/realEstateStore";
+import { Link } from '@/components/Link/Link.tsx';
+import { fetchLeads, fetchObjects, USER_ID } from '@/services/entityService';
+import type { Lead, RealEstateObject } from '@/types/entity';
+import { observer } from 'mobx-react-lite';
+import { leadStore } from '@/stores/leadStore';
+import { realEstateStore } from '@/stores/realEstateStore';
+import { getUserByTgId } from '@/requests/user';
+import { userStore } from '@/stores/userStore';
 
-type TabType = "leads" | "objects";
+type TabType = 'leads' | 'objects';
 
 export const IndexPage: FC = observer(() => {
-  const debug = WebApp.initDataUnsafe.start_param === "debug";
+  const debug = WebApp.initDataUnsafe.start_param === 'debug';
+
+  const tgUserId = WebApp.initDataUnsafe.user?.id;
 
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabType>("leads");
+
+  const [activeTab, setActiveTab] = useState<TabType>('leads');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+
+      const user = tgUserId ? await getUserByTgId(tgUserId) : { id: USER_ID };
+      userStore.setUser(user);
+
       try {
-        if (activeTab === "leads") {
+        if (activeTab === 'leads') {
           const data = await fetchLeads();
           leadStore.setLeads(data);
         } else {
@@ -38,7 +41,7 @@ export const IndexPage: FC = observer(() => {
           realEstateStore.setObjects(data);
         }
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error('Failed to fetch data:', error);
       } finally {
         setLoading(false);
       }
@@ -54,52 +57,39 @@ export const IndexPage: FC = observer(() => {
   return (
     <>
       <TabsList>
-        <TabsList.Item
-          selected={activeTab === "leads"}
-          onClick={() => setActiveTab("leads")}
-        >
+        <TabsList.Item selected={activeTab === 'leads'} onClick={() => setActiveTab('leads')}>
           Лиды
         </TabsList.Item>
-        <TabsList.Item
-          selected={activeTab === "objects"}
-          onClick={() => setActiveTab("objects")}
-        >
+        <TabsList.Item selected={activeTab === 'objects'} onClick={() => setActiveTab('objects')}>
           Объекты
         </TabsList.Item>
       </TabsList>
 
       <List>
         <Section
-          header={activeTab === "leads" ? "Лиды" : "Объекты"}
+          header={activeTab === 'leads' ? 'Лиды' : 'Объекты'}
           footer={
-            activeTab === "leads"
-              ? "Нажмите на лид, чтобы начать подбор объектов"
-              : "Нажмите на объект, чтобы начать подбор лидов"
+            activeTab === 'leads'
+              ? 'Нажмите на лид, чтобы начать подбор объектов'
+              : 'Нажмите на объект, чтобы начать подбор лидов'
           }
         >
           {loading ? (
             <div
               style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "20px",
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '20px',
               }}
             >
               <Spinner size="m" />
             </div>
           ) : (
-            (activeTab === "leads"
-              ? leadStore.getLeads()
-              : realEstateStore.getObjects()
-            ).map((item) => (
+            (activeTab === 'leads' ? leadStore.leads : realEstateStore.objects).map(item => (
               <Cell
                 key={item.id}
                 before={
-                  activeTab === "leads" ? (
-                    <User color="var(--button_color)" />
-                  ) : (
-                    <Building2 color="var(--button_color)" />
-                  )
+                  activeTab === 'leads' ? <User color="var(--button_color)" /> : <Building2 color="var(--button_color)" />
                 }
                 after={<ChevronRight />}
                 onClick={() => handleEntityClick(item)}
@@ -115,19 +105,13 @@ export const IndexPage: FC = observer(() => {
             footer="These pages help developer to learn more about current launch information"
           >
             <Link to="/init-data">
-              <Cell subtitle="User data, chat information, technical data">
-                Init Data
-              </Cell>
+              <Cell subtitle="User data, chat information, technical data">Init Data</Cell>
             </Link>
             <Link to="/launch-params">
-              <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-                Launch Parameters
-              </Cell>
+              <Cell subtitle="Platform identifier, Mini Apps version, etc.">Launch Parameters</Cell>
             </Link>
             <Link to="/theme-params">
-              <Cell subtitle="Telegram application palette information">
-                Theme Parameters
-              </Cell>
+              <Cell subtitle="Telegram application palette information">Theme Parameters</Cell>
             </Link>
           </Section>
         )}

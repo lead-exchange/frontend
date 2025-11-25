@@ -52,3 +52,9 @@
 .comission-bids__value {
   flex: 1;
 }
+
+.comission-modal__buttons {
+    display: flex;
+    justify-content: space-evenly;
+    padding-bottom: 5px;
+}

@@ -5,17 +5,20 @@ import { LeadMatchCard } from '../MatchCard/LeadMatchCard';
 
 import './TinderSwiper.css';
 import { MatchControls } from '../MatchControls/MatchControls';
+import { ComissionModal } from '../Comission/ComissionModal';
 
 interface TinderSwiperProps {
   items: (Lead | RealEstateObject)[];
   onLike?: (item: Lead | RealEstateObject) => void;
   onDislike?: (item: Lead | RealEstateObject) => void;
-  onCustomShare?: (item: Lead | RealEstateObject) => void;
+  onCustomShare?: (item: Lead | RealEstateObject, comission: number) => void;
   onFinish?: () => void;
 }
 
 export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [isComissionModalOpen, setIsComissionModalOpen] = useState(false);
 
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
@@ -34,8 +37,9 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       onDislike(currentItem);
     } else if (direction === 'right' && onLike) {
       onLike(currentItem);
-    } else if (direction === 'up' && onCustomShare) {
-      onCustomShare(currentItem);
+    } else if (direction === 'up') {
+      setIsComissionModalOpen(true);
+      return;
     }
 
     setCurrentIndex(prev => prev + 1);
@@ -84,25 +88,37 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
   const currentItem = items[currentIndex];
 
   return (
-    <div className="tinder-swiper">
-      <div
-        className="tinder-swiper__card-container"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        ref={cardRef}
-      >
-        {currentItem.type === 'object' ? (
-          <ObjectMatchCard data={currentItem} displayComission={true} />
-        ) : (
-          <LeadMatchCard data={currentItem} displayComission={true} />
-        )}
-      </div>
-
-      <MatchControls
-        onLike={() => handleSwipe('right')}
-        onComission={() => handleSwipe('up')}
-        onDislike={() => handleSwipe('left')}
+    <>
+      <ComissionModal
+        onOpenChange={open => setIsComissionModalOpen(open)}
+        open={isComissionModalOpen}
+        onComissionSubmit={async comission => {
+          if (onCustomShare) {
+            onCustomShare(currentItem, comission);
+            setCurrentIndex(prev => prev + 1);
+          }
+        }}
       />
-    </div>
+      <div className="tinder-swiper">
+        <div
+          className="tinder-swiper__card-container"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          ref={cardRef}
+        >
+          {currentItem.type === 'object' ? (
+            <ObjectMatchCard data={currentItem} displayComission={true} />
+          ) : (
+            <LeadMatchCard data={currentItem} displayComission={true} />
+          )}
+        </div>
+
+        <MatchControls
+          onLike={() => handleSwipe('right')}
+          onComission={() => handleSwipe('up')}
+          onDislike={() => handleSwipe('left')}
+        />
+      </div>
+    </>
   );
 };

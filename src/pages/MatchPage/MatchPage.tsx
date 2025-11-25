@@ -2,12 +2,16 @@ import { ComissionBids } from '@/components/Comission/ComissionBids';
 import { LeadMatchCard } from '@/components/MatchCard/LeadMatchCard';
 import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
-import { getLeadById, getMatchById, getObjectById } from '@/services/entityService';
-import { EntityType, Lead, Match, RealEstateObject } from '@/types/entity';
+import { getLeadById, getMatchById, getObjectById, getMatchLogs } from '@/services/entityService';
+import { EntityType, Lead, RealEstateObject } from '@/types/entity';
+import { Match } from '@/types/matching';
 import { Button, Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './MatchPage.css';
+import { matchStore } from '@/stores/matchStore';
+import { matchLogStore } from '@/stores/matchLogStore';
+import { observer } from 'mobx-react-lite';
 
 enum MatchStatus {
   OK,
@@ -44,7 +48,40 @@ const getMatchStatus = (type: EntityType, match: Match) => {
   return MatchStatus.BIDS;
 };
 
-export const MatchPage: FC = () => {
+const getActualComissionValues = (
+  matchId: string,
+  sourceEntity: Lead | RealEstateObject
+): { leadUserComission?: number; objectUserComission?: number } => {
+  const matchLogs = matchLogStore.getLogsByMatch(matchId);
+
+  const result = {
+    leadUserComission: sourceEntity.type === 'lead' ? sourceEntity.commissionShare : undefined,
+    objectUserComission: sourceEntity.type === 'object' ? sourceEntity.commissionShare : undefined,
+  };
+
+  if (!matchLogs) {
+    return result;
+  }
+
+  matchLogs.sort((a, b) => {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
+  const lastLead = matchLogs.filter(log => log.userType == 'lead').at(0);
+  const lastObject = matchLogs.filter(log => log.userType == 'object').at(0);
+
+  if (lastLead) {
+    result.leadUserComission = lastLead.leadCommission;
+  }
+
+  if (lastObject) {
+    result.objectUserComission = lastObject.leadCommission;
+  }
+
+  return result;
+};
+
+export const MatchPage: FC = observer(() => {
   const { type, id } = useParams<{
     type: EntityType;
     id: string;
@@ -52,11 +89,8 @@ export const MatchPage: FC = () => {
 
   const [sourceEntity, setSourceEntity] = useState<Lead | RealEstateObject | null>(null);
 
-  const [match, setMatch] = useState<Match | null>(null);
-
   const [loading, setLoading] = useState(true);
 
-  // May refactor later to use tanstack or some state management lib
   useEffect(() => {
     const loadData = async () => {
       if (!type || !id) return;
@@ -65,7 +99,11 @@ export const MatchPage: FC = () => {
 
       try {
         const matchResp = await getMatchById(id);
-        setMatch(matchResp);
+
+        matchStore.addMatch(matchResp);
+
+        const matchLogs = await getMatchLogs(id);
+        matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'lead') {
           const lead = await getLeadById(matchResp!.leadId);
@@ -84,7 +122,7 @@ export const MatchPage: FC = () => {
     loadData();
   }, [type, id]);
 
-  if (loading) {
+  if (loading || !id || !sourceEntity || !type) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <Spinner size="l" />
@@ -92,7 +130,11 @@ export const MatchPage: FC = () => {
     );
   }
 
-  const matchStatus = getMatchStatus(type!, match!);
+  const match = matchStore.getMatchById(id);
+
+  const matchStatus = getMatchStatus(type, match!);
+
+  const { leadUserComission, objectUserComission } = getActualComissionValues(id, sourceEntity);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -103,7 +145,12 @@ export const MatchPage: FC = () => {
           <LeadMatchCard data={sourceEntity as Lead} displayComission={matchStatus !== MatchStatus.BIDS} />
         )}
 
-        {matchStatus === MatchStatus.BIDS && <ComissionBids yours={30} theirs={20} />}
+        {matchStatus === MatchStatus.BIDS && (
+          <ComissionBids
+            yours={sourceEntity.type === 'object' ? leadUserComission! : objectUserComission!}
+            theirs={sourceEntity.type === 'lead' ? leadUserComission! : objectUserComission!}
+          />
+        )}
       </div>
 
       {matchStatus === MatchStatus.OK && (
@@ -119,4 +166,4 @@ export const MatchPage: FC = () => {
       {matchStatus === MatchStatus.BIDS && <MatchControls onLike={() => {}} onComission={() => {}} onDislike={() => {}} />}
     </div>
   );
-};
+});

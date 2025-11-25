@@ -2,15 +2,25 @@ import { type FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner } from '@telegram-apps/telegram-ui';
 import { TinderSwiper } from '@/components/TinderSwiper/TinderSwiper';
-import { getLeadById, getObjectsForLead, getObjectById, getLeadsForObject } from '@/services/entityService';
 import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
+import { createMatch } from '@/requests/matches';
+import { userStore } from '@/stores/userStore';
+import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
+import { MatchStatus } from '@/types/matching';
+import { leadStore } from '@/stores/leadStore';
+import { realEstateStore } from '@/stores/realEstateStore';
+import { getLeadsForObject, getObjectsForLead } from '@/requests/tinder';
 
 export const TinderPage: FC = () => {
   const { type, id } = useParams<{ type: EntityType; id: string }>();
+
   const navigate = useNavigate();
+
   const [sourceEntity, setSourceEntity] = useState<Lead | RealEstateObject | null>(null);
+
   const [matchItems, setMatchItems] = useState<(Lead | RealEstateObject)[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [likedItems, setLikedItems] = useState<(Lead | RealEstateObject)[]>([]);
   const [dislikedItems, setDislikedItems] = useState<(Lead | RealEstateObject)[]>([]);
   const [customShareItems, setCustomShareItems] = useState<(Lead | RealEstateObject)[]>([]);
@@ -23,17 +33,25 @@ export const TinderPage: FC = () => {
 
       try {
         if (type === 'lead') {
-          const lead = await getLeadById(id);
+          const lead = leadStore.getLeadById(id);
+          if (!lead) {
+            return;
+          }
+
           setSourceEntity(lead);
           if (lead) {
-            const objects = await getObjectsForLead();
+            const objects = await getObjectsForLead(id);
             setMatchItems(objects);
           }
         } else {
-          const object = await getObjectById(id);
+          const object = realEstateStore.getObjectById(id);
+          if (!object) {
+            return;
+          }
+
           setSourceEntity(object);
           if (object) {
-            const leads = await getLeadsForObject();
+            const leads = await getLeadsForObject(id);
             setMatchItems(leads);
           }
         }
@@ -46,30 +64,6 @@ export const TinderPage: FC = () => {
 
     loadData();
   }, [type, id]);
-
-  const handleLike = (item: Lead | RealEstateObject) => {
-    setLikedItems(prev => [...prev, item]);
-  };
-
-  const handleDislike = (item: Lead | RealEstateObject) => {
-    setDislikedItems(prev => [...prev, item]);
-  };
-
-  const handleCustomShare = (item: Lead | RealEstateObject) => {
-    setCustomShareItems(prev => [...prev, item]);
-  };
-
-  const handleFinish = () => {
-    navigate('/results', {
-      state: {
-        sourceEntity,
-        total: matchItems.length,
-        liked: likedItems,
-        disliked: dislikedItems,
-        customShare: customShareItems,
-      },
-    });
-  };
 
   if (loading) {
     return (
@@ -87,15 +81,61 @@ export const TinderPage: FC = () => {
     );
   }
 
+  const matchesStore = sourceEntity.type === 'lead' ? leadMatchesStore : objectMatchesStore;
+
+  const addMatch = async (item: Lead | RealEstateObject, status: MatchStatus, commission?: number) => {
+    const match = await createMatch({
+      leadId: item.type === 'lead' ? item.id : sourceEntity.id,
+      estateId: item.type === 'object' ? item.id : sourceEntity.id,
+      status: status,
+      leadCommission: item.type === 'lead' ? commission : commission && 100 - commission,
+      updatedBy: userStore.user!.id,
+    });
+
+    matchesStore.addMatch(sourceEntity.id, match);
+  };
+
+  const handleLike = async (item: Lead | RealEstateObject) => {
+    await addMatch(item, 'LIKED');
+
+    setLikedItems(prev => [...prev, item]);
+  };
+
+  const handleDislike = async (item: Lead | RealEstateObject) => {
+    await addMatch(item, 'DISLIKE');
+
+    setDislikedItems(prev => [...prev, item]);
+  };
+
+  const handleCustomShare = async (item: Lead | RealEstateObject, comission: number) => {
+    await addMatch(item, 'COMMISSION', comission);
+
+    setCustomShareItems(prev => [...prev, item]);
+  };
+
+  const handleFinish = () => {
+    navigate('/results', {
+      state: {
+        sourceEntity,
+        total: matchItems.length,
+        liked: likedItems,
+        disliked: dislikedItems,
+        customShare: customShareItems,
+      },
+    });
+  };
+
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <TinderSwiper
-        items={matchItems}
-        onLike={handleLike}
-        onDislike={handleDislike}
-        onCustomShare={handleCustomShare}
-        onFinish={handleFinish}
-      />
-    </div>
+    <>
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <TinderSwiper
+          items={matchItems}
+          onLike={handleLike}
+          onDislike={handleDislike}
+          onCustomShare={handleCustomShare}
+          onFinish={handleFinish}
+        />
+      </div>
+    </>
   );
 };

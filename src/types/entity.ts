@@ -55,14 +55,4 @@ export interface RealEstateObject extends Entity {
   updatedAt: string;
 }
 
-export type MatchStatus = 'COMMISSION' | 'LIKED' | 'DISLIKE' | 'ACCEPTED' | 'UNDEFINED' | 'DECLINED';
-
 export type EntityType = 'lead' | 'object';
-
-export interface Match {
-  id: string;
-  leadId: string;
-  estateId: string;
-  leadStatus: MatchStatus;
-  estateStatus: MatchStatus;
-}
