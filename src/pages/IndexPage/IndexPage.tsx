@@ -3,11 +3,6 @@ import { type FC, useEffect, useState } from 'react';
 import { User, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
-import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
-import { type FC, useEffect, useState } from 'react';
-import { User, ChevronRight, Building2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
 import { USER_ID } from '@/services/entityService';
@@ -39,7 +34,7 @@ export const IndexPage: FC = observer(() => {
 
       try {
         if (activeTab === 'leads') {
-          const data = await fetchLeads();
+          const data = await getLeads(user.id);
           leadStore.setLeads(data);
         } else {
           const data = await getRealEstateObjects(user.id);
