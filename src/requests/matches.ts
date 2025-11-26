@@ -2,11 +2,11 @@ import { Match, MatchLog, MatchStatus } from '@/types/matching';
 import { apiClient } from './client';
 
 export const getMatchById = (id: string): Promise<Match> => {
-  return apiClient.get<Match>(`/matches/${id}`);
+  return apiClient.get<Match>(`/api/matches/${id}`);
 };
 
 export const getMatchLogs = (matchId: string): Promise<MatchLog[]> => {
-  return apiClient.get<MatchLog[]>(`/match-logs/${matchId}`);
+  return apiClient.get<MatchLog[]>(`/api/match-logs/${matchId}`);
 };
 
 interface CreateMatchRequest {
@@ -19,7 +19,7 @@ interface CreateMatchRequest {
 }
 
 export const createMatch = async (req: CreateMatchRequest): Promise<Match> => {
-  const resp = await apiClient.post('/matches', req);
+  const resp = await apiClient.post('/api/matches', req);
   return await resp.json();
 };
 
@@ -32,6 +32,6 @@ interface UpdateMatchRequest {
 }
 
 export const updateMatch = async (req: UpdateMatchRequest): Promise<Match> => {
-  const resp = await apiClient.put(`/matches/${req.id}`, req);
+  const resp = await apiClient.put(`/api/matches/${req.id}`, req);
   return await resp.json();
 };

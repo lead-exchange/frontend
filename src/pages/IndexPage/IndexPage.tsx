@@ -1,6 +1,6 @@
 import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useState } from 'react';
-import { User, ChevronRight, Building2 } from 'lucide-react';
+import { User as UserIcon, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
@@ -29,7 +29,13 @@ export const IndexPage: FC = observer(() => {
     const loadData = async () => {
       setLoading(true);
 
-      const user = tgUserId ? await getUserByTgId(tgUserId) : { id: USER_ID };
+      let user;
+      try {
+        user = tgUserId ? await getUserByTgId(tgUserId) : { id: USER_ID };
+      } catch (e) {
+        console.error('Failed to fetch user:', e);
+        user = { id: USER_ID };
+      }
       userStore.setUser(user);
 
       try {
@@ -89,7 +95,11 @@ export const IndexPage: FC = observer(() => {
               <Cell
                 key={item.id}
                 before={
-                  activeTab === 'leads' ? <User color="var(--button_color)" /> : <Building2 color="var(--button_color)" />
+                  activeTab === 'leads' ? (
+                    <UserIcon color="var(--button_color)" />
+                  ) : (
+                    <Building2 color="var(--button_color)" />
+                  )
                 }
                 after={<ChevronRight />}
                 onClick={() => handleEntityClick(item)}

@@ -1,5 +1,5 @@
 class ApiClient {
-  #apiURL: string = import.meta.env.VITE_BACKEND_URL + '/api';
+  #apiURL: string = import.meta.env.VITE_BACKEND_URL;
 
   async do(method: string, path: string, body?: object): Promise<Response> {
     let jsonBody = null;
