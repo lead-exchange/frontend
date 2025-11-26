@@ -114,13 +114,13 @@ export const MatchPage: FC = observer(() => {
         matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'lead') {
-          const lead = leadStore.getLeadById(matchResp!.leadId);
+          const lead = await leadStore.getLeadById(matchResp!.leadId);
           if (!lead) {
             return;
           }
           setSourceEntity(lead);
         } else {
-          const object = realEstateStore.getObjectById(matchResp!.estateId);
+          const object = await realEstateStore.getObjectById(matchResp!.estateId);
           if (!object) {
             return;
           }

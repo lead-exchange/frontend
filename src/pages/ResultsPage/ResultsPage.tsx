@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Section, Cell, List, Button, Text } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Button } from '@telegram-apps/telegram-ui';
 import { ThumbsUp, ThumbsDown, DollarSign, Home } from 'lucide-react';
 import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import './ResultsPage.css';
@@ -36,7 +36,9 @@ export const ResultsPage: FC = observer(() => {
   if (total === 0) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <Text>Нет рекомендаций по {isLead ? 'лиду' : 'объекту'}</Text>
+        <div className="results-page__no-recs" style={{ paddingBottom: '10px' }}>
+          Нет рекомендаций по {isLead ? 'лиду' : 'объекту'}
+        </div>
         <Button onClick={() => navigate('/')}>На главную</Button>
       </div>
     );
@@ -83,7 +85,7 @@ export const ResultsPage: FC = observer(() => {
                     : `${(item as RealEstateObject).attributes.price.toLocaleString()} ₽`
                 }
               >
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>
@@ -97,7 +99,7 @@ export const ResultsPage: FC = observer(() => {
                 before={<DollarSign size={20} color="#ff9500" />}
                 subtitle={`Комиссия покупателя: ${item.commissionShare}%`}
               >
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>
@@ -107,7 +109,7 @@ export const ResultsPage: FC = observer(() => {
           <Section header="Не подошли" footer="Эти варианты вам не понравились">
             {disliked.map(item => (
               <Cell key={item.id} before={<ThumbsDown size={20} color="#ff3b30" />}>
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>

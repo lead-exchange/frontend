@@ -34,7 +34,7 @@ export const TinderPage: FC = observer(() => {
 
       try {
         if (type === 'lead') {
-          const lead = leadStore.getLeadById(id);
+          const lead = await leadStore.getLeadById(id);
           if (!lead) {
             return;
           }
@@ -45,7 +45,7 @@ export const TinderPage: FC = observer(() => {
             setMatchItems(objects);
           }
         } else {
-          const object = realEstateStore.getObjectById(id);
+          const object = await realEstateStore.getObjectById(id);
           if (!object) {
             return;
           }
@@ -128,16 +128,14 @@ export const TinderPage: FC = observer(() => {
   };
 
   return (
-    <>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <TinderSwiper
-          items={matchItems}
-          onLike={handleLike}
-          onDislike={handleDislike}
-          onCustomShare={handleCustomShare}
-          onFinish={handleFinish}
-        />
-      </div>
-    </>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <TinderSwiper
+        items={matchItems}
+        onLike={handleLike}
+        onDislike={handleDislike}
+        onCustomShare={handleCustomShare}
+        onFinish={handleFinish}
+      />
+    </div>
   );
 });
