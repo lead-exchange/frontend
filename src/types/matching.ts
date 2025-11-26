@@ -1,4 +1,4 @@
-export type MatchStatus = 'COMMISSION' | 'LIKED' | 'DISLIKE' | 'ACCEPTED' | 'UNDEFINED' | 'DECLINED';
+export type MatchStatus = 'COMMISSION' | 'LIKED' | 'DISLIKED' | 'ACCEPTED' | 'UNDEFINED' | 'DECLINED';
 
 export interface Match {
   id: string;

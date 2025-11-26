@@ -10,8 +10,9 @@ import { MatchStatus } from '@/types/matching';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
 import { getLeadsForObject, getObjectsForLead } from '@/requests/tinder';
+import { observer } from 'mobx-react-lite';
 
-export const TinderPage: FC = () => {
+export const TinderPage: FC = observer(() => {
   const { type, id } = useParams<{ type: EntityType; id: string }>();
 
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export const TinderPage: FC = () => {
 
       try {
         if (type === 'lead') {
-          const lead = leadStore.getLeadById(id);
+          const lead = await leadStore.getLeadById(id);
           if (!lead) {
             return;
           }
@@ -44,7 +45,7 @@ export const TinderPage: FC = () => {
             setMatchItems(objects);
           }
         } else {
-          const object = realEstateStore.getObjectById(id);
+          const object = await realEstateStore.getObjectById(id);
           if (!object) {
             return;
           }
@@ -83,7 +84,7 @@ export const TinderPage: FC = () => {
 
   const matchesStore = sourceEntity.type === 'lead' ? leadMatchesStore : objectMatchesStore;
 
-  const addMatch = async (item: Lead | RealEstateObject, status: MatchStatus, commission?: number) => {
+  const addMatch = async (item: Lead | RealEstateObject, status: MatchStatus, commission: number) => {
     const match = await createMatch({
       leadId: item.type === 'lead' ? item.id : sourceEntity.id,
       estateId: item.type === 'object' ? item.id : sourceEntity.id,
@@ -96,13 +97,13 @@ export const TinderPage: FC = () => {
   };
 
   const handleLike = async (item: Lead | RealEstateObject) => {
-    await addMatch(item, 'LIKED');
+    await addMatch(item, 'LIKED', item.commissionShare);
 
     setLikedItems(prev => [...prev, item]);
   };
 
   const handleDislike = async (item: Lead | RealEstateObject) => {
-    await addMatch(item, 'DISLIKE');
+    await addMatch(item, 'DISLIKED', item.commissionShare);
 
     setDislikedItems(prev => [...prev, item]);
   };
@@ -116,7 +117,8 @@ export const TinderPage: FC = () => {
   const handleFinish = () => {
     navigate('/results', {
       state: {
-        sourceEntity,
+        entityName: sourceEntity.type === 'lead' ? sourceEntity.name : sourceEntity.attributes.title,
+        entityType: sourceEntity.type,
         total: matchItems.length,
         liked: likedItems,
         disliked: dislikedItems,
@@ -126,16 +128,14 @@ export const TinderPage: FC = () => {
   };
 
   return (
-    <>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <TinderSwiper
-          items={matchItems}
-          onLike={handleLike}
-          onDislike={handleDislike}
-          onCustomShare={handleCustomShare}
-          onFinish={handleFinish}
-        />
-      </div>
-    </>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <TinderSwiper
+        items={matchItems}
+        onLike={handleLike}
+        onDislike={handleDislike}
+        onCustomShare={handleCustomShare}
+        onFinish={handleFinish}
+      />
+    </div>
   );
-};
+});

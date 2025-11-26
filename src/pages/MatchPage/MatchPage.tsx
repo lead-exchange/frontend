@@ -41,8 +41,8 @@ const getMatchStatus = (type: EntityType, match: Match) => {
   }
 
   if (
-    match?.leadStatus == 'DISLIKE' ||
-    match.estateStatus == 'DISLIKE' ||
+    match?.leadStatus == 'DISLIKED' ||
+    match.estateStatus == 'DISLIKED' ||
     match.leadStatus == 'DECLINED' ||
     match.estateStatus == 'DECLINED'
   ) {
@@ -114,13 +114,13 @@ export const MatchPage: FC = observer(() => {
         matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'lead') {
-          const lead = leadStore.getLeadById(matchResp!.leadId);
+          const lead = await leadStore.getLeadById(matchResp!.leadId);
           if (!lead) {
             return;
           }
           setSourceEntity(lead);
         } else {
-          const object = realEstateStore.getObjectById(matchResp!.estateId);
+          const object = await realEstateStore.getObjectById(matchResp!.estateId);
           if (!object) {
             return;
           }
@@ -168,7 +168,9 @@ export const MatchPage: FC = observer(() => {
 
   const { leadUserComission, objectUserComission } = getActualComissionValues(id, sourceEntity);
 
-  const updateMatchAction = async (status: MatchStatus, commission?: number) => {
+  const otherUserComission = type === 'lead' ? objectUserComission : leadUserComission;
+
+  const updateMatchAction = async (status: MatchStatus, commission: number) => {
     const match = await updateMatch({
       id: id,
       status: status,
@@ -221,11 +223,17 @@ export const MatchPage: FC = observer(() => {
         {matchStatus === MatchStatusEnum.BIDS && (
           <MatchControls
             onLike={() => {
-              updateMatchAction(otherStatus === 'COMMISSION' ? 'ACCEPTED' : 'LIKED');
+              updateMatchAction(
+                otherStatus === 'COMMISSION' ? 'ACCEPTED' : 'LIKED',
+                otherUserComission || sourceEntity.commissionShare
+              );
             }}
             onComission={() => setIsComissionModalOpen(true)}
             onDislike={() => {
-              updateMatchAction(otherStatus === 'COMMISSION' ? 'DECLINED' : 'DISLIKE');
+              updateMatchAction(
+                otherStatus === 'COMMISSION' ? 'DECLINED' : 'DISLIKED',
+                otherUserComission || sourceEntity.commissionShare
+              );
             }}
           />
         )}

@@ -9,7 +9,7 @@ interface ComissionModalProps extends ModalProps {
 }
 
 export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, onComissionSubmit }) => {
-  const [comission, setComission] = useState<number | undefined>(undefined);
+  const [comission, setComission] = useState<string>('');
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -19,7 +19,7 @@ export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, on
         placeholder="0-100 %"
         onChange={e => {
           if (e.target.value === '') {
-            setComission(undefined);
+            setComission('');
             return;
           }
 
@@ -34,7 +34,7 @@ export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, on
           if (num < 0) {
             num = 0;
           }
-          setComission(num);
+          setComission(`${num}`);
         }}
       ></Input>
       <div className="comission-modal__buttons">
@@ -43,9 +43,9 @@ export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, on
         </Button>
         <Button
           mode="filled"
-          disabled={comission === undefined}
+          disabled={comission === ''}
           onClick={() => {
-            onComissionSubmit(comission!);
+            onComissionSubmit(parseInt(comission));
             onOpenChange(false);
           }}
         >

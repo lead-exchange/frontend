@@ -1,6 +1,7 @@
 import { InlineButtons } from '@telegram-apps/telegram-ui';
 import { ThumbsDown, ThumbsUp, DollarSign } from 'lucide-react';
 import { FC } from 'react';
+import './MatchControls.css';
 
 interface MatchControlsProps {
   onDislike: () => void;
@@ -10,16 +11,16 @@ interface MatchControlsProps {
 
 export const MatchControls: FC<MatchControlsProps> = ({ onDislike, onComission, onLike }) => {
   return (
-    <InlineButtons mode="bezeled" className="tinder-swiper__controls">
-      <InlineButtons.Item text="Дизлайк" className="tinder-swiper__control-button" onClick={onDislike}>
+    <InlineButtons mode="bezeled" className="match-controls">
+      <InlineButtons.Item text="Дизлайк" className="match-controls__button" onClick={onDislike}>
         <ThumbsDown size={20} />
       </InlineButtons.Item>
 
-      <InlineButtons.Item text="Cвоя доля" className="tinder-swiper__control-button" onClick={onComission}>
+      <InlineButtons.Item text="Cвоя доля" className="match-controls__button" onClick={onComission}>
         <DollarSign size={20} />
       </InlineButtons.Item>
 
-      <InlineButtons.Item text="Лайк" className="tinder-swiper__control-button" onClick={onLike}>
+      <InlineButtons.Item text="Лайк" className="match-controls__button" onClick={onLike}>
         <ThumbsUp size={20} />
       </InlineButtons.Item>
     </InlineButtons>

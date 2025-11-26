@@ -2,18 +2,20 @@ import { type FC } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Section, Cell, List, Button } from '@telegram-apps/telegram-ui';
 import { ThumbsUp, ThumbsDown, DollarSign, Home } from 'lucide-react';
-import type { Lead, RealEstateObject } from '@/types/entity';
+import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import './ResultsPage.css';
+import { observer } from 'mobx-react-lite';
 
 interface ResultsState {
-  sourceEntity: Lead | RealEstateObject;
+  entityName: string;
+  entityType: EntityType;
   total: number;
   liked: (Lead | RealEstateObject)[];
   disliked: (Lead | RealEstateObject)[];
   customShare: (Lead | RealEstateObject)[];
 }
 
-export const ResultsPage: FC = () => {
+export const ResultsPage: FC = observer(() => {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as ResultsState;
@@ -27,16 +29,26 @@ export const ResultsPage: FC = () => {
     );
   }
 
-  const { sourceEntity, total, liked, disliked, customShare } = state;
-  const isLead = sourceEntity.type === 'lead';
+  const { entityName, entityType, total, liked, disliked, customShare } = state;
+
+  const isLead = entityType === 'lead';
+
+  if (total === 0) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <div className="results-page__no-recs" style={{ paddingBottom: '10px' }}>
+          Нет рекомендаций по {isLead ? 'лиду' : 'объекту'}
+        </div>
+        <Button onClick={() => navigate('/')}>На главную</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="results-page">
       <div className="results-page__header">
         <h2 className="results-page__title">Результаты подбора</h2>
-        <p className="results-page__subtitle">
-          {isLead ? `Для лида: ${sourceEntity.name}` : `Для объекта: ${sourceEntity.name}`}
-        </p>
+        <p className="results-page__subtitle">{isLead ? `Для лида: ${entityName}` : `Для объекта: ${entityName}`}</p>
       </div>
 
       <div className="results-page__stats">
@@ -73,7 +85,7 @@ export const ResultsPage: FC = () => {
                     : `${(item as RealEstateObject).attributes.price.toLocaleString()} ₽`
                 }
               >
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>
@@ -85,13 +97,9 @@ export const ResultsPage: FC = () => {
               <Cell
                 key={item.id}
                 before={<DollarSign size={20} color="#ff9500" />}
-                subtitle={
-                  item.type === 'lead'
-                    ? `Комиссия покупателя: ${(item as Lead).commissionShare}%`
-                    : `Комиссия покупателя: ${(item as RealEstateObject).commissionShare}%`
-                }
+                subtitle={`Комиссия покупателя: ${item.commissionShare}%`}
               >
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>
@@ -101,7 +109,7 @@ export const ResultsPage: FC = () => {
           <Section header="Не подошли" footer="Эти варианты вам не понравились">
             {disliked.map(item => (
               <Cell key={item.id} before={<ThumbsDown size={20} color="#ff3b30" />}>
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))}
           </Section>
@@ -114,4 +122,4 @@ export const ResultsPage: FC = () => {
       </div>
     </div>
   );
-};
+});

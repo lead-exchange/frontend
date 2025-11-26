@@ -29,6 +29,15 @@
   color: var(--tgui--hint_color);
 }
 
+.results-page__no-recs {
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+  margin: 0;
+  color: var(--tgui--text_color);
+}
+
 .results-page__stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
