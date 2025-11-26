@@ -104,7 +104,7 @@ export const IndexPage: FC = observer(() => {
                 after={<ChevronRight />}
                 onClick={() => handleEntityClick(item)}
               >
-                {item.name}
+                {item.type === 'lead' ? item.name : item.attributes.title}
               </Cell>
             ))
           )}

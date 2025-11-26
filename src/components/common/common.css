@@ -3,7 +3,7 @@
 }
 
 .modal {
-    max-width: 60vw;
+    max-width: 90vw;
     background-color: var(--tgui--bg_color);
     z-index: var(--tgui--z-index--overlay);
     position: fixed;

@@ -12,7 +12,7 @@ export const getMatchLogs = (matchId: string): Promise<MatchLog[]> => {
 interface CreateMatchRequest {
   leadId: string;
   estateId: string;
-  leadCommission?: number;
+  leadCommission: number;
   updatedBy: string;
   comment?: string;
   status: MatchStatus;
@@ -25,7 +25,7 @@ export const createMatch = async (req: CreateMatchRequest): Promise<Match> => {
 
 interface UpdateMatchRequest {
   id: string;
-  leadCommission?: number;
+  leadCommission: number;
   updatedBy: string;
   comment?: string;
   status: MatchStatus;
