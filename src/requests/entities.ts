@@ -2,7 +2,7 @@ import { CreateLeadDto, Lead, RealEstateObject } from '@/types/entity';
 import { apiClient } from './client';
 
 export const getLeads = async (userId: string): Promise<Lead[]> => {
-  const leads = await apiClient.get<Lead[]>(`/api/leads/${userId}`);
+  const leads = await apiClient.get<Lead[]>(`/api/leads/user/${userId}`);
   return leads.map(lead => ({
     ...lead,
     type: 'lead',

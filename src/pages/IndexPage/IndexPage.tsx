@@ -59,9 +59,9 @@ export const IndexPage: FC = observer(() => {
 
   const handleEntityClick = (item: Lead | RealEstateObject) => {
     if (activeTab === 'leads') {
-      navigate(`/matches/lead/${item.id}`);
+      navigate(`/user/lead/${item.id}`);
     } else {
-      navigate(`/matches/object/${item.id}`);
+      navigate(`/user/object/${item.id}`);
     }
   };
 

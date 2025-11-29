@@ -27,7 +27,6 @@ export const LeadCreatePage: FC = () => {
     const [bedrooms, setBedrooms] = useState('');
 
     const handleSubmit = async () => {
-        // TODO: Implement lead creation logic
         const leadData = {
             userId: USER_ID, // TODO
             name,
@@ -47,12 +46,11 @@ export const LeadCreatePage: FC = () => {
         try {
             const createLeadData = await createLead(leadData);
             console.log('Lead created successfully:', createLeadData);
-            navigate('/');
+            navigate(`/user/lead/${createLeadData.id}`);
         } catch (error) {
             console.error('Failed to create lead:', error);
             alert('Ошибка при создании лида');
         }
-        // navigate('/');
     };
 
     return (
