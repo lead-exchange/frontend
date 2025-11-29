@@ -19,8 +19,7 @@ interface CreateMatchRequest {
 }
 
 export const createMatch = async (req: CreateMatchRequest): Promise<Match> => {
-  const resp = await apiClient.post('/api/matches', req);
-  return await resp.json();
+  return apiClient.post('/api/matches', req);
 };
 
 interface UpdateMatchRequest {

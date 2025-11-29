@@ -7,6 +7,7 @@ import { ThemeParamsPage } from '@/pages/ThemeParamsPage/ThemeParamsPage.tsx';
 import { TinderPage } from '@/pages/TinderPage/TinderPage';
 import { ResultsPage } from '@/pages/ResultsPage/ResultsPage';
 import { MatchPage } from '@/pages/MatchPage/MatchPage';
+import { LeadCreatePage } from '@/pages/LeadCreatePage/LeadCreatePage';
 
 interface Route {
   path: string;
@@ -17,6 +18,7 @@ interface Route {
 
 export const routes: Route[] = [
   { path: '/', Component: IndexPage },
+  { path: '/lead/create', Component: LeadCreatePage, title: 'Создать лида' },
   { path: '/tinder/:type/:id', Component: TinderPage },
   { path: '/matches/:type/:id', Component: MatchPage },
   { path: '/results', Component: ResultsPage },

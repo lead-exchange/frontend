@@ -1,4 +1,4 @@
-import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Spinner, TabsList, Button } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useState } from 'react';
 import { User as UserIcon, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +41,7 @@ export const IndexPage: FC = observer(() => {
       try {
         if (activeTab === 'leads') {
           const data = await getLeads(user.id);
+          console.log(data);
           leadStore.setLeads(data);
         } else {
           const data = await getRealEstateObjects(user.id);
@@ -57,7 +58,15 @@ export const IndexPage: FC = observer(() => {
   }, [activeTab]);
 
   const handleEntityClick = (item: Lead | RealEstateObject) => {
-    navigate(`/tinder/${item.type}/${item.id}`);
+    if (activeTab === 'leads') {
+      navigate(`/matches/lead/${item.id}`);
+    } else {
+      navigate(`/matches/object/${item.id}`);
+    }
+  };
+
+  const handleCreateLead = () => {
+    navigate('/lead/create');
   };
 
   return (
@@ -126,6 +135,17 @@ export const IndexPage: FC = observer(() => {
           </Section>
         )}
       </List>
+      
+      {activeTab === 'leads' && (
+        <div style={{ padding: '16px', paddingBottom: '24px' }}>
+          <Button 
+          size="l"
+          onClick={handleCreateLead}
+          >
+            Создать лида
+          </Button>
+        </div>
+      )}
     </>
   );
 });

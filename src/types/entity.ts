@@ -4,7 +4,7 @@ export interface Entity {
 }
 
 export interface LeadRequirements {
-  propertyType: 'apartment' | 'house' | 'commercial';
+  propertyType: 'flat' | 'room' | 'commerce' | 'house' | 'land' | 'garage';
   minPrice: number;
   maxPrice: number;
   minArea: number;
@@ -15,6 +15,13 @@ export interface LeadRequirements {
   marketType?: string[];
   paymentType?: string[];
   features?: string[];
+}
+
+export interface CreateLeadDto {
+  userId: string;
+  requirements: LeadRequirements;
+  commissionShare: number;
+  description?: string;
 }
 
 export interface Lead extends Entity {
