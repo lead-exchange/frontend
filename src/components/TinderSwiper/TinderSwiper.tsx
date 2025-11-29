@@ -17,7 +17,7 @@ interface TinderSwiperProps {
 
 const moveThreshold = 30;
 
-const nextItemInitialScale = 0.4;
+const nextItemInitialScale = 0.5;
 
 export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,7 +54,8 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     });
   };
 
-  const swipeActionThreshold = window.document.body.scrollWidth / 4;
+  const swipeActionThreshold = 100;
+  // const swipeActionThreshold = window.document.body.scrollWidth / 4;
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!currentCardRef.current || !touchStart) {
@@ -67,7 +68,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       return;
     }
 
-    currentCardRef.current.style.transform = `translateX(${deltaX - moveThreshold}px)`;
+    currentCardRef.current.style.transform = `translateX(${deltaX > 0 ? deltaX - moveThreshold : deltaX + moveThreshold}px)`;
 
     if (!nextCardRef.current) {
       return;
