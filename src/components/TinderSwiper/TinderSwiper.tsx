@@ -17,7 +17,7 @@ interface TinderSwiperProps {
 
 const moveThreshold = 30;
 
-const nextItemInitialScale = 0.4;
+const nextItemInitialScale = 0.5;
 
 export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,7 +54,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     });
   };
 
-  const threshold = window.document.body.scrollWidth / 2;
+  const swipeActionThreshold = (window.document.body.scrollWidth * 5) / 12;
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!currentCardRef.current || !touchStart) {
@@ -73,7 +73,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       return;
     }
 
-    const scale = Math.min(1, nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(deltaX)) / threshold);
+    const scale = Math.min(1, nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(deltaX)) / swipeActionThreshold);
 
     nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
   };
@@ -89,7 +89,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     const deltaX = touchEnd.x - touchStart.x;
     const deltaY = touchEnd.y - touchStart.y;
 
-    if (Math.abs(deltaX) > threshold) {
+    if (Math.abs(deltaX) > swipeActionThreshold) {
       currentCardRef.current.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
 
       currentCardRef.current.style.transform = `translateX(${deltaX > 0 ? 1000 : -1000}px) rotate(${
@@ -116,7 +116,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
     }
 
-    if (Math.abs(deltaY) > threshold && deltaY < 0) {
+    if (Math.abs(deltaY) > swipeActionThreshold && deltaY < 0) {
       setIsComissionModalOpen(true);
     }
 
