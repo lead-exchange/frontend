@@ -135,12 +135,19 @@ export const IndexPage: FC = observer(() => {
           </Section>
         )}
       </List>
-      
+
       {activeTab === 'leads' && (
-        <div style={{ padding: '16px', paddingBottom: '24px' }}>
-          <Button 
-          size="l"
-          onClick={handleCreateLead}
+        <div
+          style={{
+            display: 'grid',
+            placeItems: 'center',
+            padding: '16px', 
+            paddingBottom: '24px',
+          }}
+        >
+          <Button
+            size="l"
+            onClick={handleCreateLead}
           >
             Создать лида
           </Button>

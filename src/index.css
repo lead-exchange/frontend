@@ -1,10 +1,23 @@
 :root {
   --button_color: #007AFF;
   --warning-color: #ff8d28;
+
+  --font-size-title-3: 20px;
+
+  --font-weight-title-3: 400;
+
+  --line-height-title-3: 24px;
 }
 
 body {
   background: var(--tg-theme-secondary-bg-color, white);
   padding: 0;
   margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+.title-3 {
+  font-size: var(--font-size-title-3);
+  font-weight: var(--font-weight-title-3);
+  line-height: var(--line-height-title-3);
 }

@@ -30,3 +30,7 @@ export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<L
   return response.json();
 };
 
+export const deleteLead = async (leadId: string): Promise<void> => {
+  await apiClient.delete(`api/leads/${leadId}`);
+};
+

@@ -1,9 +1,11 @@
-import { getLeadById } from "@/requests/entities";
+import { getLeadById, deleteLead } from "@/requests/entities";
 import { Lead } from "@/types/entity";
 import { FC, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Spinner, Chip, Button } from "@telegram-apps/telegram-ui";
-import { Archive, Check, Pencil } from "lucide-react";
+import { Archive, Pencil, Trash } from "lucide-react";
+import '../../index.css';
+import styles from './styles.module.css';
 
 const propertyTypeLabels: Record<string, string> = {
     flat: 'Квартира',
@@ -65,18 +67,25 @@ export const LeadPage: FC = () => {
     const priceRange = `< ${formatPrice(lead.requirements.maxPrice)}`;
     const bedroomsText = lead.requirements.bedrooms ? `${lead.requirements.bedrooms}-комн.` : null;
 
+    const handleDelete = async () => {
+        if (!leadId) return;
+
+        try {
+            await deleteLead(leadId);
+            console.log('Lead deleted successfully');
+            navigate('/');
+        } catch (error) {
+            console.error('Failed to delete lead:', error);
+            alert('Ошибка при удалении лида');
+        }
+    };
+
     return (
-        <div style={{ padding: '16px', backgroundColor: 'var(--tgui--bg_color)' }}>
+        <div style={{ padding: '16px', backgroundColor: 'var(--tgui--bg_color)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {/* Имя клиента */}
-            <h1 style={{
-                fontSize: '24px',
-                fontWeight: '600',
-                textAlign: 'center',
-                margin: '24px 0 32px 0',
-                color: 'var(--tgui--text_color)'
-            }}>
+            <div className={`${styles.header} title-3`}>
                 {lead.name}
-            </h1>
+            </div>
 
             {/* Chips с основной информацией */}
             <div style={{
@@ -96,38 +105,43 @@ export const LeadPage: FC = () => {
                 <Chip mode="mono">
                     {priceRange}
                 </Chip>
+                {lead.requirements.locations.map((location, index) => (
+                    <Chip key={index} mode="mono">
+                        {location}
+                    </Chip>
+                ))}
             </div>
 
             {/* Локации */}
-            {lead.requirements.locations && lead.requirements.locations.length > 0 && (
-                <div style={{
-                    display: 'flex',
-                    gap: '8px',
-                    flexWrap: 'wrap',
-                    marginBottom: '24px'
-                }}>
-                    {lead.requirements.locations.map((location, index) => (
-                        <Chip key={index} mode="mono">
-                            {location}
-                        </Chip>
-                    ))}
-                </div>
-            )}
 
-            {/* Комиссии */}
-            <div style={{ marginBottom: '24px' }}>
-                <div style={{
-                    color: 'var(--tgui--link_color)',
-                    fontSize: '16px',
-                    marginBottom: '4px'
-                }}>
-                    Агент покупателя: {lead.commissionShare}%
+
+            <div
+                className="comission-bids-container"
+                style={{
+                    padding: '8px',
+                    alignSelf: 'start'
+                }}
+            >
+                <div
+                    className="comission-bids comission-bids__yours"
+                    style={{
+                        padding: '0px 2px 0px 2px'
+                    }}
+                >
+                    <span className="comission-bids__value">
+                        Агент покупателя: {lead.commissionShare}%
+                    </span>
                 </div>
-                <div style={{
-                    color: 'var(--tgui--link_color)',
-                    fontSize: '16px'
-                }}>
-                    Агент продавца: {100 - lead.commissionShare}%
+
+                <div
+                    className="comission-bids comission-bids__theirs"
+                    style={{
+                        padding: '0px 2px 0px 2px'
+                    }}
+                >
+                    <span className="comission-bids__value">
+                        Агент продавца: {100 - lead.commissionShare}%
+                    </span>
                 </div>
             </div>
 
@@ -146,14 +160,13 @@ export const LeadPage: FC = () => {
             {/* Кнопки действий */}
             <div style={{
                 display: 'flex',
-                gap: '12px',
+                gap: '8px',
                 marginBottom: '24px'
             }}>
                 <Button
                     mode="bezeled"
                     size="m"
                     before={<Pencil />}
-                    style={{ flex: 1 }}
                     onClick={() => navigate(`/user/lead/${leadId}/edit`)}
                 >
                     Редакт.
@@ -162,17 +175,16 @@ export const LeadPage: FC = () => {
                     mode="bezeled"
                     size="m"
                     before={<Archive />}
-                    style={{ flex: 1 }}
                 >
                     Приост.
                 </Button>
                 <Button
                     mode="bezeled"
                     size="m"
-                    before={<Check />}
-                    style={{ flex: 1 }}
+                    before={<Trash />}
+                    onClick={handleDelete}
                 >
-                    Заверш.
+                    Удалить
                 </Button>
             </div>
 
