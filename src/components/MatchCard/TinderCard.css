@@ -1,5 +1,4 @@
 .match-card__content {
-  padding: 0px 24px 0px 24px;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -7,6 +6,7 @@
 }
 
 .match-card__info {
+  padding: 0px 24px 0px 24px;
   display: flex;
   flex-direction: column;
   gap: 4px;

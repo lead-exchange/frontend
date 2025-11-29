@@ -3,6 +3,7 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--tgui--secondary_bg_color);
+  animation: fade-in 1s;
 }
 
 .results-page__header {
@@ -100,4 +101,13 @@
 
 .results-page__actions {
   margin: auto 16px 16px 16px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1.0;
+  }
 }

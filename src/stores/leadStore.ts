@@ -20,7 +20,6 @@ class LeadStore {
 
   async getLeadById(id: string): Promise<Lead | undefined> {
     await this.assertLeadsAreLoaded();
-    console.log(this.leads.slice());
     return this.leads.find(lead => lead.id === id);
   }
 

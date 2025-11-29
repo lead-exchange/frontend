@@ -5,6 +5,8 @@
   height: 100%;
   padding: 0;
   gap: 12px;
+  position: relative;
+  background: var(--tgui--bg_color);
 }
 
 .tinder-swiper__card-container {
@@ -14,5 +16,12 @@
   align-items: flex-start;
   justify-content: start;
   overflow-y: auto;
+  max-height: 90%;
   touch-action: pan-y;
+}
+
+.tinder-swiper__match-controls {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }

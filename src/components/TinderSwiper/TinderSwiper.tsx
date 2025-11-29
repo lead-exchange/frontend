@@ -22,13 +22,18 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const currentCardRef = useRef<HTMLDivElement>(null);
+  const nextCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (currentIndex >= items.length && onFinish) {
-      onFinish();
+    if (!currentCardRef.current) {
+      return;
     }
-  }, [currentIndex, items.length, onFinish]);
+
+    currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
+    currentCardRef.current.style.opacity = '1';
+    currentCardRef.current.style.transition = '';
+  }, [currentIndex]);
 
   const handleSwipe = (direction: 'left' | 'right' | 'up') => {
     const currentItem = items[currentIndex];
@@ -41,19 +46,41 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       setIsComissionModalOpen(true);
       return;
     }
-
-    setCurrentIndex(prev => prev + 1);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (currentCardRef.current) {
+      currentCardRef.current.style.transition = 'none';
+    }
+
     setTouchStart({
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
     });
   };
 
+  const threshold = window.document.body.scrollWidth / 3;
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!currentCardRef.current || !touchStart) {
+      return;
+    }
+
+    const deltaX = e.touches[0].clientX - touchStart?.x;
+
+    currentCardRef.current.style.transform = `translateX(${deltaX}px)`;
+
+    if (!nextCardRef.current) {
+      return;
+    }
+
+    const scale = 0.7 + Math.min((0.3 * Math.abs(deltaX)) / threshold, 0.3);
+
+    nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
+  };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStart) return;
+    if (!currentCardRef.current || !touchStart) return;
 
     const touchEnd = {
       x: e.changedTouches[0].clientX,
@@ -62,15 +89,35 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
     const deltaX = touchEnd.x - touchStart.x;
     const deltaY = touchEnd.y - touchStart.y;
-    const threshold = 100;
 
     if (Math.abs(deltaX) > threshold) {
-      if (deltaX > 0) {
+      currentCardRef.current.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+
+      currentCardRef.current.style.transform = `translateX(${deltaX > 0 ? 1000 : -1000}px) rotate(${
+        deltaX > 0 ? 45 : -45
+      }deg)`;
+
+      currentCardRef.current.style.opacity = '0';
+
+      if (deltaX < 0) {
         handleSwipe('right');
       } else {
         handleSwipe('left');
       }
-    } else if (Math.abs(deltaY) > threshold && deltaY < 0) {
+
+      if (onFinish && currentIndex + 1 == items.length) {
+        onFinish();
+      }
+
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+      }, 400);
+    } else {
+      currentCardRef.current.style.transition = 'transform 0.3s ease';
+      currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
+    }
+
+    if (Math.abs(deltaY) > threshold && deltaY < 0) {
       handleSwipe('up');
     }
 
@@ -86,6 +133,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
   }
 
   const currentItem = items[currentIndex];
+  const nextItem = items[currentIndex + 1] || null;
 
   return (
     <>
@@ -99,25 +147,45 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
           }
         }}
       />
-      <div className="tinder-swiper">
-        <div
-          className="tinder-swiper__card-container"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          ref={cardRef}
-        >
+
+      {nextItem && (
+        <div className="tinder-swiper" ref={nextCardRef} style={{ position: 'absolute', width: '100%' }}>
+          <div className="tinder-swiper__match-controls">
+            <MatchControls onLike={() => {}} onComission={() => {}} onDislike={() => {}} />
+          </div>
+
+          <div className="tinder-swiper__card-container">
+            {nextItem.type === 'object' ? (
+              <ObjectMatchCard data={nextItem} displayComission={true} />
+            ) : (
+              <LeadMatchCard data={nextItem} displayComission={true} />
+            )}
+          </div>
+        </div>
+      )}
+
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="tinder-swiper"
+        ref={currentCardRef}
+      >
+        <div className="tinder-swiper__match-controls">
+          <MatchControls
+            onLike={() => handleSwipe('right')}
+            onComission={() => handleSwipe('up')}
+            onDislike={() => handleSwipe('left')}
+          />
+        </div>
+
+        <div className="tinder-swiper__card-container">
           {currentItem.type === 'object' ? (
             <ObjectMatchCard data={currentItem} displayComission={true} />
           ) : (
             <LeadMatchCard data={currentItem} displayComission={true} />
           )}
         </div>
-
-        <MatchControls
-          onLike={() => handleSwipe('right')}
-          onComission={() => handleSwipe('up')}
-          onDislike={() => handleSwipe('left')}
-        />
       </div>
     </>
   );

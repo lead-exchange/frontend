@@ -22,7 +22,7 @@ export const ImageWithSteps: FC<ImageWithStepsProps> = ({ photos }) => {
   }
 
   return (
-    <div className="image-placeholder">
+    <div className="image-w-steps image-placeholder">
       <Image size={96} strokeWidth={1} className="image-placeholder__icon" />
     </div>
   );
