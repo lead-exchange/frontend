@@ -19,6 +19,16 @@ export interface LeadRequirements {
 
 export interface CreateLeadDto {
   userId: string;
+  name?: string;
+  phone?: string;
+  requirements: LeadRequirements;
+  commissionShare: number;
+  description?: string;
+}
+
+export interface UpdateLeadDto {
+  name?: string;
+  phone?: string;
   requirements: LeadRequirements;
   commissionShare: number;
   description?: string;
@@ -27,6 +37,7 @@ export interface CreateLeadDto {
 export interface Lead extends Entity {
   type: 'lead';
   userId: string;
+  phone?: string;
   requirements: LeadRequirements;
   status: 'ACTIVE' | 'ARCHIVE';
   commissionShare: number;

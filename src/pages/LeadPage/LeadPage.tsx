@@ -1,7 +1,7 @@
 import { getLeadById } from "@/requests/entities";
 import { Lead } from "@/types/entity";
 import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Spinner, Chip, Button } from "@telegram-apps/telegram-ui";
 import { Archive, Check, Pencil } from "lucide-react";
 
@@ -23,6 +23,7 @@ const formatPrice = (price: number): string => {
 
 export const LeadPage: FC = () => {
     const { leadId } = useParams<{ leadId: string }>();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [lead, setLead] = useState<Lead | null>(null);
 
@@ -153,6 +154,7 @@ export const LeadPage: FC = () => {
                     size="m"
                     before={<Pencil />}
                     style={{ flex: 1 }}
+                    onClick={() => navigate(`/user/lead/${leadId}/edit`)}
                 >
                     Редакт.
                 </Button>

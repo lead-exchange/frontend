@@ -8,6 +8,7 @@ import { TinderPage } from '@/pages/TinderPage/TinderPage';
 import { ResultsPage } from '@/pages/ResultsPage/ResultsPage';
 import { MatchPage } from '@/pages/MatchPage/MatchPage';
 import { LeadCreatePage } from '@/pages/LeadCreatePage/LeadCreatePage';
+import { LeadEditPage } from '@/pages/LeadEditPage/LeadEditPage';
 import { LeadPage } from '@/pages/LeadPage/LeadPage';
 
 interface Route {
@@ -20,6 +21,7 @@ interface Route {
 export const routes: Route[] = [
   { path: '/', Component: IndexPage },
   { path: '/lead/create', Component: LeadCreatePage, title: 'Создать лида' },
+  { path: '/user/lead/:leadId/edit', Component: LeadEditPage, title: 'Редактировать лида' },
   { path: '/user/lead/:leadId', Component: LeadPage, title: 'Лид' },
   { path: '/tinder/:type/:id', Component: TinderPage },
   { path: '/matches/:type/:id', Component: MatchPage },

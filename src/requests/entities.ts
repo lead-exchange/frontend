@@ -1,4 +1,4 @@
-import { CreateLeadDto, Lead, RealEstateObject } from '@/types/entity';
+import { CreateLeadDto, Lead, RealEstateObject, UpdateLeadDto } from '@/types/entity';
 import { apiClient } from './client';
 
 export const getLeads = async (userId: string): Promise<Lead[]> => {
@@ -23,5 +23,10 @@ export const getLeadById = (leadId: string): Promise<Lead> => {
 
 export const createLead = (lead: CreateLeadDto): Promise<Lead> => {
   return apiClient.post<Lead>(`api/leads`, lead);
-}
+};
+
+export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<Lead> => {
+  const response = await apiClient.put(`api/leads/${leadId}`, lead);
+  return response.json();
+};
 
