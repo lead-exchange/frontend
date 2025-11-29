@@ -15,6 +15,19 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
   const { attributes, commissionShare } = data;
   const photos = attributes.photos ?? [];
 
+  const chipValues = attributes.marketType || [];
+
+  if (attributes.paymentType) {
+    chipValues.concat(attributes.paymentType);
+  }
+
+  if (attributes.propertyClass) {
+    chipValues.push(attributes.propertyClass);
+  }
+  if (attributes.repairType) {
+    chipValues.push(attributes.repairType);
+  }
+
   return (
     <div className="match-card__content">
       <ImageWithSteps key={data.id} photos={photos} />
@@ -35,11 +48,7 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
         {displayComission && <ComissionDisplay type="buyer" value={commissionShare} />}
       </div>
 
-      <Chips
-        values={[attributes.propertyClass, attributes.repairType]
-          .concat(attributes.marketType)
-          .concat(attributes.paymentType)}
-      />
+      {chipValues.length > 0 && <Chips values={chipValues} />}
     </div>
   );
 };

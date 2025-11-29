@@ -1,7 +1,9 @@
 .match-controls {
   width: 80%;
   margin: auto;
-  padding: 16px 24px;
+  padding-right: 24px;
+  padding-left: 24px;
+  padding-bottom: 24px;
 }
 
 .match-controls__button {

@@ -1,17 +1,19 @@
 .image-w-steps {
+  flex: 1;
   position: relative;
   width: 90%;
   overflow: hidden;
   border: none;
   border-radius: 10px;
+  min-height: 200px;
   margin: auto;
   margin-top: 10px;
+  margin-bottom: 0px;
 }
 
 .image-placeholder {
   overflow: hidden;
   position: relative;
-  min-height: 600px;
   border: 1px solid var(--tgui--link_color);
   background: var(--tgui--tertiary_bg_color);
 }

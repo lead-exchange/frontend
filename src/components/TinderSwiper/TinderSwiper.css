@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   height: 100%;
   padding: 0;
   gap: 12px;
@@ -10,18 +11,12 @@
 }
 
 .tinder-swiper__card-container {
-  flex: 1;
   width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: start;
-  overflow-y: auto;
-  max-height: 90%;
+  overflow-y: hidden;
+  height: fit-content;
   touch-action: pan-y;
 }
 
 .tinder-swiper__match-controls {
-    position: absolute;
-    bottom: 0;
     width: 100%;
 }

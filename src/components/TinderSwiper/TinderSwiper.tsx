@@ -9,11 +9,15 @@ import { ComissionModal } from '../Comission/ComissionModal';
 
 interface TinderSwiperProps {
   items: (Lead | RealEstateObject)[];
-  onLike?: (item: Lead | RealEstateObject) => void;
-  onDislike?: (item: Lead | RealEstateObject) => void;
-  onCustomShare?: (item: Lead | RealEstateObject, comission: number) => void;
-  onFinish?: () => void;
+  onLike: (item: Lead | RealEstateObject) => void;
+  onDislike: (item: Lead | RealEstateObject) => void;
+  onCustomShare: (item: Lead | RealEstateObject, comission: number) => void;
+  onFinish: () => void;
 }
+
+const moveThreshold = 30;
+
+const nextItemInitialScale = 0.4;
 
 export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,23 +34,14 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       return;
     }
 
+    if (currentIndex == items.length) {
+      onFinish();
+    }
+
     currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
     currentCardRef.current.style.opacity = '1';
     currentCardRef.current.style.transition = '';
-  }, [currentIndex]);
-
-  const handleSwipe = (direction: 'left' | 'right' | 'up') => {
-    const currentItem = items[currentIndex];
-
-    if (direction === 'left' && onDislike) {
-      onDislike(currentItem);
-    } else if (direction === 'right' && onLike) {
-      onLike(currentItem);
-    } else if (direction === 'up') {
-      setIsComissionModalOpen(true);
-      return;
-    }
-  };
+  }, [currentIndex, items]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (currentCardRef.current) {
@@ -59,7 +54,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     });
   };
 
-  const threshold = window.document.body.scrollWidth / 3;
+  const threshold = window.document.body.scrollWidth / 2;
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!currentCardRef.current || !touchStart) {
@@ -68,13 +63,17 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
     const deltaX = e.touches[0].clientX - touchStart?.x;
 
-    currentCardRef.current.style.transform = `translateX(${deltaX}px)`;
+    if (Math.abs(deltaX) < moveThreshold) {
+      return;
+    }
+
+    currentCardRef.current.style.transform = `translateX(${deltaX - moveThreshold}px)`;
 
     if (!nextCardRef.current) {
       return;
     }
 
-    const scale = 0.7 + Math.min((0.3 * Math.abs(deltaX)) / threshold, 0.3);
+    const scale = Math.min(1, nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(deltaX)) / threshold);
 
     nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
   };
@@ -100,12 +99,12 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       currentCardRef.current.style.opacity = '0';
 
       if (deltaX < 0) {
-        handleSwipe('right');
+        onLike(currentItem);
       } else {
-        handleSwipe('left');
+        onDislike(currentItem);
       }
 
-      if (onFinish && currentIndex + 1 == items.length) {
+      if (currentIndex + 1 == items.length) {
         onFinish();
       }
 
@@ -118,7 +117,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     }
 
     if (Math.abs(deltaY) > threshold && deltaY < 0) {
-      handleSwipe('up');
+      setIsComissionModalOpen(true);
     }
 
     setTouchStart(null);
@@ -150,16 +149,16 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
       {nextItem && (
         <div className="tinder-swiper" ref={nextCardRef} style={{ position: 'absolute', width: '100%' }}>
-          <div className="tinder-swiper__match-controls">
-            <MatchControls onLike={() => {}} onComission={() => {}} onDislike={() => {}} />
-          </div>
-
           <div className="tinder-swiper__card-container">
             {nextItem.type === 'object' ? (
               <ObjectMatchCard data={nextItem} displayComission={true} />
             ) : (
               <LeadMatchCard data={nextItem} displayComission={true} />
             )}
+          </div>
+
+          <div className="tinder-swiper__match-controls">
+            <MatchControls onLike={() => {}} onComission={() => {}} onDislike={() => {}} />
           </div>
         </div>
       )}
@@ -171,20 +170,26 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
         className="tinder-swiper"
         ref={currentCardRef}
       >
-        <div className="tinder-swiper__match-controls">
-          <MatchControls
-            onLike={() => handleSwipe('right')}
-            onComission={() => handleSwipe('up')}
-            onDislike={() => handleSwipe('left')}
-          />
-        </div>
-
         <div className="tinder-swiper__card-container">
           {currentItem.type === 'object' ? (
             <ObjectMatchCard data={currentItem} displayComission={true} />
           ) : (
             <LeadMatchCard data={currentItem} displayComission={true} />
           )}
+        </div>
+
+        <div className="tinder-swiper__match-controls">
+          <MatchControls
+            onLike={() => {
+              onLike(currentItem);
+              setCurrentIndex(prev => prev + 1);
+            }}
+            onComission={() => setIsComissionModalOpen(true)}
+            onDislike={() => {
+              onDislike(currentItem);
+              setCurrentIndex(prev => prev + 1);
+            }}
+          />
         </div>
       </div>
     </>
