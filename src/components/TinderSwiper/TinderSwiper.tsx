@@ -1,4 +1,4 @@
-import { type FC, useState, useRef, useEffect } from 'react';
+import { type FC, useState, useRef, useEffect, useLayoutEffect } from 'react';
 import type { Lead, RealEstateObject } from '@/types/entity';
 import { ObjectMatchCard } from '../MatchCard/ObjectMatchCard';
 import { LeadMatchCard } from '../MatchCard/LeadMatchCard';
@@ -33,23 +33,23 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
   const currentCardRef = useRef<HTMLDivElement>(null);
   const nextCardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (currentIndex === items.length) {
+      onFinish();
+    }
+
     if (!currentCardRef.current) {
       return;
     }
 
-    if (currentIndex == items.length) {
-      onFinish();
-    }
-
+    currentCardRef.current.style.transition = '';
     currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
     currentCardRef.current.style.opacity = '1';
-    currentCardRef.current.style.transition = '';
 
     if (nextCardRef.current) {
       nextCardRef.current.style.transition = '';
     }
-  }, [currentIndex, items]);
+  }, [currentIndex, items.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (currentCardRef.current) {
@@ -78,6 +78,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       currentMoveOffset = deltaX > 0 ? -1 * moveThreshold : moveThreshold;
       setMoveOffset(currentMoveOffset);
     }
+
     const moveX = deltaX + currentMoveOffset;
 
     currentCardRef.current.style.transform = `translateX(${moveX}px)`;
@@ -120,7 +121,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       currentCardRef.current.style.opacity = '0';
 
       if (nextCardRef.current) {
-        nextCardRef.current.style.transition = 'transform 0.4s ease';
+        nextCardRef.current.style.transition = 'transform 0.2s ease';
         nextCardRef.current.style.transform = 'scale(1, 1)';
       }
 
@@ -130,7 +131,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
         onDislike(currentItem);
       }
 
-      if (currentIndex + 1 == items.length) {
+      if (currentIndex + 1 === items.length) {
         onFinish();
       }
 
