@@ -114,6 +114,11 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
       currentCardRef.current.style.opacity = '0';
 
+      if (nextCardRef.current) {
+        nextCardRef.current.style.transition = 'transform 0.4s ease';
+        nextCardRef.current.style.transform = 'scale(1, 1)';
+      }
+
       if (deltaX < 0) {
         onLike(currentItem);
       } else {
