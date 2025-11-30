@@ -46,6 +46,7 @@ export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, on
           disabled={comission === ''}
           onClick={() => {
             onComissionSubmit(parseInt(comission));
+            setComission('');
             onOpenChange(false);
           }}
         >
