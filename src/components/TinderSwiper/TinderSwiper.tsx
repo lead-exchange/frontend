@@ -87,7 +87,10 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       return;
     }
 
-    const scale = Math.min(1, nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(moveX)) / swipeActionThreshold);
+    const scale = Math.min(
+      0.9,
+      0.9 * nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(moveX)) / swipeActionThreshold
+    );
 
     nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
   };
@@ -121,7 +124,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       currentCardRef.current.style.opacity = '0';
 
       if (nextCardRef.current) {
-        nextCardRef.current.style.transition = 'transform 0.2s ease';
+        nextCardRef.current.style.transition = 'transform 0.3s ease';
         nextCardRef.current.style.transform = 'scale(1, 1)';
       }
 
