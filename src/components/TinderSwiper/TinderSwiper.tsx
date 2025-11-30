@@ -19,6 +19,8 @@ const moveThreshold = 25;
 
 const nextItemInitialScale = 0.6;
 
+const swipeActionThreshold = 100;
+
 export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -43,6 +45,10 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
     currentCardRef.current.style.opacity = '1';
     currentCardRef.current.style.transition = '';
+
+    if (nextCardRef.current) {
+      nextCardRef.current.style.transition = '';
+    }
   }, [currentIndex, items]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -56,8 +62,6 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     });
   };
 
-  const swipeActionThreshold = 100;
-
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!currentCardRef.current || !touchStart) {
       return;
@@ -65,23 +69,24 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
     const deltaX = e.touches[0].clientX - touchStart?.x;
 
+    let currentMoveOffset = moveOffset; // workaround because set state happens only on next rerender
+
     if (moveOffset === 0) {
       if (Math.abs(deltaX) < moveThreshold) {
         return;
       }
-      setMoveOffset(deltaX > 0 ? -1 * moveThreshold : moveThreshold);
+      currentMoveOffset = deltaX > 0 ? -1 * moveThreshold : moveThreshold;
+      setMoveOffset(currentMoveOffset);
     }
+    const moveX = deltaX + currentMoveOffset;
 
-    currentCardRef.current.style.transform = `translateX(${deltaX + moveOffset}px)`;
+    currentCardRef.current.style.transform = `translateX(${moveX}px)`;
 
     if (!nextCardRef.current) {
       return;
     }
 
-    const scale = Math.min(
-      1,
-      nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(deltaX + moveOffset)) / swipeActionThreshold
-    );
+    const scale = Math.min(1, nextItemInitialScale + ((1 - nextItemInitialScale) * Math.abs(moveX)) / swipeActionThreshold);
 
     nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
   };
