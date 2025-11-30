@@ -1,4 +1,4 @@
-import { type FC, useState, useRef, useEffect, useLayoutEffect } from 'react';
+import { type FC, useState, useRef, useLayoutEffect } from 'react';
 import type { Lead, RealEstateObject } from '@/types/entity';
 import { ObjectMatchCard } from '../MatchCard/ObjectMatchCard';
 import { LeadMatchCard } from '../MatchCard/LeadMatchCard';
