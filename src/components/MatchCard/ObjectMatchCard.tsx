@@ -13,14 +13,25 @@ interface ObjectMatchCardProps {
 
 export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComission }) => {
   const { attributes, commissionShare } = data;
+
   const photos = attributes.photos ?? [];
+
+  const address = attributes.address;
+
+  const adressParts = [
+    address.regionName + (address.regionType ? ' ' + address.regionType : ''),
+    address.cityName,
+    address.streetName && (address.streetType ? address.streetType + ' ' : '') + address.streetName,
+    address.house,
+    address.flat,
+  ].filter(item => item);
 
   return (
     <div className="match-card__content">
       <ImageWithSteps key={data.id} photos={photos} />
 
       <div className="match-card__info">
-        <h3 className="match-card__title">{attributes.title}</h3>
+        <h3 className="match-card__title">{data.displayName}</h3>
 
         <p className="match-card__price">
           {new Intl.NumberFormat('ru-RU', {
@@ -30,7 +41,7 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
           }).format(attributes.price)}
         </p>
 
-        <p className="match-card__address">{attributes.address}</p>
+        <p className="match-card__address">{adressParts.join(', ')}</p>
 
         {displayComission && <ComissionDisplay type="buyer" value={commissionShare} />}
       </div>

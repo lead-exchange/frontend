@@ -49,7 +49,7 @@ export interface Lead extends Entity {
 export interface EstateAttributes {
   title: string;
   description: string;
-  address: string;
+  address: EstateAddress;
   price: number;
   area: number;
   bedrooms?: number | null;
@@ -62,8 +62,27 @@ export interface EstateAttributes {
   paymentType?: string[];
 }
 
+interface EstateAddress {
+  coordinates?: string;
+  regionName?: string;
+  regionType?: string;
+  countyName?: string;
+  cityName?: string;
+  placeName?: string;
+  placeType?: string;
+  streetName?: string;
+  streetType?: string;
+  house?: string;
+  corpus?: string;
+  litera?: string;
+  building?: string;
+  metro?: string;
+  flat?: string;
+}
+
 export interface RealEstateObject extends Entity {
   type: 'object';
+  displayName: string;
   userId: string;
   attributes: EstateAttributes;
   totalCommissionRate: number;

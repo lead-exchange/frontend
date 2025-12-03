@@ -1,8 +1,16 @@
-import { Match, MatchLog, MatchStatus } from '@/types/matching';
+import { ObjectMatch, Match, MatchLog, MatchStatus, LeadMatch } from '@/types/matching';
 import { apiClient } from './client';
 
 export const getMatchById = (id: string): Promise<Match> => {
   return apiClient.get<Match>(`/api/matches/${id}`);
+};
+
+export const getLeadMatches = (id: string): Promise<LeadMatch[]> => {
+  return apiClient.get<LeadMatch[]>(`/api/matches/lead/${id}`);
+};
+
+export const getObjectMatches = (id: string): Promise<ObjectMatch[]> => {
+  return apiClient.get<ObjectMatch[]>(`/api/matches/estate/${id}`);
 };
 
 export const getMatchLogs = (matchId: string): Promise<MatchLog[]> => {

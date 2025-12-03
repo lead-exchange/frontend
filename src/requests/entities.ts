@@ -10,11 +10,28 @@ export const getLeads = async (userId: string): Promise<Lead[]> => {
 };
 
 export const getRealEstateObjects = async (userId: string): Promise<RealEstateObject[]> => {
-  const objects = await apiClient.get<RealEstateObject[]>(`api/estates/${userId}`);
-  return objects.map(object => ({
-    ...object,
-    type: 'object',
-  }));
+  const objects = await apiClient.get<RealEstateObject[]>(`api/estates/user/${userId}`);
+  return objects.map(object => {
+    const address = object.attributes.address;
+
+    const displayName =
+      object.attributes.title ||
+      [
+        address.cityName || address.regionName + (address.regionType ? ' ' + address.regionType : ''),
+        address.streetName && (address.streetType ? address.streetType + ' ' : '') + address.streetName,
+        address.house,
+        address.flat,
+      ]
+        .filter(item => item)
+        .join(', ') ||
+      '';
+
+    return {
+      ...object,
+      displayName: displayName,
+      type: 'object',
+    };
+  });
 };
 
 export const getLeadById = (leadId: string): Promise<Lead> => {
@@ -33,4 +50,3 @@ export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<L
 export const deleteLead = async (leadId: string): Promise<void> => {
   await apiClient.delete(`api/leads/${leadId}`);
 };
-

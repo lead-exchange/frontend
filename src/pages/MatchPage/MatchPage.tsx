@@ -67,12 +67,12 @@ const getActualComissionValues = (
     return result;
   }
 
-  matchLogs.sort((a, b) => {
+  const logs = matchLogs.slice().sort((a, b) => {
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
-  const lastLead = matchLogs.filter(log => log.userType == 'lead').at(0);
-  const lastObject = matchLogs.filter(log => log.userType == 'object').at(0);
+  const lastLead = logs.filter(log => log.userType == 'lead').at(0);
+  const lastObject = logs.filter(log => log.userType == 'object').at(0);
 
   if (lastLead) {
     result.leadUserComission = lastLead.leadCommission;
@@ -108,12 +108,12 @@ export const MatchPage: FC = observer(() => {
       try {
         const matchResp = await getMatchById(id);
 
-        matchesStore.putMatch(type === 'lead' ? matchResp?.leadId : matchResp?.estateId, matchResp);
+        matchesStore.putMatch(type === 'object' ? matchResp?.leadId : matchResp?.estateId, matchResp);
 
         const matchLogs = await getMatchLogs(id);
         matchLogStore.setLogs(id, matchLogs || []);
 
-        if (type === 'lead') {
+        if (type === 'object') {
           const lead = await leadStore.getLeadById(matchResp!.leadId);
           if (!lead) {
             return;

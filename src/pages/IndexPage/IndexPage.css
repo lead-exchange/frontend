@@ -1,0 +1,6 @@
+.tab-header {
+  position: sticky;
+  top: 0px;
+  background: var(--tgui--bg_color);
+  z-index: 1;
+}

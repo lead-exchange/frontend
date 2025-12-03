@@ -77,7 +77,7 @@ const mockLeads: Lead[] = [
     type: 'lead',
     userId: '33333333-3333-3333-3333-333333333333',
     requirements: {
-      propertyType: 'commercial',
+      propertyType: 'commerce',
       minPrice: 15000000,
       maxPrice: 20000000,
       minArea: 80,
