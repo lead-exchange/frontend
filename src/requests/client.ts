@@ -36,8 +36,9 @@ class ApiClient {
     return resp.json();
   }
 
-  async post(path: string, body?: object): Promise<Response> {
-    return await this.do('POST', path, body);
+  async post<T extends object>(path: string, body?: object): Promise<T> {
+    const resp = await this.do('POST', path, body);
+    return resp.json();
   }
 
   async put(path: string, body?: object): Promise<Response> {

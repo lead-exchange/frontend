@@ -3,7 +3,7 @@ import { LeadMatchCard } from '@/components/MatchCard/LeadMatchCard';
 import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
 import { EntityType, Lead, RealEstateObject } from '@/types/entity';
-import { Match, MatchStatus } from '@/types/matching';
+import { LeadMatch, Match, MatchStatus, ObjectMatch } from '@/types/matching';
 import { Button, Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -67,12 +67,12 @@ const getActualComissionValues = (
     return result;
   }
 
-  matchLogs.sort((a, b) => {
+  const logs = matchLogs.slice().sort((a, b) => {
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
 
-  const lastLead = matchLogs.filter(log => log.userType == 'lead').at(0);
-  const lastObject = matchLogs.filter(log => log.userType == 'object').at(0);
+  const lastLead = logs.filter(log => log.userType == 'lead').at(0);
+  const lastObject = logs.filter(log => log.userType == 'object').at(0);
 
   if (lastLead) {
     result.leadUserComission = lastLead.leadCommission;
@@ -108,12 +108,16 @@ export const MatchPage: FC = observer(() => {
       try {
         const matchResp = await getMatchById(id);
 
-        matchesStore.putMatch(type === 'lead' ? matchResp?.leadId : matchResp?.estateId, matchResp);
+        if (type === 'object') {
+          objectMatchesStore.putMatch(matchResp?.leadId, matchResp as ObjectMatch);
+        } else {
+          leadMatchesStore.putMatch(matchResp?.estateId, matchResp as LeadMatch);
+        }
 
         const matchLogs = await getMatchLogs(id);
         matchLogStore.setLogs(id, matchLogs || []);
 
-        if (type === 'lead') {
+        if (type === 'object') {
           const lead = await leadStore.getLeadById(matchResp!.leadId);
           if (!lead) {
             return;
@@ -178,7 +182,11 @@ export const MatchPage: FC = observer(() => {
       updatedBy: userStore.user!.id,
     });
 
-    matchesStore.putMatch(sourceEntity.id, match);
+    if (type === 'lead') {
+      leadMatchesStore.putMatch(sourceEntity.id, match as LeadMatch);
+    } else {
+      objectMatchesStore.putMatch(sourceEntity.id, match as ObjectMatch);
+    }
   };
 
   return (

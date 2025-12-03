@@ -4,7 +4,7 @@ export interface Entity {
 }
 
 export interface LeadRequirements {
-  propertyType: 'apartment' | 'house' | 'commercial';
+  propertyType: 'flat' | 'room' | 'commerce' | 'house' | 'land' | 'garage';
   minPrice: number;
   maxPrice: number;
   minArea: number;
@@ -17,9 +17,27 @@ export interface LeadRequirements {
   features?: string[];
 }
 
+export interface CreateLeadDto {
+  userId: string;
+  name?: string;
+  phone?: string;
+  requirements: LeadRequirements;
+  commissionShare: number;
+  description?: string;
+}
+
+export interface UpdateLeadDto {
+  name?: string;
+  phone?: string;
+  requirements: LeadRequirements;
+  commissionShare: number;
+  description?: string;
+}
+
 export interface Lead extends Entity {
   type: 'lead';
   userId: string;
+  phone?: string;
   requirements: LeadRequirements;
   status: 'ACTIVE' | 'ARCHIVE';
   commissionShare: number;
@@ -31,7 +49,7 @@ export interface Lead extends Entity {
 export interface EstateAttributes {
   title: string;
   description: string;
-  address: string;
+  address: EstateAddress;
   price: number;
   area: number;
   bedrooms?: number | null;
@@ -44,8 +62,27 @@ export interface EstateAttributes {
   paymentType?: string[];
 }
 
+interface EstateAddress {
+  coordinates?: string;
+  regionName?: string;
+  regionType?: string;
+  countyName?: string;
+  cityName?: string;
+  placeName?: string;
+  placeType?: string;
+  streetName?: string;
+  streetType?: string;
+  house?: string;
+  corpus?: string;
+  litera?: string;
+  building?: string;
+  metro?: string;
+  flat?: string;
+}
+
 export interface RealEstateObject extends Entity {
   type: 'object';
+  displayName: string;
   userId: string;
   attributes: EstateAttributes;
   totalCommissionRate: number;

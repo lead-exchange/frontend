@@ -1,4 +1,4 @@
-import { Section, Cell, List, Spinner, TabsList } from '@telegram-apps/telegram-ui';
+import { Section, Cell, List, Spinner, TabsList, Button } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect, useState } from 'react';
 import { User as UserIcon, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,8 @@ import { realEstateStore } from '@/stores/realEstateStore';
 import { getUserByTgId } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
+
+import './IndexPage.css';
 
 type TabType = 'leads' | 'objects';
 
@@ -41,6 +43,7 @@ export const IndexPage: FC = observer(() => {
       try {
         if (activeTab === 'leads') {
           const data = await getLeads(user.id);
+          console.log(data);
           leadStore.setLeads(data);
         } else {
           const data = await getRealEstateObjects(user.id);
@@ -57,12 +60,22 @@ export const IndexPage: FC = observer(() => {
   }, [activeTab]);
 
   const handleEntityClick = (item: Lead | RealEstateObject) => {
-    navigate(`/tinder/${item.type}/${item.id}`);
+    if (activeTab === 'leads') {
+      navigate(`/user/lead/${item.id}`);
+    } else {
+      navigate(`/user/object/${item.id}`);
+    }
   };
+
+  const handleCreateLead = () => {
+    navigate('/lead/create');
+  };
+
+  const entitiesLength = activeTab === 'leads' ? leadStore.leads.length : realEstateStore.objects.length;
 
   return (
     <>
-      <TabsList>
+      <TabsList className="tab-header">
         <TabsList.Item selected={activeTab === 'leads'} onClick={() => setActiveTab('leads')}>
           Лиды
         </TabsList.Item>
@@ -72,14 +85,7 @@ export const IndexPage: FC = observer(() => {
       </TabsList>
 
       <List>
-        <Section
-          header={activeTab === 'leads' ? 'Лиды' : 'Объекты'}
-          footer={
-            activeTab === 'leads'
-              ? 'Нажмите на лид, чтобы начать подбор объектов'
-              : 'Нажмите на объект, чтобы начать подбор лидов'
-          }
-        >
+        <Section>
           {loading ? (
             <div
               style={{
@@ -104,9 +110,17 @@ export const IndexPage: FC = observer(() => {
                 after={<ChevronRight />}
                 onClick={() => handleEntityClick(item)}
               >
-                {item.type === 'lead' ? item.name : item.attributes.title}
+                {item.type === 'lead' ? item.name : item.displayName}
               </Cell>
             ))
+          )}
+
+          {loading || entitiesLength > 0 || (
+            <div style={{ width: '80%', margin: 'auto', paddingTop: '12px' }}>
+              {activeTab === 'leads'
+                ? 'Вы пока не добавили лидов в систему. Добавьте их по кнопке "Создать лида"'
+                : 'Мы не смогли найти ваши объекты недвижимости - добавьте их в CRM и они появятся в системе'}
+            </div>
           )}
         </Section>
         {debug && (
@@ -126,6 +140,21 @@ export const IndexPage: FC = observer(() => {
           </Section>
         )}
       </List>
+
+      {activeTab === 'leads' && (
+        <div
+          style={{
+            display: 'grid',
+            placeItems: 'center',
+            padding: '16px',
+            paddingBottom: '24px',
+          }}
+        >
+          <Button size="l" onClick={handleCreateLead}>
+            Создать лида
+          </Button>
+        </div>
+      )}
     </>
   );
 });
