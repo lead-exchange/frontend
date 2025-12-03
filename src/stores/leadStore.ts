@@ -11,11 +11,21 @@ class LeadStore {
     makeObservable(this, {
       leads: observable,
       setLeads: action,
+      addLead: action,
     });
   }
 
   setLeads(leads: Lead[]) {
     this.leads = leads;
+  }
+
+  addLead(lead: Lead) {
+    const idx = this.leads.findIndex(item => item.id === lead.id);
+    if (idx === -1) {
+      this.leads.push(lead);
+    } else {
+      this.leads[idx] = lead;
+    }
   }
 
   async getLeadById(id: string): Promise<Lead | undefined> {

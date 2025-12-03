@@ -10,6 +10,15 @@ export interface Match {
   userType: string;
 }
 
+export interface LeadMatch extends Match {
+  estateName: string;
+  thumbnail: string;
+}
+
+export interface ObjectMatch extends Match {
+  leadName: string;
+}
+
 export interface MatchLog {
   matchId: string;
   status: MatchStatus;
