@@ -13,9 +13,12 @@ export const LeadMatchCard: FC<LeadMatchCardProps> = ({ data, displayComission }
   const { name, requirements, commissionShare, description } = data;
 
   const propertyTypeMap = {
-    apartment: 'квартира',
+    flat: 'квартира',
     house: 'дом',
-    commercial: 'коммерческое',
+    commerce: 'коммерческое',
+    room: 'комнату',
+    land: 'участок',
+    garage: 'гараж',
   };
 
   return (
