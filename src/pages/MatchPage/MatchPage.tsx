@@ -3,7 +3,7 @@ import { LeadMatchCard } from '@/components/MatchCard/LeadMatchCard';
 import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
 import { EntityType, Lead, RealEstateObject } from '@/types/entity';
-import { Match, MatchStatus } from '@/types/matching';
+import { LeadMatch, Match, MatchStatus, ObjectMatch } from '@/types/matching';
 import { Button, Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -108,7 +108,11 @@ export const MatchPage: FC = observer(() => {
       try {
         const matchResp = await getMatchById(id);
 
-        matchesStore.putMatch(type === 'object' ? matchResp?.leadId : matchResp?.estateId, matchResp);
+        if (type === 'object') {
+          objectMatchesStore.putMatch(matchResp?.leadId, matchResp as ObjectMatch);
+        } else {
+          leadMatchesStore.putMatch(matchResp?.estateId, matchResp as LeadMatch);
+        }
 
         const matchLogs = await getMatchLogs(id);
         matchLogStore.setLogs(id, matchLogs || []);
@@ -178,7 +182,11 @@ export const MatchPage: FC = observer(() => {
       updatedBy: userStore.user!.id,
     });
 
-    matchesStore.putMatch(sourceEntity.id, match);
+    if (type === 'lead') {
+      leadMatchesStore.putMatch(sourceEntity.id, match as LeadMatch);
+    } else {
+      objectMatchesStore.putMatch(sourceEntity.id, match as ObjectMatch);
+    }
   };
 
   return (

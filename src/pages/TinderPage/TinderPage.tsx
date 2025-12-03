@@ -6,7 +6,7 @@ import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import { createMatch } from '@/requests/matches';
 import { userStore } from '@/stores/userStore';
 import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
-import { MatchStatus } from '@/types/matching';
+import { LeadMatch, MatchStatus, ObjectMatch } from '@/types/matching';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
 import { getLeadsForObject, getObjectsForLead } from '@/requests/tinder';
@@ -82,8 +82,6 @@ export const TinderPage: FC = observer(() => {
     );
   }
 
-  const matchesStore = sourceEntity.type === 'lead' ? leadMatchesStore : objectMatchesStore;
-
   const addMatch = async (item: Lead | RealEstateObject, status: MatchStatus, commission: number) => {
     const match = await createMatch({
       leadId: item.type === 'lead' ? item.id : sourceEntity.id,
@@ -93,7 +91,11 @@ export const TinderPage: FC = observer(() => {
       updatedBy: userStore.user!.id,
     });
 
-    matchesStore.putMatch(sourceEntity.id, match);
+    if (sourceEntity.type === 'lead') {
+      leadMatchesStore.putMatch(sourceEntity.id, match as LeadMatch);
+    } else {
+      objectMatchesStore.putMatch(sourceEntity.id, match as ObjectMatch);
+    }
   };
 
   const handleLike = async (item: Lead | RealEstateObject) => {
