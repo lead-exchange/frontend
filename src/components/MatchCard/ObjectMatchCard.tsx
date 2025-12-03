@@ -16,6 +16,18 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
 
   const photos = attributes.photos ?? [];
 
+  const chipValues = attributes.marketType || [];
+
+  if (attributes.paymentType) {
+    chipValues.concat(attributes.paymentType);
+  }
+
+  if (attributes.propertyClass) {
+    chipValues.push(attributes.propertyClass);
+  }
+  if (attributes.repairType) {
+    chipValues.push(attributes.repairType);
+  }
   const address = attributes.address;
 
   const adressParts = [
@@ -46,11 +58,7 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
         {displayComission && <ComissionDisplay type="buyer" value={commissionShare} />}
       </div>
 
-      <Chips
-        values={[attributes.propertyClass, attributes.repairType]
-          .concat(attributes.marketType)
-          .concat(attributes.paymentType)}
-      />
+      {chipValues.length > 0 && <Chips values={chipValues} />}
     </div>
   );
 };

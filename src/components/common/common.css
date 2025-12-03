@@ -3,7 +3,7 @@
 }
 
 .modal {
-    max-width: 90vw;
+    max-width: 85vw;
     background-color: var(--tgui--bg_color);
     z-index: var(--tgui--z-index--overlay);
     position: fixed;
@@ -11,13 +11,13 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 150px;
+    height: fit-content;
     border-radius: 10px;
+    border: 2px solid var(--tgui--link_color);
     margin: auto;
     padding-top: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .modal__overlay {
@@ -29,8 +29,4 @@
   top: 0;
   height: 100vh;
   background: rgba(0, 0, 0, 0.3);
-}
-
-.modal * {
-  align-self: stretch;
 }

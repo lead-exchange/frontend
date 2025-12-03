@@ -1,7 +1,31 @@
 .image-w-steps {
+  flex: 1;
   position: relative;
-  width: 100%;
+  width: 90%;
   overflow: hidden;
+  border: none;
+  border-radius: 10px;
+  min-height: 200px;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.image-placeholder {
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--tgui--link_color);
+  background: var(--tgui--tertiary_bg_color);
+}
+
+.image-placeholder__icon {
+  position: absolute;
+  stroke: var(--tgui--link_color);
+  top: 50%;
+  left: 50%;
+  margin: auto;
+  width: 96px;
+  transform: translate(-50%, -50%);
 }
 
 .image-w-steps__image {
