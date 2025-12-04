@@ -1,4 +1,4 @@
-import { ObjectMatch, LeadMatch, MatchStatus } from '@/types/matching';
+import { ObjectMatch, LeadMatch } from '@/types/matching';
 import { Cell, Image, Section, Spinner } from '@telegram-apps/telegram-ui';
 import { ChevronRight, User } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
