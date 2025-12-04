@@ -4,6 +4,23 @@
   gap: 3px;
   font-family: 'Roboto', sans-serif;
   font-size: 13px;
+
+  flex-direction: row;
+  justify-content: right;
+
+  width: min-content;
+}
+
+.status_match {
+  color: var(--tgui--accent_text_color);
+}
+
+.status_need_answer {
+  color: #FF8D28;
+}
+
+.status_declined {
+  color: var(--tgui--destructive_text_color);
 }
 
 .match__name {
@@ -12,9 +29,9 @@
 }
 
 .entity-match {
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
 .matches-header {
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
 }
