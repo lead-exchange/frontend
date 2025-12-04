@@ -8,6 +8,13 @@ import { matchLogStore } from '@/stores/matchLogStore';
 import { useNavigate } from 'react-router-dom';
 import { getMatchLogs } from '@/requests/matches';
 
+const statusToClass: Record<string, string> = {
+  'Мэтч': 'status_match',
+  'Нужен ваш ответ': 'status_need_answer',
+  'Ждём ответа': 'status_need_answer',
+  'Отказался': 'status_declined',
+};
+
 type MatchesProps = LeadMatchesProps | ObjectMatchesProps;
 
 interface LeadMatchesProps {
@@ -18,6 +25,10 @@ interface LeadMatchesProps {
 interface ObjectMatchesProps {
   type: 'object';
   matches: ObjectMatch[];
+}
+
+const getStatusStyle = (val: string): string => {
+  return statusToClass[val];
 }
 
 const getMatchStatusText = (match: ObjectMatch | LeadMatch, type: EntityType): string => {
@@ -111,28 +122,28 @@ export const Matches: FC<MatchesProps> = ({ type, matches }) => {
             before={
               <Image
                 src={
-                  (match as LeadMatch).thumbnail ||
+                  (match as LeadMatch).estatePhoto ||
                   new URL('/assets/estate/elizarovskaya/elizarovskaya-1.jpg', import.meta.url).href
                 }
                 size={40}
               />
             }
             after={
-              <span className="match__status">
+              <span className={`match__status ${getStatusStyle(getMatchStatusText(match, type))}`}>
                 {getMatchStatusText(match, type)}
                 <ChevronRight size={16} />
               </span>
             }
             key={match.id}
           >
-            <span className="match__name">{(match as LeadMatch).estateName || 'Название'}</span>
+            <span className="match__name">{(match as LeadMatch).estateTitle || 'Название'}</span>
           </Cell>
         ) : (
           <Cell
             onClick={() => navigate(`/matches/object/${match.id}`)}
             before={<User size={24}></User>}
             after={
-              <span className="match__status">
+              <span className={`match__status ${getStatusStyle(getMatchStatusText(match, type))}`}>
                 {getMatchStatusText(match, type)}
                 <ChevronRight />
               </span>

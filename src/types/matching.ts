@@ -11,8 +11,8 @@ export interface Match {
 }
 
 export interface LeadMatch extends Match {
-  estateName: string;
-  thumbnail: string;
+  estateTitle: string;
+  estatePhoto: string;
 }
 
 export interface ObjectMatch extends Match {
