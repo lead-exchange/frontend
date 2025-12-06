@@ -63,7 +63,7 @@ export const IndexPage: FC = observer(() => {
     if (activeTab === 'leads') {
       navigate(`/user/lead/${item.id}`);
     } else {
-      navigate(`/tinder/object/${item.id}`);
+      navigate(`/user/estate/${item.id}`);
     }
   };
 

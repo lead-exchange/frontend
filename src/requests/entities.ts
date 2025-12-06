@@ -38,6 +38,10 @@ export const getLeadById = (leadId: string): Promise<Lead> => {
   return apiClient.get<Lead>(`api/leads/${leadId}`);
 };
 
+export const getEstateById = (estateId: string): Promise<RealEstateObject> => {
+  return apiClient.get<RealEstateObject>(`api/estates/${estateId}`);
+};
+
 export const createLead = (lead: CreateLeadDto): Promise<Lead> => {
   return apiClient.post<Lead>(`api/leads`, lead);
 };

@@ -10,6 +10,7 @@ import { MatchPage } from '@/pages/MatchPage/MatchPage';
 import { LeadCreatePage } from '@/pages/LeadCreatePage/LeadCreatePage';
 import { LeadEditPage } from '@/pages/LeadEditPage/LeadEditPage';
 import { LeadPage } from '@/pages/LeadPage/LeadPage';
+import { EstatePage } from '@/pages/EstatePage/EstatePage';
 
 interface Route {
   path: string;
@@ -23,6 +24,7 @@ export const routes: Route[] = [
   { path: '/lead/create', Component: LeadCreatePage, title: 'Создать лида' },
   { path: '/user/lead/:leadId/edit', Component: LeadEditPage, title: 'Редактировать лида' },
   { path: '/user/lead/:leadId', Component: LeadPage, title: 'Лид' },
+  { path: '/user/estate/:estateId', Component: EstatePage, title: 'Объект' },
   { path: '/tinder/:type/:id', Component: TinderPage },
   { path: '/matches/:type/:id', Component: MatchPage },
   { path: '/results', Component: ResultsPage },

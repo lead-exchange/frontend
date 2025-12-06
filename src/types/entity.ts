@@ -52,7 +52,8 @@ export interface EstateAttributes {
   address: EstateAddress;
   price: number;
   area: number;
-  bedrooms?: number | null;
+  areaCommon: number;
+  rooms?: number | null;
   photos?: string[];
   floor?: number;
   totalFloors?: number;
@@ -60,6 +61,7 @@ export interface EstateAttributes {
   propertyClass?: string;
   marketType?: string[];
   paymentType?: string[];
+  realtyType: string;
 }
 
 interface EstateAddress {
