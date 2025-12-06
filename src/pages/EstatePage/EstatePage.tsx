@@ -2,7 +2,7 @@ import { getEstateById } from '@/requests/entities';
 import { RealEstateObject } from '@/types/entity';
 import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Spinner, Chip, Button, Image } from '@telegram-apps/telegram-ui';
+import { Spinner, Button, Image } from '@telegram-apps/telegram-ui';
 import '../../index.css';
 import styles from './styles.module.css';
 import { Matches } from '@/components/Matches/Matches';
@@ -35,7 +35,7 @@ const formatRegion = (address: RealEstateObject['attributes']['address']): strin
   if (address.cityName) {
     return address.cityName;
   } else {
-    return  address.regionName + (address.regionType ? ' ' + address.regionType : '')
+    return address.regionName + (address.regionType ? ' ' + address.regionType : '')
   }
 };
 
