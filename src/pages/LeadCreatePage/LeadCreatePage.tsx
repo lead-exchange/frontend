@@ -50,7 +50,7 @@ export const LeadCreatePage: FC = () => {
       leadStore.addLead(createLeadData);
 
       console.log('Lead created successfully:', createLeadData);
-      navigate(`/user/lead/${createLeadData.id}`);
+      navigate(`/user/lead/${createLeadData.id}`, { replace: true });
     } catch (error) {
       console.error('Failed to create lead:', error);
       alert('Ошибка при создании лида');

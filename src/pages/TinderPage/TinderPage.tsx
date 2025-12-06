@@ -118,6 +118,7 @@ export const TinderPage: FC = observer(() => {
 
   const handleFinish = () => {
     navigate('/results', {
+      replace: true,
       state: {
         entityName: sourceEntity.type === 'lead' ? sourceEntity.name : sourceEntity.displayName,
         entityType: sourceEntity.type,

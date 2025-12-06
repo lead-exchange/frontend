@@ -1,11 +1,10 @@
-import { useEffect, type FC } from 'react';
+import { type FC } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Section, Cell, List, Button } from '@telegram-apps/telegram-ui';
 import { ThumbsUp, ThumbsDown, DollarSign, Home } from 'lucide-react';
 import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import './ResultsPage.css';
 import { observer } from 'mobx-react-lite';
-import WebApp from '@twa-dev/sdk';
 
 interface ResultsState {
   entityName: string;
@@ -20,18 +19,6 @@ export const ResultsPage: FC = observer(() => {
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as ResultsState;
-
-  useEffect(() => {
-    if (state && state.total !== 0) {
-      return;
-    }
-
-    const onClick = () => navigate(-2);
-
-    WebApp.BackButton.onClick(onClick);
-
-    return () => WebApp.BackButton.offClick(onClick);
-  }, [state]);
 
   if (!state) {
     return (

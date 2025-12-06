@@ -86,7 +86,7 @@ export const LeadEditPage: FC = () => {
     try {
       const updatedLead = await updateLead(leadId, leadData);
       console.log('Lead updated successfully:', updatedLead);
-      navigate(`/user/lead/${leadId}`);
+      navigate(`/user/lead/${leadId}`, { replace: true });
     } catch (error) {
       console.error('Failed to update lead:', error);
       alert('Ошибка при обновлении лида');
