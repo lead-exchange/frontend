@@ -15,7 +15,8 @@ import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
 
 import './IndexPage.css';
-import { init, requestContact, RequestedContact } from '@tma.js/sdk';
+import { init, isTMA, requestContact, RequestedContact } from '@tma.js/sdk';
+import { isInsideMiniApp } from '@/index';
 
 const requestContactAction = async (): Promise<string> => {
   try {
@@ -23,9 +24,12 @@ const requestContactAction = async (): Promise<string> => {
       setTimeout(() => reject(new Error('Request timeout - user likely clicked outside')), 30000);
     });
 
-    const contacts = await Promise.race([requestContact(), timeoutPromise]);
-
-    return contacts.contact.phone_number;
+    if (isInsideMiniApp) {
+      const contacts = await Promise.race([requestContact(), timeoutPromise]);
+      return contacts.contact.phone_number;
+    } else {
+      return "79999999999";
+    }
   } catch (e) {
     console.log(e);
     return '';
@@ -34,7 +38,9 @@ const requestContactAction = async (): Promise<string> => {
 
 type TabType = 'leads' | 'objects';
 
-init();
+if (isTMA()) {
+  init();
+}
 
 export const IndexPage: FC = observer(() => {
   const debug = WebApp.initDataUnsafe.start_param === 'debug';
