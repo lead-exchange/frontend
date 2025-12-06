@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/requests/user';
 import { User } from '@/types/user';
 import { action, makeObservable, observable } from 'mobx';
 
@@ -13,6 +14,17 @@ class UserStore {
 
   setUser(user: User) {
     this.user = user;
+  }
+
+  async getUser(): Promise<User> {
+    if (this.user) {
+      return this.user;
+    }
+
+    const user: User = await getCurrentUser();
+    this.setUser(user);
+
+    return user;
   }
 }
 

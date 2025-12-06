@@ -1,8 +1,6 @@
 import { RealEstateObject } from '@/types/entity';
 import { action, makeObservable, observable } from 'mobx';
-import { userStore } from './userStore';
 import { getRealEstateObjects } from '@/requests/entities';
-import { USER_ID } from '@/services/entityService';
 
 class RealEstateStore {
   objects: RealEstateObject[] = [];
@@ -30,8 +28,7 @@ class RealEstateStore {
   }
 
   async loadObjects() {
-    const userId = userStore.user?.id || USER_ID;
-    const objects = await getRealEstateObjects(userId);
+    const objects = await getRealEstateObjects();
     this.setObjects(objects);
   }
 }

@@ -96,6 +96,7 @@ export const LeadPage: FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        gap: '15px',
       }}
     >
       {/* Имя клиента */}
@@ -107,7 +108,6 @@ export const LeadPage: FC = () => {
           display: 'flex',
           gap: '8px',
           flexWrap: 'wrap',
-          marginBottom: '16px',
         }}
       >
         <Chip mode="mono">{propertyTypeLabels[lead.requirements.propertyType]}</Chip>
@@ -155,7 +155,6 @@ export const LeadPage: FC = () => {
             color: 'var(--tgui--text_color)',
             fontSize: '15px',
             lineHeight: '20px',
-            marginBottom: '24px',
           }}
         >
           {lead.description}
@@ -167,7 +166,6 @@ export const LeadPage: FC = () => {
         style={{
           display: 'flex',
           gap: '8px',
-          marginBottom: '24px',
         }}
       >
         <Button mode="bezeled" size="m" before={<Pencil />} onClick={() => navigate(`/user/lead/${leadId}/edit`)}>
