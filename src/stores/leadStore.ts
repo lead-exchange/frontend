@@ -1,7 +1,5 @@
 import { Lead } from '@/types/entity';
 import { action, makeObservable, observable } from 'mobx';
-import { userStore } from './userStore';
-import { USER_ID } from '@/services/entityService';
 import { getLeads } from '@/requests/entities';
 
 class LeadStore {
@@ -40,8 +38,7 @@ class LeadStore {
   }
 
   async loadLeads() {
-    const userId = userStore.user?.id || USER_ID;
-    const leads = await getLeads(userId);
+    const leads = await getLeads();
     this.setLeads(leads);
   }
 }

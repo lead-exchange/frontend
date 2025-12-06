@@ -119,7 +119,7 @@ export const TinderPage: FC = observer(() => {
   const handleFinish = () => {
     navigate('/results', {
       state: {
-        entityName: sourceEntity.type === 'lead' ? sourceEntity.name : sourceEntity.attributes.title,
+        entityName: sourceEntity.type === 'lead' ? sourceEntity.name : sourceEntity.displayName,
         entityType: sourceEntity.type,
         total: matchItems.length,
         liked: likedItems,
