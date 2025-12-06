@@ -38,7 +38,7 @@ const requestContactAction = async (): Promise<string> => {
 
 type TabType = 'leads' | 'objects';
 
-if (await isTMA('complete')) {
+if (isTMA()) {
   init();
 }
 
