@@ -1,16 +1,16 @@
 import { CreateLeadDto, Lead, RealEstateObject, UpdateLeadDto } from '@/types/entity';
 import { apiClient } from './client';
 
-export const getLeads = async (userId: string): Promise<Lead[]> => {
-  const leads = await apiClient.get<Lead[]>(`/api/leads/user/${userId}`);
+export const getLeads = async (): Promise<Lead[]> => {
+  const leads = await apiClient.get<Lead[]>(`/api/leads`);
   return leads.map(lead => ({
     ...lead,
     type: 'lead',
   }));
 };
 
-export const getRealEstateObjects = async (userId: string): Promise<RealEstateObject[]> => {
-  const objects = await apiClient.get<RealEstateObject[]>(`api/estates/user/${userId}`);
+export const getRealEstateObjects = async (): Promise<RealEstateObject[]> => {
+  const objects = await apiClient.get<RealEstateObject[]>(`api/estates`);
   return objects.map(object => {
     const address = object.attributes.address;
 
@@ -42,8 +42,9 @@ export const getEstateById = (estateId: string): Promise<RealEstateObject> => {
   return apiClient.get<RealEstateObject>(`api/estates/${estateId}`);
 };
 
-export const createLead = (lead: CreateLeadDto): Promise<Lead> => {
-  return apiClient.post<Lead>(`api/leads`, lead);
+export const createLead = async (lead: CreateLeadDto): Promise<Lead> => {
+  const leadResp = await apiClient.post<Lead>(`api/leads`, lead);
+  return { ...leadResp, type: 'lead' };
 };
 
 export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<Lead> => {

@@ -5,48 +5,121 @@ import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
-import { USER_ID } from '@/services/entityService';
 import type { Lead, RealEstateObject } from '@/types/entity';
+import type { User } from '@/types/user';
 import { observer } from 'mobx-react-lite';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
-import { getUserByTgId } from '@/requests/user';
+import { setUserAcceptedTerms, setUserPhone } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
 
 import './IndexPage.css';
+import { init, requestContact, RequestedContact } from '@tma.js/sdk';
+
+const requestContactAction = async (): Promise<string> => {
+  try {
+    const timeoutPromise = new Promise<RequestedContact>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout - user likely clicked outside')), 30000);
+    });
+
+    const contacts = await Promise.race([requestContact(), timeoutPromise]);
+
+    return contacts.contact.phone_number;
+  } catch (e) {
+    console.log(e);
+    return '';
+  }
+};
 
 type TabType = 'leads' | 'objects';
+
+init();
 
 export const IndexPage: FC = observer(() => {
   const debug = WebApp.initDataUnsafe.start_param === 'debug';
 
-  const tgUserId = WebApp.initDataUnsafe.user?.id;
-
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('leads');
+
+  const [isOfferSigned, setIsOfferSigned] = useState<boolean>(false);
+  const [isOfferCheckboxSelected, setIsOfferCheckboxSelected] = useState<boolean>(false);
+
+  const [isPhoneProvided, setIsPhoneProvided] = useState<boolean>(false);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
+    const signTerms = async () => {
       setLoading(true);
 
-      let user;
-      try {
-        user = tgUserId ? await getUserByTgId(tgUserId) : { id: USER_ID };
-      } catch (e) {
-        console.error('Failed to fetch user:', e);
-        user = { id: USER_ID };
-      }
-      userStore.setUser(user);
+      const user: User = await userStore.getUser();
 
+      setLoading(false);
+
+      if (user.offer1Signed && user.offer2Signed) {
+        setIsOfferSigned(true);
+      } else {
+        return;
+      }
+    };
+
+    signTerms();
+  }, []);
+
+  useEffect(() => {
+    if (!isOfferSigned) {
+      return;
+    }
+
+    const getPhone = async () => {
+      const user: User = await userStore.getUser();
+
+      if (user.phone && user.phone !== '') {
+        setIsPhoneProvided(true);
+        return;
+      }
+
+      const phone = await requestContactAction();
+
+      if (phone && phone != '') {
+        console.log(`Phone: ${phone}`);
+
+        await setUserPhone(phone);
+        setIsPhoneProvided(true);
+
+        return;
+      }
+
+      WebApp.showPopup(
+        {
+          buttons: [{ type: 'close' }],
+          message: 'Для того, чтобы пользоваться сервисом, вы должны предоставить доступ к своему номеру телефона',
+        },
+        () => {
+          WebApp.close();
+        }
+      );
+    };
+
+    getPhone();
+  }, [isOfferSigned]);
+
+  useEffect(() => {
+    if (!isOfferSigned || !isPhoneProvided) {
+      return;
+    }
+
+    const loadData = async () => {
       try {
+        setLoading(true);
+
         if (activeTab === 'leads') {
-          const data = await getLeads(user.id);
+          const data = await getLeads();
           console.log(data);
           leadStore.setLeads(data);
         } else {
-          const data = await getRealEstateObjects(user.id);
+          const data = await getRealEstateObjects();
           realEstateStore.setObjects(data);
         }
       } catch (error) {
@@ -57,7 +130,7 @@ export const IndexPage: FC = observer(() => {
     };
 
     loadData();
-  }, [activeTab]);
+  }, [activeTab, isOfferSigned, isPhoneProvided]);
 
   const handleEntityClick = (item: Lead | RealEstateObject) => {
     if (activeTab === 'leads') {
@@ -72,6 +145,60 @@ export const IndexPage: FC = observer(() => {
   };
 
   const entitiesLength = activeTab === 'leads' ? leadStore.leads.length : realEstateStore.objects.length;
+
+  if (loading && (!isOfferSigned || !isPhoneProvided)) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px',
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <Spinner size="m" />
+      </div>
+    );
+  }
+
+  if (!isOfferSigned) {
+    return (
+      <>
+        <div className="terms-modal">
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <input
+              style={{ width: '20px', height: '20px' }}
+              type="checkbox"
+              checked={isOfferCheckboxSelected}
+              onChange={e => setIsOfferCheckboxSelected(e.target.checked)}
+            />{' '}
+            <span>
+              {' '}
+              Я прочитал и согласен с <a href="https://aiplus.ru/privacy">публичной офертой</a> и{' '}
+              <a href="https://aiplus.ru/agreement">согласием на обработку персональных данных</a>
+            </span>
+          </div>
+
+          <Button
+            disabled={!isOfferCheckboxSelected}
+            onClick={async () => {
+              await setUserAcceptedTerms();
+              setIsOfferSigned(true);
+            }}
+          >
+            Подтвердить
+          </Button>
+        </div>
+      </>
+    );
+  }
+
+  if (!isPhoneProvided) {
+    return <></>;
+  }
 
   return (
     <>
@@ -116,10 +243,12 @@ export const IndexPage: FC = observer(() => {
           )}
 
           {loading || entitiesLength > 0 || (
-            <div style={{ width: '80%', margin: 'auto', paddingTop: '12px' }}>
-              {activeTab === 'leads'
-                ? 'Вы пока не добавили лидов в систему. Добавьте их по кнопке "Создать лида"'
-                : 'Мы не смогли найти ваши объекты недвижимости - добавьте их в CRM и они появятся в системе'}
+            <div style={{ width: '90%', margin: 'auto', padding: '8px 0px 8px 0px' }}>
+              {activeTab === 'leads' ? (
+                <p>Добавьте лидов по кнопке "Создать лида"</p>
+              ) : (
+                <p>Мы не смогли найти ваши объекты недвижимости - добавьте их в CRM и они появятся в системе</p>
+              )}
             </div>
           )}
         </Section>

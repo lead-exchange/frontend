@@ -1,3 +1,5 @@
+import WebApp from '@twa-dev/sdk';
+
 class ApiClient {
   #apiURL: string = import.meta.env.VITE_BACKEND_URL;
 
@@ -11,10 +13,14 @@ class ApiClient {
       path = '/' + path;
     }
 
+    const headers: HeadersInit = body ? { 'Content-Type': 'application/json' } : {};
+
+    headers.Authorization = `tma ${WebApp.initData}`;
+
     const resp = await fetch(`${this.#apiURL}${path}`, {
       method: method,
       body: jsonBody,
-      headers: body && { 'Content-Type': 'application/json' },
+      headers: headers,
     });
 
     if (!resp.ok) {
@@ -43,6 +49,10 @@ class ApiClient {
 
   async put(path: string, body?: object): Promise<Response> {
     return await this.do('PUT', path, body);
+  }
+
+  async patch(path: string, body?: object): Promise<Response> {
+    return await this.do('PATCH', path, body);
   }
 
   async delete(path: string, body?: object): Promise<Response> {
