@@ -51,6 +51,22 @@ export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<L
   return await apiClient.put<Lead>(`/api/leads/${leadId}`, lead);
 };
 
+export const archiveLead = async (leadId: string): Promise<void> => {
+  await apiClient.post(`/api/leads/${leadId}/archive`);
+};
+
+export const unarchiveLead = async (leadId: string): Promise<void> => {
+  await apiClient.post(`/api/leads/${leadId}/unarchive`);
+};
+
+export const archiveEstate = async (estateId: string): Promise<void> => {
+  await apiClient.post(`/api/estates/${estateId}/archive`);
+};
+
+export const unarchiveEstate = async (estateId: string): Promise<void> => {
+  await apiClient.post(`/api/estates/${estateId}/unarchive`);
+};
+
 export const deleteLead = async (leadId: string): Promise<void> => {
   await apiClient.delete(`/api/leads/${leadId}`);
 };

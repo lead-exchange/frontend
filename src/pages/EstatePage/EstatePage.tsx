@@ -1,8 +1,9 @@
-import { getEstateById } from '@/requests/entities';
+import { getEstateById, archiveEstate, unarchiveEstate } from '@/requests/entities';
 import { RealEstateObject } from '@/types/entity';
 import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Button, Image } from '@telegram-apps/telegram-ui';
+import { Archive, ArchiveRestore, Pencil, Trash } from 'lucide-react';
 import '../../index.css';
 import styles from './styles.module.css';
 import { Matches } from '@/components/Matches/Matches';
@@ -90,6 +91,32 @@ export const EstatePage: FC = () => {
   const addressText = formatAddress(estate.attributes.address);
   const regionText = formatRegion(estate.attributes.address);
 
+  const handleArchive = async () => {
+    if (!estateId) return;
+
+    try {
+      await archiveEstate(estateId);
+      console.log('Estate archived successfully');
+      navigate(0);
+    } catch (error) {
+      console.error('Failed to archive estate:', error);
+      alert('Ошибка при архивировании объекта');
+    }
+  };
+
+  const handleUnarchive = async () => {
+    if (!estateId) return;
+
+    try {
+      await unarchiveEstate(estateId);
+      console.log('Estate unarchived successfully');
+      navigate(0);
+    } catch (error) {
+      console.error('Failed to unarchive estate:', error);
+      alert('Ошибка при разархивировании объекта');
+    }
+  };
+
   return (
     <div
       style={{
@@ -97,6 +124,7 @@ export const EstatePage: FC = () => {
         backgroundColor: 'var(--tgui--bg_color)',
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       {/* Название объекта */}
@@ -157,6 +185,25 @@ export const EstatePage: FC = () => {
           {estate.attributes.description}
         </div>
       )}
+
+      {/* Кнопки действий */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '16px',
+        }}
+      >
+        {estate.status === 'ARCHIVE' ? (
+          <Button mode="bezeled" size="m" before={<ArchiveRestore />} onClick={handleUnarchive}>
+            Возобн.
+          </Button>
+        ) : (
+          <Button mode="bezeled" size="m" before={<Archive />} onClick={handleArchive}>
+            Приост.
+          </Button>
+        )}
+      </div>
 
       {/* Кнопка рекомендаций */}
       <Button mode="filled" size="l" stretched onClick={() => navigate(`/tinder/object/${estate.id}`)}>
