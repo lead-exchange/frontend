@@ -1,0 +1,98 @@
+.selectContainer {
+  position: relative;
+  background-color: transparent;
+  padding: 0 0 calc(5px + 16px); /* место под ошибку */
+  border-radius: 0;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tgui--hint_color);
+  line-height: 1.2;
+  padding: 0 var(--padding-xs);
+  position: absolute;
+  top: -12px;
+  left: var(--spacing-m);
+  background-color: var(--tgui--bg_color);
+}
+
+.selectWrapper {
+  position: relative;
+  background-color: var(--tgui--bg_color);
+  padding: calc(var(--padding-s) + var(--padding-xs)) var(--padding-m) var(--padding-s);
+  border-radius: var(--border-radius);
+  border: 2px solid var(--tgui--border_color);
+  min-height: var(--input-outer-height);
+}
+
+.select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 17px;
+  color: var(--tgui--text_color);
+  padding: 0;
+  height: var(--input-height);
+  line-height: var(--input-height);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.select::placeholder {
+  color: var(--tgui--hint_color);
+}
+
+.select.error {
+  color: var(--tgui--destructive_text_color);
+}
+
+.selectWrapper::after {
+  content: '';
+  position: absolute;
+  right: var(--padding-m);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--tgui--hint_color);
+  pointer-events: none;
+}
+
+.errorText {
+  margin-top: 5px;
+  padding: 0 var(--padding-m);
+  color: var(--tgui--destructive_text_color);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+/* focus: синий бордер и лейбл */
+.selectContainer:focus-within .selectWrapper {
+  border-color: var(--tgui--link_color);
+}
+
+.selectContainer:focus-within .label {
+  color: var(--tgui--link_color);
+}
+
+/* error: красный бордер и лейбл */
+.selectContainer.error .label {
+  color: var(--tgui--destructive_text_color);
+}
+
+.selectWrapper.error {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.selectContainer.error:focus-within .selectWrapper {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.selectContainer.error:focus-within .label {
+  color: var(--tgui--destructive_text_color);
+}

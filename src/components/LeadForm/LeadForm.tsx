@@ -1,11 +1,13 @@
 import { FC, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Input, Select, Button, List, Section, Textarea } from '@telegram-apps/telegram-ui';
+import { Button } from '@telegram-apps/telegram-ui';
 import { Plus } from 'lucide-react';
 import { LeadFormData, leadSchema, NUMERIC_FIELDS, propertyTypeOptions } from './schema';
-import { FormFieldWrapper, formFieldStyles } from '../FormField/FormFieldWrapper';
 import { formatNumber, parseNumber } from '@/utils/numberFormat';
+import { CustomInput } from '../CustomInput/CustomInput';
+import { CustomSelect } from '../CustomSelect/CustomSelect';
+import { CustomTextarea } from '../CustomTextarea/CustomTextarea';
 import styles from './LeadForm.module.css';
 
 interface LeadFormProps {
@@ -54,169 +56,150 @@ export const LeadForm: FC<LeadFormProps> = ({
   };
 
   return (
-    <form className={styles.container} onSubmit={handleFormSubmit}>
-      <List className={styles.list}>
-        <Section
-          header="Основная информация"
-          footer="Заполните информацию о клиенте"
-          className={styles.formSection}
-        >
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.name}>
-                <Input
-                  {...field}
-                  header="Имя клиента"
-                  placeholder="Введите имя"
-                  className={formFieldStyles.inputField}
-                  status={errors.name ? 'error' : 'default'}
-                />
-              </FormFieldWrapper>
-            )}
+    <form className={styles.form} onSubmit={handleFormSubmit}>
+      <h2 className={styles.title}>Основная информация</h2>
+
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => (
+          <CustomInput
+            {...field}
+            label="Имя клиента"
+            placeholder="Введите имя"
+            hasError={!!errors.name}
+            errorMessage={errors.name?.message}
           />
+        )}
+      />
 
-          <Controller
-            name="commissionShare"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.commissionShare}>
-                <Input
-                  {...field}
-                  value={field.value !==  null ? formatNumber(field.value) : ''}
-                  onChange={(e) => {
-                    const num = parseNumber(e.target.value);
-                    field.onChange(num);
-                  }}
-                  header="Агент покупателя"
-                  placeholder="70"
-                  type="text"
-                  inputMode="numeric"
-                  className={formFieldStyles.inputField}
-                  status={errors.commissionShare ? 'error' : 'default'}
-                  after={<span className={formFieldStyles.inputSuffix}>%</span>}
-                />
-              </FormFieldWrapper>
-            )}
+      <Controller
+        name="commissionShare"
+        control={control}
+        render={({ field }) => (
+          <CustomInput
+            {...field}
+            value={field.value != null ? formatNumber(field.value) : ''}
+            onChange={(e) => {
+              const num = parseNumber(e.target.value);
+              field.onChange(num);
+            }}
+            label="Агент покупателя"
+            placeholder="70"
+            type="text"
+            inputMode="numeric"
+            hasError={!!errors.commissionShare}
+            errorMessage={errors.commissionShare?.message}
+            suffix="%"
           />
+        )}
+      />
 
-          <Controller
-            name="propertyType"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.propertyType}>
-                <Select
-                  {...field}
-                  header="Тип недвижимости"
-                  className={formFieldStyles.selectField}
-                  status={errors.propertyType ? 'error' : 'default'}
-                >
-                  {propertyTypeOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </FormFieldWrapper>
-            )}
-          />
-
-          {NUMERIC_FIELDS.map(item => (
-            <Controller
-              key={item.name}
-              name={item.name as keyof LeadFormData}
-              control={control}
-              render={({ field }) => (
-                <FormFieldWrapper error={errors[item.name as keyof LeadFormData]}>
-                  <Input
-                    {...field}
-                    value={field.value !== null ? formatNumber(field.value as number) : ''}
-                    onChange={(e) => {
-                      const num = parseNumber(e.target.value);
-                      field.onChange(num);
-                    }}
-                    header={item.label}
-                    placeholder={item.placeholder}
-                    inputMode="numeric"
-                    className={formFieldStyles.inputField}
-                    status={errors[item.name as keyof LeadFormData] ? 'error' : 'default'}
-                    after={<span className={formFieldStyles.inputSuffix}>{item.suffix}</span>}
-                  />
-                </FormFieldWrapper>
-              )}
-            />
-          ))}
-
-          <Controller
-            name="locations"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.locations}>
-                <Input
-                  {...field}
-                  header="Локации"
-                  placeholder="Москва, Центр, Арбат"
-                  className={formFieldStyles.inputField}
-                  status={errors.locations ? 'error' : 'default'}
-                />
-              </FormFieldWrapper>
-            )}
-          />
-
-          <Controller
-            name="bedrooms"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.bedrooms}>
-                <Input
-                  {...field}
-                  value={field.value !== null ? formatNumber(field.value) : ''}
-                  onChange={(e) => {
-                     const num = parseNumber(e.target.value);
-                     field.onChange(num);
-                  }}
-                  header="Количество спален"
-                  placeholder="2"
-                  type="text"
-                  inputMode="numeric"
-                  className={formFieldStyles.inputField}
-                  status={errors.bedrooms ? 'error' : 'default'}
-                />
-              </FormFieldWrapper>
-            )}
-          />
-
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper error={errors.description}>
-                <Textarea
-                  {...field}
-                  value={field.value || ''}
-                  header="Описание запроса"
-                  placeholder="Введите описание"
-                  className={formFieldStyles.inputField}
-                  status={errors.description ? 'error' : 'default'}
-                />
-              </FormFieldWrapper>
-            )}
-          />
-        </Section>
-
-        <div className={styles.buttonContainer}>
-          <Button
-            size="l"
-            stretched
-            onClick={handleFormSubmit}
-            loading={isLoading || isSubmitting}
-            before={<Plus size={20} />}
+      <Controller
+        name="propertyType"
+        control={control}
+        render={({ field }) => (
+          <CustomSelect
+            {...field}
+            label="Тип недвижимости"
+            hasError={!!errors.propertyType}
+            errorMessage={errors.propertyType?.message}
           >
-            {submitText}
-          </Button>
-        </div>
-      </List>
+            {propertyTypeOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </CustomSelect>
+        )}
+      />
+
+      {NUMERIC_FIELDS.map(item => (
+        <Controller
+          key={item.name}
+          name={item.name as keyof LeadFormData}
+          control={control}
+          render={({ field }) => (
+            <CustomInput
+              {...field}
+              value={field.value !== null ? formatNumber(field.value as number) : ''}
+              onChange={(e) => {
+                const num = parseNumber(e.target.value);
+                field.onChange(num);
+              }}
+              label={item.label}
+              placeholder={item.placeholder}
+              inputMode="numeric"
+              hasError={!!errors[item.name as keyof LeadFormData]}
+              errorMessage={errors[item.name as keyof LeadFormData]?.message}
+              suffix={item.suffix}
+            />
+          )}
+        />
+      ))}
+
+      <Controller
+        name="locations"
+        control={control}
+        render={({ field }) => (
+          <CustomInput
+            {...field}
+            label="Локации"
+            placeholder="Москва, Центр, Арбат"
+            hasError={!!errors.locations}
+            errorMessage={errors.locations?.message}
+          />
+        )}
+      />
+
+      <Controller
+        name="bedrooms"
+        control={control}
+        render={({ field }) => (
+          <CustomInput
+            {...field}
+            value={field.value !== null ? formatNumber(field.value) : ''}
+            onChange={(e) => {
+                const num = parseNumber(e.target.value);
+                field.onChange(num);
+            }}
+            label="Количество спален"
+            placeholder="2"
+            type="text"
+            inputMode="numeric"
+            hasError={!!errors.bedrooms}
+            errorMessage={errors.bedrooms?.message}
+          />
+        )}
+      />
+
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <CustomTextarea
+            {...field}
+            value={field.value || ''}
+            label="Описание запроса"
+            placeholder="Введите описание"
+            hasError={!!errors.description}
+            errorMessage={errors.description?.message}
+          />
+        )}
+      />
+
+      <div className={styles.buttonContainer}>
+        <span className={styles.text}>Заполните информацию о клиенте</span>
+        <Button
+          size="l"
+          stretched
+          onClick={handleFormSubmit}
+          loading={isLoading || isSubmitting}
+          before={<Plus size={20} />}
+        >
+          {submitText}
+        </Button>
+      </div>
     </form>
   );
 };

@@ -9,6 +9,12 @@
   --spacing-l: 24px;
   --spacing-xl: 32px;
 
+  /* Paddings */
+  --padding-xs: 4px;
+  --padding-s: 8px;
+  --padding-m: 16px;
+  --padding-l: 24px;
+
   /* Colors */
   --tgui--bg_color: var(--tg-theme-bg-color, #ffffff);
   --secondary-bg-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
@@ -17,6 +23,15 @@
   --tgui--link_color: var(--tg-theme-link-color, #2481cc);
   --button-color: var(--tg-theme-button-color, #2481cc);
   --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+  --tgui--text_color: var(--tg-theme-text-color, #000000);
+  --tgui--hint_color: var(--tg-theme-hint-color, #999999);
+  --tgui--destructive_text_color: var(--tg-theme-destructive-text-color, #ff3b30);
+  --tgui--border_color: color-mix(in srgb, var(--tg-theme-hint-color, #999999) 25%, transparent);
+
+  /* Input specific */
+  --input-height: 20px;        /* inner text line height */
+  --input-outer-height: 30px;  /* visual height of input field */
+  --border-radius: 16px;
 
   --font-size-title-3: 20px;
 

@@ -1,0 +1,89 @@
+.inputContainer {
+  position: relative;
+  background-color: transparent;
+  padding: 0 0 calc(5px + 16px);
+  border-radius: 0;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tgui--hint_color);
+  line-height: 1.2;
+  padding: 0 var(--padding-xs);
+  position: absolute;
+  top: -12px;
+  left: var(--spacing-m);
+  background-color: var(--tgui--bg_color);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--tgui--bg_color);
+  padding: calc(var(--padding-s) + var(--padding-xs)) var(--padding-m) var(--padding-s);
+  border-radius: var(--border-radius);
+  border: 2px solid var(--tgui--border_color);
+  min-height: var(--input-outer-height); /* visual input height (mobile standard) */
+}
+
+.inputWrapper.error {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 17px;
+  color: var(--tgui--text_color);
+  padding: 0;
+  height: var(--input-height);
+  line-height: var(--input-height);
+}
+
+.input::placeholder {
+  color: var(--tgui--hint_color);
+}
+
+.input.error {
+  color: var(--tgui--destructive_text_color);
+}
+
+.suffix {
+  color: var(--tgui--hint_color);
+  font-size: 17px;
+  margin-left: var(--spacing-xs);
+  pointer-events: none;
+}
+
+.errorText {
+  position: absolute;
+  margin-top: 5px;
+  left: var(--padding-m);
+  color: var(--tgui--destructive_text_color);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.inputContainer:focus-within .inputWrapper {
+  border-color: var(--tgui--link_color);
+}
+
+.inputContainer:focus-within .label {
+  color: var(--tgui--link_color);
+}
+
+.inputContainer.error .label {
+  color: var(--tgui--destructive_text_color);
+}
+
+.inputContainer.error:focus-within .inputWrapper {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.inputContainer.error:focus-within .label {
+  color: var(--tgui--destructive_text_color);
+}

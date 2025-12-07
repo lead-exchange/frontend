@@ -1,0 +1,80 @@
+.textareaContainer {
+  position: relative;
+  background-color: transparent;
+  padding: 0 0 calc(5px + 16px);
+  border-radius: 0;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tgui--hint_color);
+  line-height: 1.2;
+  padding: 0 var(--padding-xs);
+  position: absolute;
+  top: -12px;
+  left: var(--spacing-m);
+  background-color: var(--tgui--bg_color);
+}
+
+.textareaWrapper {
+  position: relative;
+  background-color: var(--tgui--bg_color);
+  padding: calc(var(--padding-s) + var(--padding-xs)) var(--padding-m) var(--padding-s);
+  border-radius: var(--border-radius);
+  border: 2px solid var(--tgui--border_color);
+}
+
+.textarea {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 17px;
+  color: var(--tgui--text_color);
+  padding: 0;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.textarea::placeholder {
+  color: var(--tgui--hint_color);
+}
+
+.textarea.error {
+  color: var(--tgui--destructive_text_color);
+}
+
+.errorText {
+  margin-top: 5px;
+  padding: 0 var(--padding-m);
+  color: var(--tgui--destructive_text_color);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+/* focus: синий бордер и лейбл */
+.textareaContainer:focus-within .textareaWrapper {
+  border-color: var(--tgui--link_color);
+}
+.textareaContainer:focus-within .label {
+  color: var(--tgui--link_color);
+}
+
+/* error: красный бордер и лейбл */
+.textareaContainer.error .label {
+  color: var(--tgui--destructive_text_color);
+}
+
+.textareaWrapper.error {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.textareaContainer.error:focus-within .textareaWrapper {
+  border-color: var(--tgui--destructive_text_color);
+}
+
+.textareaContainer.error:focus-within .label {
+  color: var(--tgui--destructive_text_color);
+}
