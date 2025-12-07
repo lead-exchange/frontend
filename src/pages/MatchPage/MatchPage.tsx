@@ -117,7 +117,7 @@ export const MatchPage: FC = observer(() => {
         matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'object') {
-          const lead = await getLeadById(matchResp.estateId);
+          const lead = await getLeadById(matchResp.leadId);
           if (!lead) {
             return;
           }
