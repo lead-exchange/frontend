@@ -46,7 +46,7 @@ export const DisplayData: FC<DisplayDataProps> = ({ header, rows }) => (
           subhead={item.title}
           readOnly
           multiline={true}
-          key={idx}
+          key={`${item.title}-${idx}`}
         >
           <span className='display-data__line-value'>
             {valueNode}

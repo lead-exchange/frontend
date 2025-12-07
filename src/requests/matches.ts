@@ -39,6 +39,5 @@ interface UpdateMatchRequest {
 }
 
 export const updateMatch = async (req: UpdateMatchRequest): Promise<Match> => {
-  const resp = await apiClient.put(`/api/matches/${req.id}`, req);
-  return await resp.json();
+  return await apiClient.put<Match>(`/api/matches/${req.id}`, req);
 };

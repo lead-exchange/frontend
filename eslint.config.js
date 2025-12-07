@@ -1,11 +1,9 @@
 import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
 
-import {defineConfig} from "eslint/config";
-
 import tseslint from "typescript-eslint";
 
-export default defineConfig([
+export default tseslint.config(
   {
     files: ["**/*.ts", "**/*.tsx"],
     extends: [
@@ -28,4 +26,4 @@ export default defineConfig([
       "@typescript-eslint/no-unused-expressions": "warn",
     },
   },
-]);
+);

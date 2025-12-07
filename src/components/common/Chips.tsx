@@ -11,7 +11,7 @@ export const Chips: FC<ChipsProps> = ({ values }) => {
       {values.map(
         (value, idx) =>
           value && (
-            <Chip mode={'mono'} key={idx}>
+            <Chip mode={'mono'} key={`${value}-${idx}`}>
               {value}
             </Chip>
           )
