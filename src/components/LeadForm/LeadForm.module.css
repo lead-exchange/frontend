@@ -9,14 +9,14 @@
   background-color: var(--tgui--bg_color);
 }
 
+.formSection > :global(div[class*="tgui-"]) {
+  background-color: var(--tgui--bg_color) !important;
+}
+
 .buttonContainer {
   padding: var(--spacing-m);
   background-color: var(--tgui--bg_color);
   margin-top: auto;
-}
-
-.list {
-  background-color: transparent;
 }
 
 .list :global(hr) {
