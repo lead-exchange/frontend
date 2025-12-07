@@ -1,11 +1,11 @@
 .inputWrapper {
   position: relative;
   padding-bottom: var(--spacing-l);
+  min-height: 80px;
 }
 
 .inputWrapper > :global(div[class*="tgui-"]) {
   padding-bottom: 5px !important;
-  background-color: var(--tgui--bg_color);
 }
 
 /* Force display headers on iOS */
@@ -22,9 +22,12 @@
 }
 
 .errorText {
-  padding-left: 25px;
+  position: absolute;
+  bottom: 16px;
+  left: 25px;
   color: var(--tgui--destructive_text_color);
   font-size: 13px;
   line-height: 16px;
+  height: 16px;
 }
 
