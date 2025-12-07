@@ -5,7 +5,6 @@
 }
 
 .inputWrapper > :global(div[class*="tgui-"]) {
-  background-color: transparent;
   padding-bottom: 5px;
 }
 
