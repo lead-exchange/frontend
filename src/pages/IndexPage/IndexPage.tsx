@@ -23,20 +23,22 @@ if (isTMA()) {
   init();
 }
 
+type RequestedContact = Awaited<ReturnType<typeof requestContact>>;
+
 const requestContactAction = async (): Promise<string> => {
   try {
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), 30000);
+    const timeoutPromise = new Promise<RequestedContact>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout - user likely clicked outside')), 30000);
     });
 
     if (isInsideMiniApp) {
-      const result = await Promise.race([requestContact(), timeoutPromise]);
-      return result.contact.phone_number;
+      const contacts = await Promise.race([requestContact(), timeoutPromise]);
+      return contacts.contact.phone_number;
     } else {
       return "79999999999";
     }
   } catch (e) {
-    console.info('Contact request failed:', e);
+    console.log(e);
     return '';
   }
 };
