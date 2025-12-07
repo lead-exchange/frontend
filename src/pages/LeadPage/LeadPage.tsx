@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Chip, Button } from '@telegram-apps/telegram-ui';
 import { Archive, ArchiveRestore, Pencil, Trash } from 'lucide-react';
 import '../../index.css';
-import styles from './styles.module.css';
+import styles from './LeadPage.module.css';
 import { Matches } from '@/components/Matches/Matches';
 import { getLeadMatches } from '@/requests/matches';
 import { leadMatchesStore } from '@/stores/matchesByEntitiesStore';
