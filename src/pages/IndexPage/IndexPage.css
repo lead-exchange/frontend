@@ -1,12 +1,12 @@
 .tab-header {
   position: sticky !important;
   top: 0px;
-  background: var(--bg-color);
+  background: var(--tgui--bg_color);
   z-index: 1;
 }
 
 .terms-modal {
-  background: var(--bg-color);
+  background: var(--tgui--bg_color);
   min-width: 50%;
   margin: auto;
   display: flex;
@@ -28,7 +28,7 @@
 }
 
 .terms-modal a {
-  color: var(--link-color);
+  color: var(--tgui--link_color);
 }
 
 .loading-container {

@@ -17,7 +17,7 @@
 
 .container {
   padding: var(--spacing-m);
-  background-color: var(--bg-color);
+  background-color: var(--tgui--bg_color);
   display: flex;
   flex-direction: column;
   align-items: center;

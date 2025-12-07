@@ -10,11 +10,11 @@
   --spacing-xl: 32px;
 
   /* Colors */
-  --bg-color: var(--tg-theme-bg-color, #ffffff);
+  --tgui--bg_color: var(--tg-theme-bg-color, #ffffff);
   --secondary-bg-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
   --text-color: var(--tg-theme-text-color, #000000);
   --hint-color: var(--tg-theme-hint-color, #999999);
-  --link-color: var(--tg-theme-link-color, #2481cc);
+  --tgui--link_color: var(--tg-theme-link-color, #2481cc);
   --button-color: var(--tg-theme-button-color, #2481cc);
   --button-text-color: var(--tg-theme-button-text-color, #ffffff);
 
