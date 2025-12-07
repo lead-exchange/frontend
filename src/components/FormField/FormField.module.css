@@ -1,0 +1,49 @@
+.inputWrapper {
+  position: relative;
+  margin-bottom: var(--spacing-m);
+  min-height: 85px;
+}
+
+.inputField,
+.selectField {
+  margin-bottom: 0;
+  --tgui--border--width: 0px !important;
+}
+
+.inputField :global(.tgui-cell__after),
+.inputField :global(.tgui-cell__before),
+.selectField :global(.tgui-cell__after),
+.selectField :global(.tgui-cell__before) {
+  display: none !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.inputField {
+  background-image: none !important;
+}
+
+.inputSuffix {
+  color: var(--hint-color);
+  padding-left: var(--spacing-s);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.errorText {
+  position: absolute;
+  bottom: 0;
+  /* magic number */
+  left: 38px;
+  color: var(--tgui--destructive_text_color);
+  font-size: 12px;
+  line-height: 14px;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: calc(100% - 32px);
+  box-sizing: border-box;
+}

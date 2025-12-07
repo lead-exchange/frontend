@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Button, Image } from '@telegram-apps/telegram-ui';
 import { Archive, ArchiveRestore } from 'lucide-react';
 import '../../index.css';
-import styles from './styles.module.css';
+import styles from './EstatePage.module.css';
 import { Matches } from '@/components/Matches/Matches';
 import { getObjectMatches } from '@/requests/matches';
 import { objectMatchesStore } from '@/stores/matchesByEntitiesStore';
@@ -70,7 +70,7 @@ export const EstatePage: FC = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className={styles.loadingContainer}>
         <Spinner size="l" />
       </div>
     );
@@ -78,7 +78,7 @@ export const EstatePage: FC = () => {
 
   if (!estate) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div className={styles.notFoundContainer}>
         <p>Объект не найден</p>
       </div>
     );
@@ -118,15 +118,7 @@ export const EstatePage: FC = () => {
   };
 
   return (
-    <div
-      style={{
-        padding: '16px',
-        backgroundColor: 'var(--tgui--bg_color)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
+    <div className={styles.container}>
       {/* Название объекта */}
       <div className={styles.topInfo}>
         <Image
@@ -146,42 +138,19 @@ export const EstatePage: FC = () => {
         </div>
       </div>
 
-      <div
-        className="comission-bids-container"
-        style={{
-          padding: '8px',
-          alignSelf: 'start',
-        }}
-      >
-        <div
-          className="comission-bids comission-bids__yours"
-          style={{
-            padding: '0px 2px 0px 2px',
-          }}
-        >
+      <div className={`comission-bids-container ${styles.commissionContainer}`}>
+        <div className={`comission-bids comission-bids__yours ${styles.commissionItem}`}>
           <span className="comission-bids__value">Агент продавца: {estate.commissionShare}%</span>
         </div>
 
-        <div
-          className="comission-bids comission-bids__theirs"
-          style={{
-            padding: '0px 2px 0px 2px',
-          }}
-        >
+        <div className={`comission-bids comission-bids__theirs ${styles.commissionItem}`}>
           <span className="comission-bids__value">Агент покупателя: {100 - estate.commissionShare}%</span>
         </div>
       </div>
 
       {/* Описание */}
       {estate.attributes.description && (
-        <div
-          style={{
-            color: 'var(--tgui--text_color)',
-            fontSize: '15px',
-            lineHeight: '20px',
-            marginBottom: '24px',
-          }}
-        >
+        <div className={styles.description}>
           {estate.attributes.description}
         </div>
       )}

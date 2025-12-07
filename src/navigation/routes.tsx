@@ -12,6 +12,8 @@ import { LeadEditPage } from '@/pages/LeadEditPage/LeadEditPage';
 import { LeadPage } from '@/pages/LeadPage/LeadPage';
 import { EstatePage } from '@/pages/EstatePage/EstatePage';
 
+import { ROUTE_PATHS } from '@/navigation/routePaths';
+
 interface Route {
   path: string;
   Component: ComponentType;
@@ -20,15 +22,15 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
-  { path: '/lead/create', Component: LeadCreatePage, title: 'Создать лида' },
-  { path: '/user/lead/:leadId/edit', Component: LeadEditPage, title: 'Редактировать лида' },
-  { path: '/user/lead/:leadId', Component: LeadPage, title: 'Лид' },
-  { path: '/user/estate/:estateId', Component: EstatePage, title: 'Объект' },
-  { path: '/tinder/:type/:id', Component: TinderPage },
-  { path: '/matches/:type/:id', Component: MatchPage },
-  { path: '/results', Component: ResultsPage },
-  { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
-  { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
-  { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
+  { path: ROUTE_PATHS.HOME, Component: IndexPage },
+  { path: ROUTE_PATHS.LEAD_CREATE, Component: LeadCreatePage, title: 'Создать лида' },
+  { path: ROUTE_PATHS.LEAD_EDIT, Component: LeadEditPage, title: 'Редактировать лида' },
+  { path: ROUTE_PATHS.LEAD_DETAILS, Component: LeadPage, title: 'Лид' },
+  { path: ROUTE_PATHS.ESTATE_DETAILS, Component: EstatePage, title: 'Объект' },
+  { path: ROUTE_PATHS.TINDER, Component: TinderPage },
+  { path: ROUTE_PATHS.MATCHES, Component: MatchPage },
+  { path: ROUTE_PATHS.RESULTS, Component: ResultsPage },
+  { path: ROUTE_PATHS.INIT_DATA, Component: InitDataPage, title: 'Init Data' },
+  { path: ROUTE_PATHS.THEME_PARAMS, Component: ThemeParamsPage, title: 'Theme Params' },
+  { path: ROUTE_PATHS.LAUNCH_PARAMS, Component: LaunchParamsPage, title: 'Launch Params' },
 ];

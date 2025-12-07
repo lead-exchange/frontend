@@ -1,0 +1,57 @@
+.header {
+  text-align: center;
+  padding: var(--spacing-m) 0;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.notFoundContainer {
+  padding: var(--spacing-l);
+  text-align: center;
+}
+
+.container {
+  padding: var(--spacing-m);
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-m);
+  min-height: 100vh;
+}
+
+.chipsContainer {
+  display: flex;
+  gap: var(--spacing-s);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.commissionContainer {
+  padding: var(--spacing-s);
+  align-self: flex-start;
+  width: 100%;
+}
+
+.commissionItem {
+  padding: 0 var(--spacing-xs);
+}
+
+.description {
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.actionsContainer {
+  display: flex;
+  gap: var(--spacing-s);
+  flex-wrap: wrap;
+  justify-content: center;
+}
