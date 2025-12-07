@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import './comission.css';
+import styles from './Comission.module.css';
 
 interface ComissionDisplayProps {
   type: 'buyer' | 'seller';
@@ -9,16 +9,16 @@ interface ComissionDisplayProps {
 
 export const ComissionDisplay: FC<ComissionDisplayProps> = ({ type, value }) => {
   return (
-    <>
-      <div className="commission-display">
-        <p className="commission-display__yours">
+    <div>
+      <div className={styles.commissionDisplay}>
+        <p className={styles.commissionDisplayYours}>
           {type === 'buyer' ? 'Агент покупателя' : 'Агент продавца'}: {value}%
         </p>
 
-        <p className="commission-display__theirs">
+        <p className={styles.commissionDisplayTheirs}>
           {type === 'buyer' ? 'Агент продавца' : 'Агент покупателя'}: {100 - value}%
         </p>
       </div>
-    </>
+    </div>
   );
 };
