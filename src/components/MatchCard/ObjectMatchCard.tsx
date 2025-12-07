@@ -28,6 +28,13 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
   if (attributes.repairType) {
     chipValues.push(attributes.repairType);
   }
+  if (attributes.rooms) {
+    chipValues.push(`${attributes.rooms}-комн.`);
+  }
+  if (attributes.areaCommon) {
+    chipValues.push(`${attributes.areaCommon} кв. м.`);
+  }
+
   const address = attributes.address;
 
   const adressParts = [
@@ -56,6 +63,19 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
         <p className="match-card__address">{adressParts.join(', ')}</p>
 
         {displayComission && <ComissionDisplay type="buyer" value={commissionShare} />}
+
+        {attributes.description && (
+          <div
+            style={{
+              color: 'var(--tgui--text_color)',
+              fontSize: '15px',
+              lineHeight: '20px',
+              marginBottom: '24px',
+            }}
+          >
+            {attributes.description}
+          </div>
+        )}
       </div>
 
       {chipValues.length > 0 && <Chips values={chipValues} />}
