@@ -3,7 +3,7 @@ import { RealEstateObject } from '@/types/entity';
 import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Button, Image } from '@telegram-apps/telegram-ui';
-import { Archive, ArchiveRestore, Pencil, Trash } from 'lucide-react';
+import { Archive, ArchiveRestore } from 'lucide-react';
 import '../../index.css';
 import styles from './styles.module.css';
 import { Matches } from '@/components/Matches/Matches';
