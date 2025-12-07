@@ -34,12 +34,14 @@ export const getRealEstateObjects = async (): Promise<RealEstateObject[]> => {
   });
 };
 
-export const getLeadById = (leadId: string): Promise<Lead> => {
-  return apiClient.get<Lead>(`/api/leads/${leadId}`);
+export const getLeadById = async (leadId: string): Promise<Lead> => {
+  const resp = await apiClient.get<Lead>(`/api/leads/${leadId}`);
+  return { ...resp, type: 'lead' };
 };
 
-export const getEstateById = (estateId: string): Promise<RealEstateObject> => {
-  return apiClient.get<RealEstateObject>(`/api/estates/${estateId}`);
+export const getEstateById = async (estateId: string): Promise<RealEstateObject> => {
+  const resp = await apiClient.get<RealEstateObject>(`/api/estates/${estateId}`);
+  return { ...resp, type: 'object' };
 };
 
 export const createLead = async (lead: CreateLeadDto): Promise<Lead> => {

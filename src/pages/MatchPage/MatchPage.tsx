@@ -14,8 +14,7 @@ import { ComissionModal } from '@/components/Comission/ComissionModal';
 import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
 import { userStore } from '@/stores/userStore';
 import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
-import { leadStore } from '@/stores/leadStore';
-import { realEstateStore } from '@/stores/realEstateStore';
+import { getEstateById, getLeadById } from '@/requests/entities';
 
 enum MatchStatusEnum {
   OK,
@@ -118,13 +117,13 @@ export const MatchPage: FC = observer(() => {
         matchLogStore.setLogs(id, matchLogs || []);
 
         if (type === 'object') {
-          const lead = await leadStore.getLeadById(matchResp!.leadId);
+          const lead = await getLeadById(matchResp.estateId);
           if (!lead) {
             return;
           }
           setSourceEntity(lead);
         } else {
-          const object = await realEstateStore.getObjectById(matchResp!.estateId);
+          const object = await getEstateById(matchResp.estateId);
           if (!object) {
             return;
           }
