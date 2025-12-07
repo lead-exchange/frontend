@@ -107,12 +107,6 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
     };
 
     const deltaX = touchEnd.x - touchStart.x;
-    const deltaY = touchEnd.y - touchStart.y;
-
-    if (Math.abs(deltaY) > swipeActionThreshold && deltaY < 0) {
-      setIsComissionModalOpen(true);
-      return;
-    }
 
     if (Math.abs(deltaX) > swipeActionThreshold) {
       currentCardRef.current.style.transition = 'transform 0.4s ease, opacity 0.4s ease';

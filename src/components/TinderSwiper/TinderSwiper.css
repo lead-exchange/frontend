@@ -13,7 +13,7 @@
 .tinder-swiper__card-container {
   width: 100%;
   height: 90%;
-  overflow-y: hidden;
+  overflow-y: scroll;
   touch-action: pan-y;
 }
 
