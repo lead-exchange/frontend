@@ -37,7 +37,7 @@
 }
 
 .container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -46,10 +46,9 @@
 }
 
 .content {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   width: 100%;
-}
-
-.chatButton {
-  margin-bottom: 12px !important;
 }

@@ -211,8 +211,9 @@ export const MatchPage: FC = observer(() => {
 
           {matchStatus === MatchStatusEnum.BIDS && (
             <ComissionBids
-              yours={sourceEntity.type === 'object' ? leadUserComission! : objectUserComission!}
-              theirs={sourceEntity.type === 'lead' ? leadUserComission! : objectUserComission!}
+              yours={(sourceEntity.type === 'lead' ? leadUserComission : objectUserComission) ?? sourceEntity.commissionShare}
+              theirs={(sourceEntity.type === 'lead' ? objectUserComission : leadUserComission) ??
+                (sourceEntity.commissionShare != null ? 100 - sourceEntity.commissionShare : 0)}
             />
           )}
         </div>

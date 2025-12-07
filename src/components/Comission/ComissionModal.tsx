@@ -3,6 +3,7 @@ import { FC, useState } from 'react';
 
 import '@/components/common/common.css';
 import { Modal, ModalProps } from '../common/Modal';
+import styles from './Comission.module.css';
 
 interface ComissionModalProps extends ModalProps {
   onComissionSubmit: (value: number) => void;
@@ -37,7 +38,7 @@ export const ComissionModal: FC<ComissionModalProps> = ({ open, onOpenChange, on
           setComission(`${num}`);
         }}
       ></Input>
-      <div className="comission-modal__buttons">
+      <div className={styles.comissionModalButtons}>
         <Button mode="outline" onClick={() => onOpenChange(false)}>
           Отмена
         </Button>
