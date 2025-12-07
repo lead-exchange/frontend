@@ -18,3 +18,7 @@
 .list {
   background-color: transparent;
 }
+
+.list :global(hr) {
+  display: none;
+}

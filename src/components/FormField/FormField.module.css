@@ -5,7 +5,8 @@
 }
 
 .inputWrapper > :global(div[class*="tgui-"]) {
-  padding-bottom: 5px !important;
+  background-color: transparent;
+  padding-bottom: 5px;
 }
 
 /* Force display headers on iOS */
