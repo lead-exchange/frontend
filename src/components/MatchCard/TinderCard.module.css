@@ -1,0 +1,73 @@
+.matchCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 100%;
+  width: 100%;
+}
+
+.matchCardContentWithTopPadding {
+  padding-top: 24px;
+}
+
+.matchCardInfo {
+  padding: 0 var(--spacing-l);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matchCardTitle {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  line-height: 24px;
+  margin: 0;
+  color: var(--tgui--text_color);
+}
+
+.matchCardSubtitle {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0;
+  color: var(--tgui--text_color);
+}
+
+.matchCardDetails,
+.matchCardPrice,
+.matchCardAddress {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0;
+  color: var(--tgui--text_color);
+}
+
+.matchCardPrice {
+  font-weight: 400;
+}
+
+.matchCardAddress {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.matchCardDescription {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--tgui--hint_color);
+  margin: 0;
+}
+
+.matchCardDescriptionSmall {
+  color: var(--tgui--text_color);
+  font-size: 15px;
+  line-height: 20px;
+  margin-bottom: var(--spacing-l);
+}

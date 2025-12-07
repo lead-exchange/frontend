@@ -23,3 +23,8 @@ export const AppRoutes = {
   tinder: (type: string, id: string | number) => `/tinder/${type}/${id}`,
   matches: (type: string, id: string | number) => `/matches/${type}/${id}`,
 } as const;
+
+export const MATCH_TYPES = {
+  LEAD: 'lead',
+  OBJECT: 'object',
+} as const;

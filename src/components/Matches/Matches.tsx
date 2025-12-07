@@ -2,17 +2,34 @@ import { ObjectMatch, LeadMatch } from '@/types/matching';
 import { Cell, Image, Section, Spinner } from '@telegram-apps/telegram-ui';
 import { ChevronRight, User } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
-import './Matches.css';
+import styles from './Matches.module.css';
 import { EntityType } from '@/types/entity';
 import { matchLogStore } from '@/stores/matchLogStore';
 import { useNavigate } from 'react-router-dom';
 import { getMatchLogs } from '@/requests/matches';
+import { AppRoutes, MATCH_TYPES } from '@/navigation/routePaths';
 
-const statusToClass: Record<string, string> = {
-  'Мэтч': 'status_match',
-  'Нужен ваш ответ': 'status_need_answer',
-  'Ждём ответа': 'status_need_answer',
-  'Отказался': 'status_declined',
+const STATUS = {
+  MATCH: 'MATCH',
+  NEED_ANSWER: 'NEED_ANSWER',
+  WAITING: 'WAITING',
+  DECLINED: 'DECLINED',
+} as const;
+
+type StatusKey = (typeof STATUS)[keyof typeof STATUS];
+
+const statusToClass: Record<StatusKey, string> = {
+  [STATUS.MATCH]: styles.statusMatch,
+  [STATUS.NEED_ANSWER]: styles.statusNeedAnswer,
+  [STATUS.WAITING]: styles.statusNeedAnswer,
+  [STATUS.DECLINED]: styles.statusDeclined,
+};
+
+const statusTextByKey: Record<StatusKey, string> = {
+  [STATUS.MATCH]: 'Мэтч',
+  [STATUS.NEED_ANSWER]: 'Нужен ваш ответ',
+  [STATUS.WAITING]: 'Ждём ответа',
+  [STATUS.DECLINED]: 'Отказался',
 };
 
 type MatchesProps = LeadMatchesProps | ObjectMatchesProps;
@@ -27,17 +44,15 @@ interface ObjectMatchesProps {
   matches: ObjectMatch[];
 }
 
-const getStatusStyle = (val: string): string => {
-  return statusToClass[val];
-}
+const getStatusStyle = (status: StatusKey | null): string => {
+  return status ? statusToClass[status] : '';
+};
 
-const getMatchStatusText = (match: ObjectMatch | LeadMatch, type: EntityType): string => {
+const getMatchStatusKey = (match: ObjectMatch | LeadMatch, type: EntityType): StatusKey | null => {
   const matchLogs = matchLogStore.getLogsByMatch(match.id);
 
-  const result = '';
-
   if (!matchLogs) {
-    return result;
+    return null;
   }
 
   const logs = matchLogs.slice().sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
@@ -46,43 +61,54 @@ const getMatchStatusText = (match: ObjectMatch | LeadMatch, type: EntityType): s
   const lastObjectStatus = logs.filter(log => log.userType == 'object').at(0)?.status || match.estateStatus || 'UNDEFINED';
 
   if (lastObjectStatus === 'LIKED' && lastLeadStatus === 'LIKED') {
-    return 'Мэтч';
+    return STATUS.MATCH;
   }
+
   if (lastObjectStatus === 'ACCEPTED' || lastLeadStatus === 'ACCEPTED') {
-    return 'Мэтч';
+    return STATUS.MATCH;
   }
 
   if (type === 'lead') {
-    if (lastObjectStatus === 'DECLINED' || lastObjectStatus === 'DISLIKED') {
-      return 'Отказался';
-    }
-    if (lastLeadStatus === 'UNDEFINED' || lastObjectStatus === 'COMMISSION') {
-      return 'Нужен ваш ответ';
-    }
-    if (lastObjectStatus === 'UNDEFINED') {
-      return 'Ждём ответа';
+    switch (true) {
+      case lastLeadStatus === 'UNDEFINED' || lastObjectStatus === 'COMMISSION':
+        return STATUS.NEED_ANSWER;
+      case lastObjectStatus === 'UNDEFINED':
+        return STATUS.WAITING;
+      case lastObjectStatus === 'DECLINED' || lastObjectStatus === 'DISLIKED':
+        return STATUS.DECLINED;
     }
   }
 
   if (type === 'object') {
-    if (lastLeadStatus === 'DECLINED' || lastLeadStatus === 'DISLIKED') {
-      return 'Отказался';
-    }
-    if (lastObjectStatus === 'UNDEFINED' || lastLeadStatus === 'COMMISSION') {
-      return 'Нужен ваш ответ';
-    }
-    if (lastLeadStatus === 'UNDEFINED') {
-      return 'Ждём ответа';
+    switch (true) {
+      case lastObjectStatus === 'UNDEFINED' || lastLeadStatus === 'COMMISSION':
+        return STATUS.NEED_ANSWER;
+      case lastLeadStatus === 'UNDEFINED':
+        return STATUS.WAITING;
+      case lastLeadStatus === 'DECLINED' || lastLeadStatus === 'DISLIKED':
+        return STATUS.DECLINED;
     }
   }
 
-  return '';
+  return null;
+};
+
+const getMatchStatusText = (status: StatusKey | null): string => {
+  return status ? statusTextByKey[status] : '';
 };
 
 export const Matches: FC<MatchesProps> = ({ type, matches }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(true);
+
+  const handleLeadMatchClick = (id: number | string) => {
+    navigate(AppRoutes.matches(MATCH_TYPES.LEAD, id));
+  };
+
+  const handleObjectMatchClick = (id: number | string) => {
+    navigate(AppRoutes.matches(MATCH_TYPES.OBJECT, id));
+  };
 
   useEffect(() => {
     const promises = [];
@@ -96,29 +122,28 @@ export const Matches: FC<MatchesProps> = ({ type, matches }) => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '20px',
-        }}
-      >
+      <div className={styles.matchesSpinner}>
         <Spinner size="m" />
       </div>
     );
   }
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-      <Section.Header className="matches-header" large>
+    <div className={styles.matchesContainer}>
+      <Section.Header className={styles.matchesHeader} large>
         Найденные мэтчи
       </Section.Header>
 
-      {matches.map(match =>
-        type === 'lead' ? (
+      {matches.map(match => {
+        const statusKey = getMatchStatusKey(match, type);
+        const statusText = getMatchStatusText(statusKey);
+        const statusClass = getStatusStyle(statusKey);
+
+        return type === 'lead' ? (
           <Cell
-            onClick={() => navigate(`/matches/lead/${match.id}`)}
-            className="entity-match"
+            key={match.id}
+            onClick={() => handleLeadMatchClick(match.id)}
+            className={styles.entityMatch}
             before={
               <Image
                 src={
@@ -129,31 +154,31 @@ export const Matches: FC<MatchesProps> = ({ type, matches }) => {
               />
             }
             after={
-              <span className={`match__status ${getStatusStyle(getMatchStatusText(match, type))}`}>
-                {getMatchStatusText(match, type)}
+              <span className={`${styles.matchStatus} ${statusClass}`}>
+                {statusText}
                 <ChevronRight size={16} />
               </span>
             }
-            key={match.id}
           >
-            <span className="match__name">{(match as LeadMatch).estateTitle || 'Название'}</span>
+            <span className={styles.matchName}>{(match as LeadMatch).estateTitle || 'Название'}</span>
           </Cell>
         ) : (
           <Cell
-            onClick={() => navigate(`/matches/object/${match.id}`)}
-            before={<User size={24}></User>}
+            key={match.id}
+            onClick={() => handleObjectMatchClick(match.id)}
+            before={<User size={24} />}
             after={
-              <span className={`match__status ${getStatusStyle(getMatchStatusText(match, type))}`}>
-                {getMatchStatusText(match, type)}
+              <span className={`${styles.matchStatus} ${statusClass}`}>
+                {statusText}
                 <ChevronRight />
               </span>
             }
-            key={match.id}
           >
-            <span className="match__name">{(match as ObjectMatch).leadName}</span>
+            <span className={styles.matchName}>{(match as ObjectMatch).leadName}</span>
           </Cell>
-        )
-      )}
+        );
+      })}
     </div>
   );
-};
+}
+;
