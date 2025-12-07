@@ -53,26 +53,26 @@ const getMatchStatusText = (match: ObjectMatch | LeadMatch, type: EntityType): s
   }
 
   if (type === 'lead') {
+    if (lastObjectStatus === 'DECLINED' || lastObjectStatus === 'DISLIKED') {
+      return 'Отказался';
+    }
     if (lastLeadStatus === 'UNDEFINED' || lastObjectStatus === 'COMMISSION') {
       return 'Нужен ваш ответ';
     }
     if (lastObjectStatus === 'UNDEFINED') {
       return 'Ждём ответа';
     }
-    if (lastObjectStatus === 'DECLINED' || lastObjectStatus === 'DISLIKED') {
-      return 'Отказался';
-    }
   }
 
   if (type === 'object') {
+    if (lastLeadStatus === 'DECLINED' || lastLeadStatus === 'DISLIKED') {
+      return 'Отказался';
+    }
     if (lastObjectStatus === 'UNDEFINED' || lastLeadStatus === 'COMMISSION') {
       return 'Нужен ваш ответ';
     }
     if (lastLeadStatus === 'UNDEFINED') {
       return 'Ждём ответа';
-    }
-    if (lastLeadStatus === 'DECLINED' || lastLeadStatus === 'DISLIKED') {
-      return 'Отказался';
     }
   }
 
