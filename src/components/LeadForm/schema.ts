@@ -60,9 +60,9 @@ export const leadSchema = yup.object({
     
   bedrooms: yup.number()
     .typeError('Введите число')
-    .required('Обязательное поле')
     .integer('Должно быть целым числом')
-    .min(0, 'Должно быть положительным'),
+    .min(0, 'Должно быть положительным')
+    .notRequired(),
   
   description: yup.string()
     .max(500, 'Не более 500 символов')

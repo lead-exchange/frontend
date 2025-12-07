@@ -5,7 +5,7 @@ export const formatNumber = (value: number | string | undefined | null): string 
   return number.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 };
 
-export const parseNumber = (value: string): number | undefined => {
+export const parseNumber = (value: string): number | null => {
   const clean = value.replace(/\s/g, '');
-  return clean === '' ? undefined : Number(clean);
+  return clean === '' ? null : Number(clean);
 };
