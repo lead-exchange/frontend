@@ -1,9 +1,9 @@
-import { getLeadById, deleteLead } from '@/requests/entities';
+import { getLeadById, deleteLead, archiveLead, unarchiveLead } from '@/requests/entities';
 import { Lead } from '@/types/entity';
 import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Chip, Button } from '@telegram-apps/telegram-ui';
-import { Archive, Pencil, Trash } from 'lucide-react';
+import { Archive, ArchiveRestore, Pencil, Trash } from 'lucide-react';
 import '../../index.css';
 import styles from './styles.module.css';
 import { Matches } from '@/components/Matches/Matches';
@@ -74,6 +74,32 @@ export const LeadPage: FC = () => {
 
   const priceRange = `< ${formatPrice(lead.requirements.maxPrice)}`;
   const bedroomsText = lead.requirements.bedrooms ? `${lead.requirements.bedrooms}-комн.` : null;
+
+  const handleArchive = async () => {
+    if (!leadId) return;
+
+    try {
+      await archiveLead(leadId);
+      console.log('Lead archived successfully');
+      navigate(0);
+    } catch (error) {
+      console.error('Failed to archive lead:', error);
+      alert('Ошибка при архивировании лида');
+    }
+  };
+
+  const handleUnarchive = async () => {
+    if (!leadId) return;
+
+    try {
+      await unarchiveLead(leadId);
+      console.log('Lead unarchived successfully');
+      navigate(0,);
+    } catch (error) {
+      console.error('Failed to unarchive lead:', error);
+      alert('Ошибка при разархивировании лида');
+    }
+  };
 
   const handleDelete = async () => {
     if (!leadId) return;
@@ -171,9 +197,15 @@ export const LeadPage: FC = () => {
         <Button mode="bezeled" size="m" before={<Pencil />} onClick={() => navigate(`/user/lead/${leadId}/edit`)}>
           Редакт.
         </Button>
-        <Button mode="bezeled" size="m" before={<Archive />}>
-          Приост.
-        </Button>
+        {lead.status === 'ARCHIVE' ? (
+          <Button mode="bezeled" size="m" before={<ArchiveRestore />} onClick={handleUnarchive}>
+            Возобн.
+          </Button>
+        ) : (
+          <Button mode="bezeled" size="m" before={<Archive />} onClick={handleArchive}>
+            Приост.
+          </Button>
+        )}
         <Button mode="bezeled" size="m" before={<Trash />} onClick={handleDelete}>
           Удалить
         </Button>
