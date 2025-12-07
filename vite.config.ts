@@ -22,4 +22,15 @@ export default defineConfig({
     // Exposes your dev server and makes it accessible for the devices in the same network.
     host: true,
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress eval warnings for eruda
+        if (warning.code === 'EVAL' && warning.message.includes('eruda')) {
+          return;
+        }
+        warn(warning);
+      }
+    }
+  }
 });

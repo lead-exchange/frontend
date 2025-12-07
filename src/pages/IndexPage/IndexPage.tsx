@@ -10,40 +10,17 @@ import type { User } from '@/types/user';
 import { observer } from 'mobx-react-lite';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
-import { setUserAcceptedTerms, setUserPhone } from '@/requests/user';
+import { setUserAcceptedTerms } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
+import { useDevMode } from '@/hooks/useDevMode';
 
 import './IndexPage.css';
-import { init, isTMA, requestContact, RequestedContact } from '@tma.js/sdk';
-import { isInsideMiniApp } from '@/index';
-
-const requestContactAction = async (): Promise<string> => {
-  try {
-    const timeoutPromise = new Promise<RequestedContact>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout - user likely clicked outside')), 30000);
-    });
-
-    if (isInsideMiniApp) {
-      const contacts = await Promise.race([requestContact(), timeoutPromise]);
-      return contacts.contact.phone_number;
-    } else {
-      return "79999999999";
-    }
-  } catch (e) {
-    console.log(e);
-    return '';
-  }
-};
 
 type TabType = 'leads' | 'objects';
 
-if (isTMA()) {
-  init();
-}
-
 export const IndexPage: FC = observer(() => {
-  const debug = WebApp.initDataUnsafe.start_param === 'debug';
+  const debug = useDevMode();
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('leads');
@@ -59,13 +36,18 @@ export const IndexPage: FC = observer(() => {
     const signTerms = async () => {
       setLoading(true);
 
-      const user: User = await userStore.getUser();
+      try {
+        const user: User = await userStore.getUser();
+        setLoading(false);
 
-      setLoading(false);
-
-      if (user.offer1Signed && user.offer2Signed) {
-        setIsOfferSigned(true);
-      } else {
+        if (user.offer1Signed && user.offer2Signed) {
+          setIsOfferSigned(true);
+        } else {
+          return;
+        }
+      } catch (error) {
+        console.error('Ошибка при загрузке пользователя:', error);
+        setLoading(false);
         return;
       }
     };
@@ -79,33 +61,27 @@ export const IndexPage: FC = observer(() => {
     }
 
     const getPhone = async () => {
-      const user: User = await userStore.getUser();
+      try {
+        const user: User = await userStore.getUser();
 
-      if (user.phone && user.phone !== '') {
-        setIsPhoneProvided(true);
-        return;
-      }
-
-      const phone = await requestContactAction();
-
-      if (phone && phone != '') {
-        console.log(`Phone: ${phone}`);
-
-        await setUserPhone(phone);
-        setIsPhoneProvided(true);
-
-        return;
-      }
-
-      WebApp.showPopup(
-        {
-          buttons: [{ type: 'close' }],
-          message: 'Для того, чтобы пользоваться сервисом, вы должны предоставить доступ к своему номеру телефона',
-        },
-        () => {
-          WebApp.close();
+        if (user.phone && user.phone !== '') {
+          setIsPhoneProvided(true);
+          return;
         }
-      );
+
+        WebApp.showPopup(
+          {
+            buttons: [{ type: 'close' }],
+            message: 'Для того, чтобы пользоваться сервисом, вы должны предоставить доступ к своему номеру телефона',
+          },
+          () => {
+            WebApp.close();
+          }
+        );
+      } catch (error) {
+        console.error('Ошибка при загрузке пользователя:', error);
+        return;
+      }
     };
 
     getPhone();
@@ -159,10 +135,6 @@ export const IndexPage: FC = observer(() => {
           display: 'flex',
           justifyContent: 'center',
           padding: '20px',
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
         }}
       >
         <Spinner size="m" />

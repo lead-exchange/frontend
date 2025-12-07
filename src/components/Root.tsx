@@ -3,6 +3,9 @@ import WebApp from '@twa-dev/sdk';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
+import { DemoUserSwitcher } from '@/components/DemoUserSwitcher/DemoUserSwitcher';
+import { getCurrentDemoUser } from '@/utils/demoUsers';
+import { useDevMode } from '@/hooks/useDevMode';
 
 const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   <div>
@@ -38,19 +41,24 @@ const VersionBadge: FC = () => {
 };
 
 const Inner: FC = () => {
-  const debug = WebApp.initDataUnsafe.start_param === 'debug';
+  const isDevMode = useDevMode();
 
   // Enable debug mode to see all the methods sent and events received.
   useEffect(() => {
-    if (debug) {
+    if (isDevMode) {
       import('eruda').then(lib => lib.default.init());
     }
-  }, [debug]);
+  }, [isDevMode]);
 
   return (
     <>
       <App />
-      {debug && <VersionBadge />}
+      {isDevMode && <VersionBadge />}
+      {isDevMode && !WebApp.initData?.trim() && (
+        <DemoUserSwitcher 
+          currentUser={getCurrentDemoUser().user.username}
+        />
+      )}
     </>
   );
 };

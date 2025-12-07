@@ -1,7 +1,6 @@
 import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
-
-import {defineConfig} from "eslint/config";
+import { defineConfig } from "eslint-define-config";
 
 import tseslint from "typescript-eslint";
 

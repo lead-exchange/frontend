@@ -21,10 +21,15 @@ class UserStore {
       return this.user;
     }
 
-    const user: User = await getCurrentUser();
-    this.setUser(user);
-
-    return user;
+    try {
+      const user: User = await getCurrentUser();
+      this.setUser(user);
+      return user;
+    } catch (error) {
+      console.error('Ошибка при загрузке пользователя:', error);
+      // Пробрасываем оригинальную ошибку для корректной обработки выше
+      throw error;
+    }
   }
 }
 

@@ -1,4 +1,13 @@
 import WebApp from '@twa-dev/sdk';
+import { getCurrentDemoUser } from '@/utils/demoUsers';
+
+const isDevMode = (): boolean => {
+  return import.meta.env.VITE_DEV_MODE === 'true' || WebApp.initDataUnsafe.start_param === 'debug';
+};
+
+const shouldUseDemoAuth = (): boolean => {
+  return isDevMode() && !WebApp.initData?.trim();
+};
 
 class ApiClient {
   #apiURL: string = import.meta.env.VITE_BACKEND_URL;
@@ -15,7 +24,13 @@ class ApiClient {
 
     const headers: HeadersInit = body ? { 'Content-Type': 'application/json' } : {};
 
-    headers.Authorization = `tma ${WebApp.initData}`;
+    // Для демо-режима добавляем заголовок X-Api-Token
+    if (shouldUseDemoAuth()) {
+      // Если в DEV режиме или демо-режиме и не в Telegram, используем тестовый токен
+      headers['X-Api-Token'] = JSON.stringify(getCurrentDemoUser());
+    } else {
+      headers.Authorization = `tma ${WebApp.initData}`;
+    }
 
     const resp = await fetch(`${this.#apiURL}${path}`, {
       method: method,
@@ -24,7 +39,18 @@ class ApiClient {
     });
 
     if (!resp.ok) {
-      throw new Error(`Expected 2xx response for ${path}, but got: ${resp.status}`);
+      let errorMessage = `Expected 2xx response for ${path}, but got: ${resp.status}`;
+      
+      try {
+        const errorData = await resp.json();
+        if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch (e) {
+        // Если не удалось распарсить JSON, используем стандартное сообщение
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return resp;
@@ -47,12 +73,14 @@ class ApiClient {
     return resp.json();
   }
 
-  async put(path: string, body?: object): Promise<Response> {
-    return await this.do('PUT', path, body);
+  async put<T extends object>(path: string, body?: object): Promise<T> {
+    const resp = await this.do('PUT', path, body);
+    return resp.json();
   }
 
-  async patch(path: string, body?: object): Promise<Response> {
-    return await this.do('PATCH', path, body);
+  async patch<T extends object>(path: string, body?: object): Promise<T> {
+    const resp = await this.do('PATCH', path, body);
+    return resp.json();
   }
 
   async delete(path: string, body?: object): Promise<Response> {

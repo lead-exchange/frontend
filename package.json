@@ -6,6 +6,7 @@
   "homepage": "https://telegram-mini-apps.github.io/reactjs-tsdk-template",
   "scripts": {
     "start": "vite",
+    "start:dev": "VITE_DEV_MODE=true vite",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
