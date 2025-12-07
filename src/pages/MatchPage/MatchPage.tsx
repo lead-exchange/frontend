@@ -4,7 +4,7 @@ import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
 import { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import { LeadMatch, Match, MatchStatus, ObjectMatch } from '@/types/matching';
-import { Button, Spinner } from '@telegram-apps/telegram-ui';
+import { Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './MatchPage.css';
@@ -219,9 +219,7 @@ export const MatchPage: FC = observer(() => {
         </div>
 
         {matchStatus === MatchStatusEnum.OK && (
-          <Button mode="filled" size="l" style={{ marginBottom: 12 }} onClick={() => {}}>
-            Перейти в чат с риэлтором
-          </Button>
+          <div className="match-accepted">Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.</div>
         )}
 
         {matchStatus === MatchStatusEnum.WAIT_FOR_ANSWER && <div className="wait-for-answer">Ждем ответа от риэлтора</div>}

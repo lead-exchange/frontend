@@ -35,7 +35,7 @@ const requestContactAction = async (): Promise<string> => {
       const contacts = await Promise.race([requestContact(), timeoutPromise]);
       return contacts.contact.phone_number;
     } else {
-      return "79999999999";
+      return '79999999999';
     }
   } catch (e) {
     console.log(e);
@@ -99,6 +99,7 @@ export const IndexPage: FC = observer(() => {
 
         if (phone && phone !== '') {
           await setUserPhone(phone);
+          userStore.setUserPhone(phone);
           setIsPhoneProvided(true);
           return;
         }
@@ -189,7 +190,7 @@ export const IndexPage: FC = observer(() => {
             />{' '}
             <span>
               {' '}
-              Я прочитал и согласен с <a href="https://aiplus.ru/privacy">публичной офертой</a> и{' '}
+              Я прочитал(a) и согласен(на) с <a href="https://aiplus.ru/privacy">публичной офертой</a> и{' '}
               <a href="https://aiplus.ru/agreement">согласием на обработку персональных данных</a>
             </span>
           </div>
@@ -199,6 +200,7 @@ export const IndexPage: FC = observer(() => {
             onClick={async () => {
               await setUserAcceptedTerms();
               setIsOfferSigned(true);
+              userStore.setUserAcceptedTerms();
             }}
           >
             Подтвердить

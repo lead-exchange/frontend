@@ -9,11 +9,26 @@ class UserStore {
     makeObservable(this, {
       user: observable,
       setUser: action,
+      setUserAcceptedTerms: action,
+      setUserPhone: action,
     });
   }
 
   setUser(user: User) {
     this.user = user;
+  }
+
+  setUserAcceptedTerms() {
+    if (this.user) {
+      this.user.offer1Signed = true;
+      this.user.offer2Signed = true;
+    }
+  }
+
+  setUserPhone(phone: string) {
+    if (this.user) {
+      this.user.phone = phone;
+    }
   }
 
   async getUser(): Promise<User> {

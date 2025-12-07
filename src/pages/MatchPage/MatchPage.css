@@ -7,6 +7,14 @@
   color: var(--warning-color);
 }
 
+.match-accepted {
+  margin-bottom: 24px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--tgui--link_color);
+}
+
 .declined {
   margin-bottom: 24px;
   font-family: 'Roboto', sans-serif;
