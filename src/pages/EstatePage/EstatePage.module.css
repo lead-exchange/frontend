@@ -1,0 +1,55 @@
+.header {
+  text-align: center;
+  padding: var(--spacing-m) 0;
+}
+
+.topInfo {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: var(--spacing-m);
+  width: 100%;
+}
+
+.topInfoText {
+  margin: 5px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.notFoundContainer {
+  padding: var(--spacing-l);
+  text-align: center;
+}
+
+.container {
+  padding: 16px;
+  background-color: var(--tgui--bg_color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.commissionContainer {
+  padding: var(--spacing-s);
+  align-self: flex-start;
+  width: 100%;
+}
+
+.commissionItem {
+  padding: 0 var(--spacing-xs);
+}
+
+.description {
+  color: var(--text-color);
+  font-size: 15px;
+  line-height: 20px;
+  margin-bottom: var(--spacing-l);
+}

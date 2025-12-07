@@ -142,7 +142,7 @@ export const MatchPage: FC = observer(() => {
 
   if (loading || !id || !type) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className="loading-container">
         <Spinner size="l" />
       </div>
     );
@@ -150,7 +150,7 @@ export const MatchPage: FC = observer(() => {
 
   if (!sourceEntity) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div className="not-found-container">
         <p>Сущность не найдена</p>
       </div>
     );
@@ -160,7 +160,7 @@ export const MatchPage: FC = observer(() => {
 
   if (!match) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div className="not-found-container">
         <p>Сущность не найдена</p>
       </div>
     );
@@ -199,8 +199,8 @@ export const MatchPage: FC = observer(() => {
         }}
       />
 
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ flex: 1 }}>
+      <div className="container">
+        <div className="content">
           {sourceEntity!.type === 'object' ? (
             <ObjectMatchCard
               data={sourceEntity as RealEstateObject}

@@ -1,33 +1,17 @@
 import { getLeadById, updateLead } from '@/requests/entities';
 import { Lead } from '@/types/entity';
-import { Section, Input, Button, List, Select, Spinner } from '@telegram-apps/telegram-ui';
+import { Spinner } from '@telegram-apps/telegram-ui';
 import { type FC, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-const propertyTypeOptions = [
-  { value: 'flat', label: 'Квартира' },
-  { value: 'room', label: 'Комната' },
-  { value: 'commerce', label: 'Коммерция' },
-  { value: 'house', label: 'Загородка' },
-  { value: 'land', label: 'Участок' },
-  { value: 'garage', label: 'Машиноместо/гараж' },
-];
+import { LeadForm } from '@/components/LeadForm/LeadForm';
+import { LeadFormData } from '@/components/LeadForm/schema';
+import { AppRoutes } from '@/navigation/routePaths';
 
 export const LeadEditPage: FC = () => {
   const navigate = useNavigate();
   const { leadId } = useParams<{ leadId: string }>();
   const [loading, setLoading] = useState(true);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [commissionShare, setCommissionShare] = useState('');
-  const [propertyType, setPropertyType] = useState<'flat' | 'room' | 'commerce' | 'house' | 'land' | 'garage'>('flat');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [minArea, setMinArea] = useState('');
-  const [maxArea, setMaxArea] = useState('');
-  const [locations, setLocations] = useState('');
-  const [bedrooms, setBedrooms] = useState('');
-  const [description, setDescription] = useState('');
+  const [lead, setLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     const loadLead = async () => {
@@ -35,20 +19,8 @@ export const LeadEditPage: FC = () => {
 
       setLoading(true);
       try {
-        const lead: Lead = await getLeadById(leadId);
-
-        // Pre-fill form with existing lead data
-        setName(lead.name || '');
-        setPhone(lead.phone || '');
-        setCommissionShare(lead.commissionShare.toString());
-        setPropertyType(lead.requirements.propertyType);
-        setMinPrice(lead.requirements.minPrice.toString());
-        setMaxPrice(lead.requirements.maxPrice.toString());
-        setMinArea(lead.requirements.minArea.toString());
-        setMaxArea(lead.requirements.maxArea.toString());
-        setLocations(lead.requirements.locations.join(', '));
-        setBedrooms(lead.requirements.bedrooms?.toString() || '');
-        setDescription(lead.description || '');
+        const leadData = await getLeadById(leadId);
+        setLead(leadData);
       } catch (error) {
         console.error('Failed to load lead:', error);
         alert('Ошибка при загрузке лида');
@@ -60,33 +32,43 @@ export const LeadEditPage: FC = () => {
     loadLead();
   }, [leadId]);
 
-  const handleSubmit = async () => {
+  const initialValues: Partial<LeadFormData> | undefined = lead ? {
+    name: lead.name || '',
+    commissionShare: lead.commissionShare,
+    propertyType: lead.requirements.propertyType,
+    minPrice: lead.requirements.minPrice,
+    maxPrice: lead.requirements.maxPrice,
+    minArea: lead.requirements.minArea,
+    maxArea: lead.requirements.maxArea,
+    locations: lead.requirements.locations.join(', '),
+    bedrooms: lead.requirements.bedrooms || undefined,
+    description: lead.requirements.description || '',
+  } : undefined;
+
+  const onSubmit = async (data: LeadFormData) => {
     if (!leadId) return;
 
     const leadData = {
-      name,
-      phone,
-      commissionShare: parseFloat(commissionShare),
-      description,
+      name: data.name.trim(),
+      commissionShare: data.commissionShare,
       requirements: {
-        propertyType: propertyType,
-        minPrice: parseFloat(minPrice),
-        maxPrice: parseFloat(maxPrice),
-        minArea: parseInt(minArea),
-        maxArea: parseInt(maxArea),
-        locations: locations
+        propertyType: data.propertyType,
+        minPrice: data.minPrice || 0,
+        maxPrice: data.maxPrice || 0,
+        minArea: data.minArea || 0,
+        maxArea: data.maxArea || 0,
+        locations: data.locations
           .split(',')
           .map(loc => loc.trim())
-          .filter(loc => loc),
-        bedrooms: bedrooms ? parseInt(bedrooms) : null,
+          .filter(Boolean),
+        bedrooms: data.bedrooms,
+        description: data.description || undefined,
       },
     };
 
-    console.log('Updating lead:', leadData);
     try {
-      const updatedLead = await updateLead(leadId, leadData);
-      console.log('Lead updated successfully:', updatedLead);
-      navigate(`/user/lead/${leadId}`, { replace: true });
+      await updateLead(leadId, leadData);
+      navigate(AppRoutes.lead.details(leadId), { replace: true });
     } catch (error) {
       console.error('Failed to update lead:', error);
       alert('Ошибка при обновлении лида');
@@ -102,82 +84,10 @@ export const LeadEditPage: FC = () => {
   }
 
   return (
-    <List>
-      <Section header="Редактирование лида" footer="Измените информацию о клиенте">
-        <Input header="Имя клиента" placeholder="Введите имя" value={name} onChange={e => setName(e.target.value)} />
-        <Input
-          header="Агент покупателя (%)"
-          placeholder="70"
-          type="number"
-          value={commissionShare}
-          onChange={e => setCommissionShare(e.target.value)}
-        />
-
-        <Select
-          header="Тип недвижимости"
-          value={propertyType}
-          onChange={e => setPropertyType(e.target.value as 'flat' | 'room' | 'commerce' | 'house' | 'land' | 'garage')}
-        >
-          {propertyTypeOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
-
-        <Input
-          header="Минимальная цена (₽)"
-          placeholder="1000000"
-          type="number"
-          value={minPrice}
-          onChange={e => setMinPrice(e.target.value)}
-        />
-
-        <Input
-          header="Максимальная цена (₽)"
-          placeholder="5000000"
-          type="number"
-          value={maxPrice}
-          onChange={e => setMaxPrice(e.target.value)}
-        />
-
-        <Input
-          header="Минимальная площадь (м²)"
-          placeholder="30"
-          type="number"
-          value={minArea}
-          onChange={e => setMinArea(e.target.value)}
-        />
-
-        <Input
-          header="Максимальная площадь (м²)"
-          placeholder="100"
-          type="number"
-          value={maxArea}
-          onChange={e => setMaxArea(e.target.value)}
-        />
-
-        <Input
-          header="Локации"
-          placeholder="Москва, Центр, Арбат"
-          value={locations}
-          onChange={e => setLocations(e.target.value)}
-        />
-
-        <Input
-          header="Количество спален"
-          placeholder="2"
-          type="number"
-          value={bedrooms}
-          onChange={e => setBedrooms(e.target.value)}
-        />
-      </Section>
-
-      <div style={{ padding: '16px' }}>
-        <Button size="l" stretched onClick={handleSubmit}>
-          Сохранить изменения
-        </Button>
-      </div>
-    </List>
+    <LeadForm
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      submitText="Сохранить изменения"
+    />
   );
 };

@@ -15,6 +15,7 @@ export interface LeadRequirements {
   marketType?: string[];
   paymentType?: string[];
   features?: string[];
+  description?: string;
 }
 
 export interface CreateLeadDto {
