@@ -21,9 +21,14 @@ const BackButtonManipulator = () => {
 
   useEffect(() => {
     if (location.pathname === '/') {
-      WebApp.BackButton.isVisible && WebApp.BackButton.hide();
-    } else {
-      !WebApp.BackButton.isVisible && WebApp.BackButton.show();
+      if (WebApp.BackButton.isVisible) {
+        WebApp.BackButton.hide();
+      }
+      return;
+    }
+    
+    if (!WebApp.BackButton.isVisible) {
+      WebApp.BackButton.show();
     }
   }, [location]);
 

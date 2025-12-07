@@ -46,7 +46,7 @@ class ApiClient {
         if (errorData.message) {
           errorMessage = errorData.message;
         }
-      } catch (e) {
+      } catch {
         // Если не удалось распарсить JSON, используем стандартное сообщение
       }
       

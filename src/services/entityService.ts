@@ -78,9 +78,8 @@ export const fetchLeads = async (): Promise<Lead[]> => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
+    await response.json();
 
-    Array.isArray(data) ? data.filter((lead: Lead) => lead.status === 'ACTIVE') : [];
     return mockLeads.filter(lead => lead.status === 'ACTIVE');
   } catch (error) {
     console.warn('Failed to fetch leads from backend, using mock data:', error);

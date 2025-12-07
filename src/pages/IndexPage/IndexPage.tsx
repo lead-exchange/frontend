@@ -98,7 +98,7 @@ export const IndexPage: FC = observer(() => {
 
         if (activeTab === 'leads') {
           const data = await getLeads();
-          console.log(data);
+          console.info(data);
           leadStore.setLeads(data);
         } else {
           const data = await getRealEstateObjects();

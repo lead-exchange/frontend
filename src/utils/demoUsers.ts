@@ -5,11 +5,15 @@ export const getCurrentDemoUser = (): DemoUser => {
     return demoUsers.bob;
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const userParam = urlParams.get('demo_user');
-  
-  if (userParam && Object.keys(demoUsers).includes(userParam)) {
-    return demoUsers[userParam as DemoUserKey];
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userParam = urlParams.get('demo_user');
+    
+    if (userParam && Object.keys(demoUsers).includes(userParam)) {
+      return demoUsers[userParam as DemoUserKey];
+    }
+  } catch (error) {
+    console.error('Failed to parse demo user from URL:', error);
   }
   
   return demoUsers.bob;

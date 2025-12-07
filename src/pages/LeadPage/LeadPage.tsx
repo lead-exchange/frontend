@@ -114,7 +114,7 @@ export const LeadPage: FC = () => {
         {bedroomsText && <Chip mode="mono">{bedroomsText}</Chip>}
         <Chip mode="mono">{priceRange}</Chip>
         {lead.requirements.locations.map((location, index) => (
-          <Chip key={index} mode="mono">
+          <Chip key={`${location}-${index}`} mode="mono">
             {location}
           </Chip>
         ))}

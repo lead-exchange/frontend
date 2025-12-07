@@ -1,19 +1,25 @@
 import { FC } from 'react';
-import { demoUsers } from '@/types/demo';
+import { demoUsers, DemoUserKey } from '@/types/demo';
 
 interface DemoUserSwitcherProps {
   currentUser: string;
 }
 
 export const DemoUserSwitcher: FC<DemoUserSwitcherProps> = ({ currentUser }) => {
-  const handleUserSwitch = (userKey: string) => {
-    const url = new URL(window.location.href);
-    if (userKey === 'bob') {
-      url.searchParams.delete('demo_user');
-    } else {
-      url.searchParams.set('demo_user', userKey);
+  const handleUserSwitch = (userKey: DemoUserKey) => {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const url = new URL(window.location.href);
+      if (userKey === 'bob') {
+        url.searchParams.delete('demo_user');
+      } else {
+        url.searchParams.set('demo_user', userKey);
+      }
+      window.location.href = url.toString();
+    } catch (error) {
+      console.error('Failed to switch user:', error);
     }
-    window.location.href = url.toString();
   };
 
   return (
@@ -33,7 +39,7 @@ export const DemoUserSwitcher: FC<DemoUserSwitcherProps> = ({ currentUser }) => 
         {Object.entries(demoUsers).map(([key, user]) => (
           <button
             key={key}
-            onClick={() => handleUserSwitch(key)}
+            onClick={() => handleUserSwitch(key as DemoUserKey)}
             style={{ 
               background: currentUser === key ? '#007AFF' : '#333',
               color: 'white',
