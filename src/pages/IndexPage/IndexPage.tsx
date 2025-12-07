@@ -3,6 +3,7 @@ import { type FC, useEffect, useState } from 'react';
 import { User as UserIcon, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
+import { requestContact, init, isTMA } from '@telegram-apps/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
 import type { Lead, RealEstateObject } from '@/types/entity';
@@ -10,12 +11,35 @@ import type { User } from '@/types/user';
 import { observer } from 'mobx-react-lite';
 import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
-import { setUserAcceptedTerms } from '@/requests/user';
+import { setUserAcceptedTerms, setUserPhone } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
 import { useDevMode } from '@/hooks/useDevMode';
+import { isInsideMiniApp } from '@/index';
 
 import './IndexPage.css';
+
+if (isTMA()) {
+  init();
+}
+
+const requestContactAction = async (): Promise<string> => {
+  try {
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 30000);
+    });
+
+    if (isInsideMiniApp) {
+      const result = await Promise.race([requestContact(), timeoutPromise]);
+      return result.contact.phone_number;
+    } else {
+      return "79999999999";
+    }
+  } catch (e) {
+    console.info('Contact request failed:', e);
+    return '';
+  }
+};
 
 type TabType = 'leads' | 'objects';
 
@@ -69,6 +93,14 @@ export const IndexPage: FC = observer(() => {
           return;
         }
 
+        const phone = await requestContactAction();
+
+        if (phone && phone !== '') {
+          await setUserPhone(phone);
+          setIsPhoneProvided(true);
+          return;
+        }
+
         WebApp.showPopup(
           {
             buttons: [{ type: 'close' }],
@@ -79,7 +111,7 @@ export const IndexPage: FC = observer(() => {
           }
         );
       } catch (error) {
-        console.error('Ошибка при загрузке пользователя:', error);
+        console.error('Ошибка при запросе телефона:', error);
         return;
       }
     };
