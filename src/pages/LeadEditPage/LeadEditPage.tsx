@@ -61,7 +61,7 @@ export const LeadEditPage: FC = () => {
           .split(',')
           .map(loc => loc.trim())
           .filter(Boolean),
-        bedrooms: data.bedrooms,
+        bedrooms: data.bedrooms || undefined,
         description: data.description || undefined,
       },
     };

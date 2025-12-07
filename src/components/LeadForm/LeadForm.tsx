@@ -84,10 +84,10 @@ export const LeadForm: FC<LeadFormProps> = ({
               <FormFieldWrapper error={errors.commissionShare}>
                 <Input
                   {...field}
-                  value={field.value ? formatNumber(field.value) : ''}
+                  value={field.value !==  null ? formatNumber(field.value) : ''}
                   onChange={(e) => {
                     const num = parseNumber(e.target.value);
-                    field.onChange(num === null ? undefined : num);
+                    field.onChange(num);
                   }}
                   header="Агент покупателя"
                   placeholder="70"
@@ -131,10 +131,10 @@ export const LeadForm: FC<LeadFormProps> = ({
                 <FormFieldWrapper error={errors[item.name as keyof LeadFormData]}>
                   <Input
                     {...field}
-                    value={field.value ? formatNumber(field.value as number) : ''}
+                    value={field.value !== null ? formatNumber(field.value as number) : ''}
                     onChange={(e) => {
                       const num = parseNumber(e.target.value);
-                      field.onChange(num === null ? undefined : num);
+                      field.onChange(num);
                     }}
                     header={item.label}
                     placeholder={item.placeholder}
@@ -171,10 +171,10 @@ export const LeadForm: FC<LeadFormProps> = ({
               <FormFieldWrapper error={errors.bedrooms}>
                 <Input
                   {...field}
-                  value={field.value ? formatNumber(field.value) : ''}
+                  value={field.value !== null ? formatNumber(field.value) : ''}
                   onChange={(e) => {
                      const num = parseNumber(e.target.value);
-                     field.onChange(num === null ? undefined : num);
+                     field.onChange(num);
                   }}
                   header="Количество спален"
                   placeholder="2"
