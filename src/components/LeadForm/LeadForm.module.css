@@ -1,24 +1,30 @@
-.container {
+.form {
   min-height: 100vh;
   background-color: var(--tgui--bg_color);
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-l);
+  padding: var(--padding-l);
 }
 
-.formSection {
-  background-color: var(--tgui--bg_color);
+.title {
+  margin: 0;
+  margin-bottom: var(--spacing-m);
+  color: var(--tgui--link_color);
+  text-align: left;
+  font-size: 20px;
+  font-weight: 600;
 }
 
-.formSection > :global(div[class*="tgui-"]) {
-  background-color: var(--tgui--bg_color) !important;
+.text {
+  color: var(--tgui--link_color);
 }
 
 .buttonContainer {
-  padding: var(--spacing-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-m);
+  padding: var(--padding-m);
   background-color: var(--tgui--bg_color);
   margin-top: auto;
-}
-
-.list :global(hr) {
-  display: none;
 }
