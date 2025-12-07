@@ -1,0 +1,72 @@
+.imageWithSteps {
+  flex: 1;
+  position: relative;
+  width: 90%;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--border-radius);
+  min-height: 200px;
+  margin: auto;
+  margin-top: var(--spacing-s);
+  margin-bottom: 0;
+}
+
+.imagePlaceholder {
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--tgui--link_color);
+  background: var(--tgui--tertiary_bg_color);
+}
+
+.imagePlaceholderIcon {
+  position: absolute;
+  stroke: var(--tgui--link_color);
+  top: 50%;
+  left: 50%;
+  margin: auto;
+  width: 96px;
+  transform: translate(-50%, -50%);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.steps {
+  position: absolute;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(in srgb, #000000 40%, transparent);
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.arrowLeft {
+  left: 8px;
+}
+
+.arrowRight {
+  right: 8px;
+}

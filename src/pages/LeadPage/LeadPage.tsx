@@ -9,6 +9,7 @@ import styles from './LeadPage.module.css';
 import { Matches } from '@/components/Matches/Matches';
 import { getLeadMatches } from '@/requests/matches';
 import { leadMatchesStore } from '@/stores/matchesByEntitiesStore';
+import { AppRoutes } from '@/navigation/routePaths';
 
 const propertyTypeLabels: Record<string, string> = {
   flat: 'Квартира',
@@ -56,7 +57,7 @@ export const LeadPage: FC = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className={styles.loadingContainer}>
         <Spinner size="l" />
       </div>
     );
@@ -64,7 +65,7 @@ export const LeadPage: FC = () => {
 
   if (!lead) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
+      <div className={styles.notFoundContainer}>
         <p>Лид не найден</p>
       </div>
     );
@@ -114,31 +115,27 @@ export const LeadPage: FC = () => {
     }
   };
 
+  const handleEditClick = () => {
+    if (!leadId) return;
+    navigate(AppRoutes.lead.edit(leadId));
+  };
+
+  const handleRecommendationsClick = () => {
+    navigate(AppRoutes.tinder('lead', lead.id));
+  };
+
   return (
-    <div
-      style={{
-        padding: '16px',
-        backgroundColor: 'var(--tgui--bg_color)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '15px',
-      }}
-    >
+    <div className={styles.container}>
       {/* Имя клиента */}
       <div className={`${styles.header} title-3`}>{lead.name}</div>
 
       {/* Chips с основной информацией */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className={styles.chipsContainer}>
         <Chip mode="mono">{propertyTypeLabels[lead.requirements.propertyType]}</Chip>
+
         {bedroomsText && <Chip mode="mono">{bedroomsText}</Chip>}
         <Chip mode="mono">{priceRange}</Chip>
+
         {lead.requirements.locations.map((location, index) => (
           <Chip key={`${location}-${index}`} mode="mono">
             {location}
@@ -148,27 +145,15 @@ export const LeadPage: FC = () => {
 
       {/* Локации */}
 
-      <div
-        className="comission-bids-container"
-        style={{
-          padding: '8px',
-          alignSelf: 'start',
-        }}
-      >
+      <div className={`comission-bids-container ${styles.commissionContainer}`}>
         <div
-          className="comission-bids comission-bids__yours"
-          style={{
-            padding: '0px 2px 0px 2px',
-          }}
+          className={`comission-bids comission-bids__yours ${styles.commissionItem}`}
         >
           <span className="comission-bids__value">Агент покупателя: {lead.commissionShare}%</span>
         </div>
 
         <div
-          className="comission-bids comission-bids__theirs"
-          style={{
-            padding: '0px 2px 0px 2px',
-          }}
+          className={`comission-bids comission-bids__theirs ${styles.commissionItem}`}
         >
           <span className="comission-bids__value">Агент продавца: {100 - lead.commissionShare}%</span>
         </div>
@@ -176,43 +161,62 @@ export const LeadPage: FC = () => {
 
       {/* Описание */}
       {lead.description && (
-        <div
-          style={{
-            color: 'var(--tgui--text_color)',
-            fontSize: '15px',
-            lineHeight: '20px',
-          }}
-        >
+        <div className={styles.description}>
           {lead.description}
         </div>
       )}
 
       {/* Кнопки действий */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-        }}
-      >
-        <Button mode="bezeled" size="m" before={<Pencil />} onClick={() => navigate(`/user/lead/${leadId}/edit`)}>
+      <div className={styles.actionsContainer}>
+        <Button
+          mode="bezeled"
+          size="m"
+          className={styles.actionButtonSmall}
+          before={<Pencil />}
+          onClick={handleEditClick}
+        >
           Редакт.
         </Button>
         {lead.status === 'ARCHIVE' ? (
-          <Button mode="bezeled" size="m" before={<ArchiveRestore />} onClick={handleUnarchive}>
+          <Button
+            mode="bezeled"
+            size="m"
+            className={styles.actionButtonSmall}
+            before={<ArchiveRestore />}
+            onClick={handleUnarchive}
+          >
             Возобн.
           </Button>
         ) : (
-          <Button mode="bezeled" size="m" before={<Archive />} onClick={handleArchive}>
+          <Button
+            mode="bezeled"
+            size="m"
+            className={styles.actionButtonSmall}
+            before={<Archive />}
+            onClick={handleArchive}
+          >
             Приост.
           </Button>
         )}
-        <Button mode="bezeled" size="m" before={<Trash />} onClick={handleDelete}>
+        <Button
+          mode="bezeled"
+          size="m"
+          className={styles.actionButtonSmall}
+          before={<Trash />}
+          onClick={handleDelete}
+        >
           Удалить
         </Button>
       </div>
 
       {/* Кнопка рекомендаций */}
-      <Button mode="filled" size="l" stretched onClick={() => navigate(`/tinder/lead/${lead.id}`)}>
+      <Button
+        mode="filled"
+        size="l"
+        stretched
+        className={styles.recommendationsButton}
+        onClick={handleRecommendationsClick}
+      >
         Смотреть рекомендации
       </Button>
 

@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import type { Lead } from '@/types/entity';
-import './TinderCard.css';
+import styles from './TinderCard.module.css';
 import { ComissionDisplay } from '../Comission/ComissionDisplay';
 import { Chips } from '../common/Chips';
 
@@ -22,19 +22,19 @@ export const LeadMatchCard: FC<LeadMatchCardProps> = ({ data, displayComission }
   };
 
   return (
-    <div className="match-card__content" style={{ paddingTop: '24px' } /* Too lazy to make it prettier */}>
-      <div className="match-card__info">
-        <h3 className="match-card__title">{name}</h3>
+    <div className={`${styles.matchCardContent} ${styles.matchCardContentWithTopPadding}`}>
+      <div className={styles.matchCardInfo}>
+        <h3 className={styles.matchCardTitle}>{name}</h3>
 
-        <p className="match-card__subtitle">
+        <p className={styles.matchCardSubtitle}>
           Ищет {requirements.bedrooms ? `${requirements.bedrooms}-комн.` : ''} {propertyTypeMap[requirements.propertyType]}
         </p>
 
-        <p className="match-card__details">
+        <p className={styles.matchCardDetails}>
           {requirements.minArea}-{requirements.maxArea} кв.м.
         </p>
 
-        <p className="match-card__details">
+        <p className={styles.matchCardDetails}>
           {new Intl.NumberFormat('ru-RU', {
             style: 'currency',
             currency: 'RUB',
@@ -53,7 +53,7 @@ export const LeadMatchCard: FC<LeadMatchCardProps> = ({ data, displayComission }
 
       <Chips values={requirements.locations.concat(requirements.repairType || []).concat(requirements.marketType || [])} />
 
-      {description && <p className="match-card__description">{description}</p>}
+      {description && <p className={styles.matchCardDescription}>{description}</p>}
     </div>
   );
 };

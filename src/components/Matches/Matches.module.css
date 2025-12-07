@@ -1,0 +1,48 @@
+.matchesContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.matchesSpinner {
+  display: flex;
+  justify-content: center;
+  padding: var(--padding-m);
+}
+
+.matchStatus {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-family-roboto, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: 13px;
+  flex-direction: row;
+  justify-content: right;
+  width: min-content;
+}
+
+.statusMatch {
+  color: var(--tgui--accent_text_color);
+}
+
+.statusNeedAnswer {
+  color: var(--warning-color);
+}
+
+.statusDeclined {
+  color: var(--tgui--destructive_text_color);
+}
+
+.matchName {
+  font-family: var(--font-family-roboto, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  font-size: var(--font-size-body);
+}
+
+.entityMatch {
+  border-bottom: 0.5px solid var(--tgui--border_color);
+}
+
+.matchesHeader {
+  border-bottom: 0.5px solid var(--tgui--border_color);
+}

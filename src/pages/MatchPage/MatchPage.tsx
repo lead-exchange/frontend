@@ -7,7 +7,7 @@ import { LeadMatch, Match, MatchStatus, ObjectMatch } from '@/types/matching';
 import { Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './MatchPage.css';
+import styles from './MatchPage.module.css';
 import { matchLogStore } from '@/stores/matchLogStore';
 import { observer } from 'mobx-react-lite';
 import { ComissionModal } from '@/components/Comission/ComissionModal';
@@ -141,7 +141,7 @@ export const MatchPage: FC = observer(() => {
 
   if (loading || !id || !type) {
     return (
-      <div className="loading-container">
+      <div className={styles.loadingContainer}>
         <Spinner size="l" />
       </div>
     );
@@ -149,7 +149,7 @@ export const MatchPage: FC = observer(() => {
 
   if (!sourceEntity) {
     return (
-      <div className="not-found-container">
+      <div className={styles.notFoundContainer}>
         <p>Сущность не найдена</p>
       </div>
     );
@@ -159,7 +159,7 @@ export const MatchPage: FC = observer(() => {
 
   if (!match) {
     return (
-      <div className="not-found-container">
+      <div className={styles.notFoundContainer}>
         <p>Сущность не найдена</p>
       </div>
     );
@@ -198,8 +198,8 @@ export const MatchPage: FC = observer(() => {
         }}
       />
 
-      <div className="container">
-        <div className="content">
+      <div className={styles.container}>
+        <div className={styles.content}>
           {sourceEntity!.type === 'object' ? (
             <ObjectMatchCard
               data={sourceEntity as RealEstateObject}
@@ -218,12 +218,12 @@ export const MatchPage: FC = observer(() => {
         </div>
 
         {matchStatus === MatchStatusEnum.OK && (
-          <div className="match-accepted">Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.</div>
+          <div className={styles.matchAccepted}>Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.</div>
         )}
 
-        {matchStatus === MatchStatusEnum.WAIT_FOR_ANSWER && <div className="wait-for-answer">Ждем ответа от риэлтора</div>}
+        {matchStatus === MatchStatusEnum.WAIT_FOR_ANSWER && <div className={styles.waitForAnswer}>Ждем ответа от риэлтора</div>}
 
-        {matchStatus === MatchStatusEnum.DECLINED && <div className="declined">Риэлтор отказался от сделки</div>}
+        {matchStatus === MatchStatusEnum.DECLINED && <div className={styles.declined}>Риэлтор отказался от сделки</div>}
 
         {matchStatus === MatchStatusEnum.BIDS && (
           <MatchControls

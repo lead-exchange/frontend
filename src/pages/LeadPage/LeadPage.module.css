@@ -55,3 +55,12 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.actionButtonSmall {
+  font-size: 13px;
+}
+
+.recommendationsButton {
+  min-height: 56px;
+  max-height: 56px;
+}

@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import type { RealEstateObject } from '@/types/entity';
-import './TinderCard.css';
+import styles from './TinderCard.module.css';
 
 import { ImageWithSteps } from '@/components/common/ImageWithSteps';
 import { ComissionDisplay } from '@/components/Comission/ComissionDisplay';
@@ -46,13 +46,13 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
   ].filter(item => item);
 
   return (
-    <div className="match-card__content">
+    <div className={styles.matchCardContent}>
       <ImageWithSteps key={data.id} photos={photos} />
 
-      <div className="match-card__info">
-        <h3 className="match-card__title">{data.displayName}</h3>
+      <div className={styles.matchCardInfo}>
+        <h3 className={styles.matchCardTitle}>{data.displayName}</h3>
 
-        <p className="match-card__price">
+        <p className={styles.matchCardPrice}>
           {new Intl.NumberFormat('ru-RU', {
             style: 'currency',
             currency: 'RUB',
@@ -60,21 +60,12 @@ export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComissi
           }).format(attributes.price)}
         </p>
 
-        <p className="match-card__address">{adressParts.join(', ')}</p>
+        <p className={styles.matchCardAddress}>{adressParts.join(', ')}</p>
 
         {displayComission && <ComissionDisplay type="buyer" value={commissionShare} />}
 
         {attributes.description && (
-          <div
-            style={{
-              color: 'var(--tgui--text_color)',
-              fontSize: '15px',
-              lineHeight: '20px',
-              marginBottom: '24px',
-            }}
-          >
-            {attributes.description}
-          </div>
+          <div className={styles.matchCardDescriptionSmall}>{attributes.description}</div>
         )}
       </div>
 

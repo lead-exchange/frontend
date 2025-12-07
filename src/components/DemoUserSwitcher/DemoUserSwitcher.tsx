@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { demoUsers, DemoUserKey } from '@/types/demo';
 
 interface DemoUserSwitcherProps {
@@ -6,6 +6,8 @@ interface DemoUserSwitcherProps {
 }
 
 export const DemoUserSwitcher: FC<DemoUserSwitcherProps> = ({ currentUser }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleUserSwitch = (userKey: DemoUserKey) => {
     if (typeof window === 'undefined') return;
     
@@ -22,6 +24,30 @@ export const DemoUserSwitcher: FC<DemoUserSwitcherProps> = ({ currentUser }) => 
     }
   };
 
+  if (!isOpen) {
+    return (
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        style={{
+          position: 'fixed',
+          top: 10,
+          right: 10,
+          zIndex: 1000,
+          background: 'rgba(0,0,0,0.8)',
+          color: 'white',
+          border: 'none',
+          borderRadius: 16,
+          padding: '6px 10px',
+          fontSize: 11,
+          cursor: 'pointer',
+        }}
+      >
+        Демо
+      </button>
+    );
+  }
+
   return (
     <div style={{ 
       position: 'fixed',
@@ -32,9 +58,29 @@ export const DemoUserSwitcher: FC<DemoUserSwitcherProps> = ({ currentUser }) => 
       padding: '10px',
       borderRadius: '8px',
       color: 'white',
-      fontSize: '12px'
+      fontSize: '12px',
+      minWidth: 220,
     }}>
-      <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>Демо-пользователь:</div>
+      <div style={{ position: 'relative', marginBottom: '8px', fontWeight: 'bold' }}>
+        Демо-пользователь
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          style={{
+            position: 'absolute',
+            top: -4,
+            right: -4,
+            background: 'transparent',
+            border: 'none',
+            color: '#fff',
+            fontSize: 14,
+            cursor: 'pointer',
+            padding: 4,
+          }}
+        >
+          ×
+        </button>
+      </div>
       <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}>
         {Object.entries(demoUsers).map(([key, user]) => (
           <button
