@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background-color: var(--tgui--secondary_bg_color);
+  background-color: var(--tgui--bg_color);
   display: flex;
   flex-direction: column;
 }
@@ -11,7 +11,7 @@
 
 .buttonContainer {
   padding: var(--spacing-m);
-  background-color: var(--tgui--secondary_bg_color);
+  background-color: var(--tgui--bg_color);
   margin-top: auto;
 }
 
