@@ -42,7 +42,7 @@ export const LeadEditPage: FC = () => {
     maxArea: lead.requirements.maxArea,
     locations: lead.requirements.locations.join(', '),
     bedrooms: lead.requirements.bedrooms || undefined,
-    description: lead.description || '',
+    description: lead.requirements.description || '',
   } : undefined;
 
   const onSubmit = async (data: LeadFormData) => {
@@ -51,7 +51,6 @@ export const LeadEditPage: FC = () => {
     const leadData = {
       name: data.name.trim(),
       commissionShare: data.commissionShare,
-      description: data.description || undefined,
       requirements: {
         propertyType: data.propertyType,
         minPrice: data.minPrice || 0,
@@ -63,6 +62,7 @@ export const LeadEditPage: FC = () => {
           .map(loc => loc.trim())
           .filter(Boolean),
         bedrooms: data.bedrooms,
+        description: data.description || undefined,
       },
     };
 
