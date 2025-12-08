@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 import type { RealEstateObject } from '@/types/entity';
 import styles from './TinderCard.module.css';
 
@@ -15,11 +15,10 @@ interface ObjectMatchCardProps {
 export const ObjectMatchCard: FC<ObjectMatchCardProps> = ({ data, displayComission }) => {
   const { attributes, commissionShare } = data;
   
-  const photos = useMemo(() => attributes.photos ?? [], [attributes.photos]);
-  const addressParts = useMemo(() => getAddressParts(attributes.address), [attributes.address]);
-  const chipValues = useMemo(() => getEstateChipValues(attributes), [attributes]);
-  const formattedPrice = useMemo(() => formatPrice(attributes.price, attributes.pricePerMeter), 
-    [attributes.price, attributes.pricePerMeter]);
+  const photos = attributes.photos ?? [];
+  const addressParts = getAddressParts(attributes.address);
+  const chipValues = getEstateChipValues(attributes);
+  const formattedPrice = formatPrice(attributes.price, attributes.pricePerMeter);
   
   return (
     <div className={styles.matchCardContent}>

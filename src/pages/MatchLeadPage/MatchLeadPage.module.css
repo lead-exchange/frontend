@@ -1,29 +1,3 @@
-.statusText {
-  display: flex;
-  align-self: stretch;
-  padding: 0 var(--spacing-l);
-  padding-bottom: var(--spacing-l);
-  font-family: var(--font-family-system);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-strong);
-  text-align: left;
-}
-
-.waitForAnswer {
-  composes: statusText;
-  color: var(--warning-color);
-}
-
-.matchAccepted {
-  composes: statusText;
-  color: var(--tgui--link_color);
-}
-
-.declined {
-  composes: statusText;
-  color: var(--tgui--destructive_text_color);
-}
-
 .loadingContainer {
   display: flex;
   justify-content: center;
@@ -41,6 +15,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--spacing-m);
   padding-bottom: var(--spacing-l);
   background-color: var(--tgui--bg_color);
 }
@@ -51,4 +26,44 @@
   align-items: stretch;
   justify-content: flex-start;
   width: 100%;
+}
+
+.statusContent {
+  display: flex;
+  align-items: left;
+  padding: 0 var(--spacing-l);
+  gap: var(--spacing-s);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 500;
+}
+
+.matchAccepted {
+  color: var(--tgui--link_color);
+}
+
+.waitForAnswer {
+  color: var(--warning-color);
+}
+
+.declined {
+  color: var(--tgui--destructive_text_color);
+}
+
+.statusIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.matchAccepted .statusIcon {
+  color: var(--tgui--link_color);
+}
+
+.waitForAnswer .statusIcon {
+  color: var(--warning-color);
+}
+
+.declined .statusIcon {
+  color: var(--tgui--destructive_text_color);
 }

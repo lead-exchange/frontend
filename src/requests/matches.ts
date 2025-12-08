@@ -33,11 +33,10 @@ export const createMatch = async (req: CreateMatchRequest): Promise<Match> => {
 interface UpdateMatchRequest {
   id: string;
   leadCommission: number;
-  updatedBy: string;
   comment?: string;
   status: MatchStatus;
 }
 
 export const updateMatch = async (req: UpdateMatchRequest): Promise<Match> => {
-  return await apiClient.put<Match>(`/api/matches/${req.id}`, req);
+  return await apiClient.put<Match>('/api/matches', req);
 };

@@ -1,0 +1,51 @@
+.matchHistory {
+  margin-top: var(--spacing-l);
+  padding: var(--spacing-l);
+}
+
+.title {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-headline);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-m) 0;
+  color: var(--tgui--text_color);
+}
+
+.logsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-m);
+}
+
+.logContent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.logText {
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-caption);
+  font-weight: 400;
+  color: var(--tgui--text_color);
+}
+
+.dialogIcon {
+  color: var(--tgui--hint_color);
+  flex-shrink: 0;
+}
+
+.logDate {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-caption);
+  color: var(--tgui--hint_color);
+  margin-top: var(--spacing-xs);
+}
+
+.calendarIcon {
+  color: var(--tgui--hint_color);
+}
+

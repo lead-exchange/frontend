@@ -12,7 +12,6 @@ import { matchLogStore } from '@/stores/matchLogStore';
 import { observer } from 'mobx-react-lite';
 import { ComissionModal } from '@/components/Comission/ComissionModal';
 import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
-import { userStore } from '@/stores/userStore';
 import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
 import { getEstateById, getLeadById } from '@/requests/entities';
 
@@ -178,7 +177,6 @@ export const MatchPage: FC = observer(() => {
       id: id,
       status: status,
       leadCommission: sourceEntity.type === 'lead' ? commission : commission && 100 - commission,
-      updatedBy: userStore.user!.id,
     });
 
     if (type === 'lead') {

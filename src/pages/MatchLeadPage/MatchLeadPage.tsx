@@ -1,20 +1,61 @@
 import { ComissionBids } from '@/components/Comission/ComissionBids';
 import { ObjectMatchCard } from '@/components/MatchCard/ObjectMatchCard';
+import { MatchHistory } from '@/components/MatchHistory';
 import { MatchControls } from '@/components/MatchControls/MatchControls';
 import { RealEstateObject } from '@/types/entity';
 import { Match, MatchStatus, ObjectMatch } from '@/types/matching';
 import { Spinner } from '@telegram-apps/telegram-ui';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import classNames from 'classnames';
+import { CheckCircle, Clock, XCircle } from 'lucide-react';
 import styles from './MatchLeadPage.module.css';
 import { matchLogStore } from '@/stores/matchLogStore';
 import { observer } from 'mobx-react-lite';
 import { ComissionModal } from '@/components/Comission/ComissionModal';
 import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
-import { userStore } from '@/stores/userStore';
 import { objectMatchesStore } from '@/stores/matchesByEntitiesStore';
 import { getEstateById } from '@/requests/entities';
 import { useQuery, useMutation } from '@tanstack/react-query';
+
+// Константы
+const COMMISSION_TOTAL = 100;
+
+// Хелперы
+const getCommissionValues = (objectCommission: number, userCommission?: number) => {
+  const yours = userCommission ?? objectCommission;
+  const theirs = objectCommission != null ? COMMISSION_TOTAL - objectCommission : 0;
+  return { yours, theirs };
+};
+
+const getStatusClassName = (status: MatchStatusEnum) => ({
+  [styles.matchAccepted]: status === MatchStatusEnum.OK,
+  [styles.waitForAnswer]: status === MatchStatusEnum.WAIT_FOR_ANSWER,
+  [styles.declined]: status === MatchStatusEnum.DECLINED,
+});
+
+const getStatusMessage = (status: MatchStatusEnum) => {
+  switch (status) {
+    case MatchStatusEnum.OK:
+      return {
+        icon: <CheckCircle className={styles.statusIcon} size={20} />,
+        text: 'Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.'
+      };
+    case MatchStatusEnum.WAIT_FOR_ANSWER:
+      return {
+        icon: <Clock className={styles.statusIcon} size={20} />,
+        text: 'Ждем ответа от риэлтора'
+      };
+    case MatchStatusEnum.DECLINED:
+      return {
+        icon: <XCircle className={styles.statusIcon} size={20} />,
+        text: 'Риэлтор отказался от сделки'
+      };
+    default:
+      return null;
+  }
+};
+
 
 enum MatchStatusEnum {
   OK,
@@ -102,8 +143,7 @@ export const MatchLeadPage: FC = observer(() => {
       updateMatch({
         id: id!,
         status: params.status,
-        leadCommission: params.commission && 100 - params.commission,
-        updatedBy: userStore.user!.id,
+        leadCommission: params.commission && COMMISSION_TOTAL - params.commission,
       }),
     onSuccess: (match) => {
       if (objectData) {
@@ -162,7 +202,12 @@ export const MatchLeadPage: FC = observer(() => {
     updateMatchMutation.mutate({ status, commission });
   };
 
-  console.log({ objectData })
+  const statusMessage = getStatusMessage(matchStatus);
+  const commissionValues = getCommissionValues(objectData.commissionShare, objectUserCommission);
+  const showControls = match.commonStatus === 'WAIT_ESTATE' || match.commonStatus === 'WAIT_LEAD';
+  const showComissionBids = matchStatus === MatchStatusEnum.BIDS;
+
+  console.log({ matchData });
 
   return (
     <>
@@ -173,23 +218,24 @@ export const MatchLeadPage: FC = observer(() => {
             displayComission={matchStatus !== MatchStatusEnum.BIDS}
           />
 
-          {matchStatus === MatchStatusEnum.BIDS && (
+          <MatchHistory matchLogs={matchLogs || []} />
+
+          {showComissionBids && (
             <ComissionBids
-              yours={objectUserCommission ?? objectData.commissionShare}
-              theirs={objectData.commissionShare != null ? 100 - objectData.commissionShare : 0}
+              yours={commissionValues.yours}
+              theirs={commissionValues.theirs}
             />
           )}
         </div>
 
-        {matchStatus === MatchStatusEnum.OK && (
-          <div className={styles.matchAccepted}>Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.</div>
+        {statusMessage && (
+          <div className={classNames(styles.statusContent, getStatusClassName(matchStatus))}>
+            {statusMessage.icon}
+            <span>{statusMessage.text}</span>
+          </div>
         )}
 
-        {matchStatus === MatchStatusEnum.WAIT_FOR_ANSWER && <div className={styles.waitForAnswer}>Ждем ответа от риэлтора</div>}
-
-        {matchStatus === MatchStatusEnum.DECLINED && <div className={styles.declined}>Риэлтор отказался от сделки</div>}
-
-        {matchStatus === MatchStatusEnum.BIDS && (
+        {showControls && (
           <MatchControls
             onLike={() => {
               updateMatchAction(

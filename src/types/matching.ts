@@ -21,9 +21,11 @@ export interface ObjectMatch extends Match {
 }
 
 export interface MatchLog {
+  id: string;
   matchId: string;
   status: MatchStatus;
   leadCommission: number;
   userType: string;
   createdAt: string;
+  comment?: string;
 }

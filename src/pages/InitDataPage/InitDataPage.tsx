@@ -1,4 +1,4 @@
-import { type FC, useMemo } from 'react';
+import { type FC } from 'react';
 import { List, Placeholder } from '@telegram-apps/telegram-ui';
 import WebApp from '@twa-dev/sdk';
 import type { WebAppUser } from '@twa-dev/types';
@@ -30,7 +30,7 @@ export const InitDataPage: FC = () => {
   const initDataRaw = WebApp.initData;
   const initData = WebApp.initDataUnsafe;
 
-  const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
+  const initDataRows: DisplayDataRow[] | undefined = (() => {
     if (!initData || !initDataRaw) {
       return;
     }
@@ -54,30 +54,21 @@ export const InitDataPage: FC = () => {
       { title: 'chat_type', value: chat_type },
       { title: 'chat_instance', value: chat_instance },
     ];
-  }, [initData, initDataRaw]);
+  })();
 
-  const userRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initData && initData.user ? getUserRows(initData.user) : undefined;
-  }, [initData]);
+  const userRows: DisplayDataRow[] | undefined = initData?.user ? getUserRows(initData.user) : undefined;
 
-  const receiverRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initData && initData.receiver ? getUserRows(initData.receiver) : undefined;
-  }, [initData]);
+  const receiverRows: DisplayDataRow[] | undefined = initData?.receiver ? getUserRows(initData.receiver) : undefined;
 
-  const chatRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    if (!initData?.chat) {
-      return;
-    }
-    const { id, title, type, username, photo_url } = initData.chat;
-
-    return [
-      { title: 'id', value: id.toString() },
-      { title: 'title', value: title },
-      { title: 'type', value: type },
-      { title: 'username', value: username },
-      { title: 'photo_url', value: photo_url },
-    ];
-  }, [initData]);
+  const chatRows: DisplayDataRow[] | undefined = initData?.chat
+    ? [
+        { title: 'id', value: initData.chat.id.toString() },
+        { title: 'title', value: initData.chat.title },
+        { title: 'type', value: initData.chat.type },
+        { title: 'username', value: initData.chat.username },
+        { title: 'photo_url', value: initData.chat.photo_url },
+      ]
+    : undefined;
 
   if (!initDataRows) {
     return (
