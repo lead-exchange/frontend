@@ -1,5 +1,6 @@
 import { Chip } from '@telegram-apps/telegram-ui';
 import { FC } from 'react';
+import styles from './Chips.module.css';
 
 interface ChipsProps {
   values: (string | undefined)[];
@@ -7,7 +8,7 @@ interface ChipsProps {
 
 export const Chips: FC<ChipsProps> = ({ values }) => {
   return (
-    <div className="tinder-card__chips">
+    <div className={styles.chipsContainer}>
       {values.map(
         (value, idx) =>
           value && (

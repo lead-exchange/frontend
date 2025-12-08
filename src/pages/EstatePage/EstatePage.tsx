@@ -33,7 +33,7 @@ const formatAddress = (address: RealEstateObject['attributes']['address']): stri
 };
 
 const formatRegion = (address: RealEstateObject['attributes']['address']): string => {
-  if (address.cityName) {
+  if (typeof address.cityName === 'string') {
     return address.cityName;
   } else {
     return address.regionName + (address.regionType ? ' ' + address.regionType : '')

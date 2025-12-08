@@ -51,41 +51,44 @@ export interface EstateAttributes {
   title: string;
   description: string;
   address: EstateAddress;
-  price: number;
-  area: number;
-  areaCommon: number;
-  rooms?: number | null;
-  photos?: string[];
-  floor?: number;
-  totalFloors?: number;
-  repairType?: string;
-  propertyClass?: string;
-  marketType?: string[];
-  paymentType?: string[];
   realtyType: string;
+  areaCommon: number;
+  areaKitchen?: number;
+  areaLiving?: number;
+  areaRoom?: string;
+  areaLand?: number;
+  areaLandType?: number;
+  builtYear?: string;
+  floor?: number;
+  floors?: number;
+  rooms?: number;
+  roofHeight?: number;
+  price: number;
+  pricePerMeter?: number;
+  photos?: string[];
 }
 
 interface EstateAddress {
   coordinates?: string;
   regionName?: string;
   regionType?: string;
-  countyName?: string;
-  cityName?: string;
-  placeName?: string;
-  placeType?: string;
-  streetName?: string;
-  streetType?: string;
+  countyName?: object;
+  cityName?: object;
+  placeName?: object;
+  placeType?: object;
+  streetName?: object;
+  streetType?: object;
   house?: string;
-  corpus?: string;
-  litera?: string;
-  building?: string;
-  metro?: string;
+  corpus?: object;
+  litera?: object;
+  building?: object;
+  metro?: object;
   flat?: string;
 }
 
-export interface RealEstateObject extends Entity {
-  type: 'object';
-  displayName: string;
+export interface RealEstateObject {
+  id: string;
+  externalId?: number;
   userId: string;
   attributes: EstateAttributes;
   totalCommissionRate: number;
@@ -93,6 +96,7 @@ export interface RealEstateObject extends Entity {
   status: 'ACTIVE' | 'ARCHIVE';
   createdAt: string;
   updatedAt: string;
+  type: 'object';
 }
 
 export type EntityType = 'lead' | 'object';

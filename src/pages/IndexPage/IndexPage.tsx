@@ -14,6 +14,7 @@ import { realEstateStore } from '@/stores/realEstateStore';
 import { setUserAcceptedTerms, setUserPhone } from '@/requests/user';
 import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
+import { getEstateName } from '@/utils/estateHelpers';
 import { useDevMode } from '@/hooks/useDevMode';
 import { isInsideMiniApp } from '@/index';
 
@@ -251,7 +252,7 @@ export const IndexPage: FC = observer(() => {
                 after={<ChevronRight />}
                 onClick={() => handleEntityClick(item)}
               >
-                {item.type === 'lead' ? item.name : item.displayName}
+                {item.type === 'lead' ? item.name : getEstateName(item.attributes)}
               </Cell>
             ))
           )}

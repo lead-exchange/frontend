@@ -1,0 +1,6 @@
+.chipsContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-s);
+}
