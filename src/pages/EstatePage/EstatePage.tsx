@@ -95,9 +95,9 @@ export const EstatePage: FC = () => {
     if (!estateId) return;
 
     try {
-      await archiveEstate(estateId);
+      const newEstate = await archiveEstate(estateId);
       console.log('Estate archived successfully');
-      navigate(0);
+      setEstate(newEstate);
     } catch (error) {
       console.error('Failed to archive estate:', error);
       alert('Ошибка при архивировании объекта');
@@ -108,9 +108,9 @@ export const EstatePage: FC = () => {
     if (!estateId) return;
 
     try {
-      await unarchiveEstate(estateId);
+      const newEstate = await unarchiveEstate(estateId);
       console.log('Estate unarchived successfully');
-      navigate(0);
+      setEstate(newEstate);
     } catch (error) {
       console.error('Failed to unarchive estate:', error);
       alert('Ошибка при разархивировании объекта');

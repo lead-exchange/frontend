@@ -53,20 +53,24 @@ export const updateLead = async (leadId: string, lead: UpdateLeadDto): Promise<L
   return await apiClient.put<Lead>(`/api/leads/${leadId}`, lead);
 };
 
-export const archiveLead = async (leadId: string): Promise<void> => {
-  await apiClient.post(`/api/leads/${leadId}/archive`);
+export const archiveLead = async (leadId: string): Promise<Lead> => {
+  const leadResp = await apiClient.post<Lead>(`/api/leads/${leadId}/archive`);
+  return { ...leadResp, type: 'lead' };
 };
 
-export const unarchiveLead = async (leadId: string): Promise<void> => {
-  await apiClient.post(`/api/leads/${leadId}/unarchive`);
+export const unarchiveLead = async (leadId: string): Promise<Lead> => {
+  const leadResp = await apiClient.post<Lead>(`/api/leads/${leadId}/unarchive`);
+  return { ...leadResp, type: 'lead' };
 };
 
-export const archiveEstate = async (estateId: string): Promise<void> => {
-  await apiClient.post(`/api/estates/${estateId}/archive`);
+export const archiveEstate = async (estateId: string): Promise<RealEstateObject> => {
+  const resp = await apiClient.post<RealEstateObject>(`/api/estates/${estateId}/archive`);
+  return { ...resp, type: 'object' };
 };
 
-export const unarchiveEstate = async (estateId: string): Promise<void> => {
-  await apiClient.post(`/api/estates/${estateId}/unarchive`);
+export const unarchiveEstate = async (estateId: string): Promise<RealEstateObject> => {
+  const resp = await apiClient.post<RealEstateObject>(`/api/estates/${estateId}/unarchive`);
+  return { ...resp, type: 'object' };
 };
 
 export const deleteLead = async (leadId: string): Promise<void> => {
