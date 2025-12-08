@@ -12,23 +12,8 @@ export const getLeads = async (): Promise<Lead[]> => {
 export const getRealEstateObjects = async (): Promise<RealEstateObject[]> => {
   const objects = await apiClient.get<RealEstateObject[]>(`/api/estates`);
   return objects.map(object => {
-    const address = object.attributes.address;
-
-    const displayName =
-      object.attributes.title ||
-      [
-        address.cityName || address.regionName + (address.regionType ? ' ' + address.regionType : ''),
-        address.streetName && (address.streetType ? address.streetType + ' ' : '') + address.streetName,
-        address.house,
-        address.flat,
-      ]
-        .filter(item => item)
-        .join(', ') ||
-      '';
-
     return {
       ...object,
-      displayName: displayName,
       type: 'object',
     };
   });

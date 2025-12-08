@@ -4,6 +4,7 @@ import { Spinner } from '@telegram-apps/telegram-ui';
 import { TinderSwiper } from '@/components/TinderSwiper/TinderSwiper';
 import type { EntityType, Lead, RealEstateObject } from '@/types/entity';
 import { createMatch } from '@/requests/matches';
+import { getEstateName } from '@/utils/estateHelpers';
 import { userStore } from '@/stores/userStore';
 import { leadMatchesStore, objectMatchesStore } from '@/stores/matchesByEntitiesStore';
 import { LeadMatch, MatchStatus, ObjectMatch } from '@/types/matching';
@@ -120,7 +121,7 @@ export const TinderPage: FC = observer(() => {
     navigate('/results', {
       replace: true,
       state: {
-        entityName: sourceEntity.type === 'lead' ? sourceEntity.name : sourceEntity.displayName,
+        entityName: sourceEntity.type === 'lead' ? sourceEntity.name : getEstateName(sourceEntity.attributes),
         entityType: sourceEntity.type,
         total: matchItems.length,
         liked: likedItems,

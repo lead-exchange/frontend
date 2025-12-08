@@ -7,7 +7,7 @@ import { EntityType } from '@/types/entity';
 import { matchLogStore } from '@/stores/matchLogStore';
 import { useNavigate } from 'react-router-dom';
 import { getMatchLogs } from '@/requests/matches';
-import { AppRoutes, MATCH_TYPES } from '@/navigation/routePaths';
+import { AppRoutes } from '@/navigation/routePaths';
 
 const COMMON_STATUS = {
   SUCCESS: 'SUCCESS',
@@ -91,11 +91,11 @@ export const Matches: FC<MatchesProps> = ({ type, matches }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleLeadMatchClick = (id: number | string) => {
-    navigate(AppRoutes.matches(MATCH_TYPES.LEAD, id));
+    navigate(AppRoutes.matches.lead(id));
   };
 
   const handleObjectMatchClick = (id: number | string) => {
-    navigate(AppRoutes.matches(MATCH_TYPES.OBJECT, id));
+    navigate(AppRoutes.matches.object(id));
   };
 
   useEffect(() => {

@@ -1,11 +1,21 @@
 import { type FC, useEffect } from 'react';
 import WebApp from '@twa-dev/sdk';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { App } from '@/components/App.tsx';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
 import { DemoUserSwitcher } from '@/components/DemoUserSwitcher/DemoUserSwitcher';
 import { getCurrentDemoUser } from '@/utils/demoUsers';
 import { useDevMode } from '@/hooks/useDevMode';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   <div>
@@ -65,6 +75,8 @@ const Inner: FC = () => {
 
 export const Root: FC = () => (
   <ErrorBoundary fallback={ErrorBoundaryError}>
-    <Inner />
+    <QueryClientProvider client={queryClient}>
+      <Inner />
+    </QueryClientProvider>
   </ErrorBoundary>
 );

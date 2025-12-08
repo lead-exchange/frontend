@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import type { Lead } from '@/types/entity';
 import styles from './TinderCard.module.css';
 import { ComissionDisplay } from '../Comission/ComissionDisplay';
-import { Chips } from '../common/Chips';
+import { Chips } from '@/components/Chips';
 
 interface LeadMatchCardProps {
   data: Lead;

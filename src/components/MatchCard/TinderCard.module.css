@@ -1,17 +1,21 @@
 .matchCardContent {
+  padding: 0 var(--spacing-l);
   display: flex;
   flex-direction: column;
   gap: 15px;
   height: 100%;
-  width: 100%;
 }
 
 .matchCardContentWithTopPadding {
   padding-top: 24px;
 }
 
+.matchCardImageContainer {
+  height: 66vh;
+  overflow: hidden;
+}
+
 .matchCardInfo {
-  padding: 0 var(--spacing-l);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -47,6 +51,12 @@
 }
 
 .matchCardPrice {
+  font-weight: 400;
+}
+
+.pricePerMeter {
+  font-size: 14px;
+  color: var(--tgui--hint_color);
   font-weight: 400;
 }
 
