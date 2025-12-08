@@ -14,7 +14,6 @@ import { matchLogStore } from '@/stores/matchLogStore';
 import { observer } from 'mobx-react-lite';
 import { ComissionModal } from '@/components/Comission/ComissionModal';
 import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
-import { userStore } from '@/stores/userStore';
 import { objectMatchesStore } from '@/stores/matchesByEntitiesStore';
 import { getEstateById } from '@/requests/entities';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -57,7 +56,6 @@ const getStatusMessage = (status: MatchStatusEnum) => {
   }
 };
 
-const shouldShowControls = (status: MatchStatusEnum) => status === MatchStatusEnum.BIDS;
 
 enum MatchStatusEnum {
   OK,
@@ -146,7 +144,6 @@ export const MatchLeadPage: FC = observer(() => {
         id: id!,
         status: params.status,
         leadCommission: params.commission && COMMISSION_TOTAL - params.commission,
-        updatedBy: userStore.user!.id,
       }),
     onSuccess: (match) => {
       if (objectData) {
@@ -207,7 +204,10 @@ export const MatchLeadPage: FC = observer(() => {
 
   const statusMessage = getStatusMessage(matchStatus);
   const commissionValues = getCommissionValues(objectData.commissionShare, objectUserCommission);
-  const showControls = shouldShowControls(matchStatus);
+  const showControls = match.commonStatus === 'WAIT_ESTATE' || match.commonStatus === 'WAIT_LEAD';
+  const showComissionBids = matchStatus === MatchStatusEnum.BIDS;
+
+  console.log({ matchData });
 
   return (
     <>
@@ -220,7 +220,7 @@ export const MatchLeadPage: FC = observer(() => {
 
           <MatchHistory matchLogs={matchLogs || []} />
 
-          {showControls && (
+          {showComissionBids && (
             <ComissionBids
               yours={commissionValues.yours}
               theirs={commissionValues.theirs}
