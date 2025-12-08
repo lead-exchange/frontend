@@ -100,6 +100,7 @@ export const getMatchLogs = async (id: string): Promise<MatchLog[] | null> => {
   await new Promise(resolve => setTimeout(resolve, 300));
   return [
     {
+      id: '1',
       matchId: id,
       status: 'ACCEPTED',
       leadCommission: 20,
