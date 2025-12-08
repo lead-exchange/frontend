@@ -5,7 +5,8 @@ export const ROUTE_PATHS = {
   LEAD_DETAILS: '/user/lead/:leadId',
   ESTATE_DETAILS: '/user/estate/:estateId',
   TINDER: '/tinder/:type/:id',
-  MATCHES: '/matches/:type/:id',
+  LEAD_MATCHES: '/matches/lead/:id',
+  OBJECT_MATCHES: '/matches/object/:id',
   RESULTS: '/results',
   INIT_DATA: '/init-data',
   THEME_PARAMS: '/theme-params',
@@ -21,7 +22,10 @@ export const AppRoutes = {
     details: (id: string | number) => `/user/estate/${id}`,
   },
   tinder: (type: string, id: string | number) => `/tinder/${type}/${id}`,
-  matches: (type: string, id: string | number) => `/matches/${type}/${id}`,
+  matches: {
+    lead: (id: string | number) => `/matches/lead/${id}`,
+    object: (id: string | number) => `/matches/object/${id}`,
+  },
 } as const;
 
 export const MATCH_TYPES = {

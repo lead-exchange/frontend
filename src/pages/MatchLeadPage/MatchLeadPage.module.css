@@ -1,0 +1,54 @@
+.statusText {
+  display: flex;
+  align-self: stretch;
+  padding: 0 var(--spacing-l);
+  padding-bottom: var(--spacing-l);
+  font-family: var(--font-family-system);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-strong);
+  text-align: left;
+}
+
+.waitForAnswer {
+  composes: statusText;
+  color: var(--warning-color);
+}
+
+.matchAccepted {
+  composes: statusText;
+  color: var(--tgui--link_color);
+}
+
+.declined {
+  composes: statusText;
+  color: var(--tgui--destructive_text_color);
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.notFoundContainer {
+  padding: var(--spacing-l);
+  text-align: center;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: var(--spacing-l);
+  background-color: var(--tgui--bg_color);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+}
