@@ -73,6 +73,17 @@ export const LeadPage: FC = () => {
 
   const matches = leadMatchesStore.getMatchesByEntity(leadId!);
 
+  const statusOrder = ['SUCCESS', 'WAIT_LEAD', 'WAIT_ESTATE', 'FAILED'];
+  const sortedMatches = [...matches].sort((a, b) => {
+    const indexA = statusOrder.indexOf(a.commonStatus);
+    const indexB = statusOrder.indexOf(b.commonStatus);
+
+    const orderA = indexA === -1 ? statusOrder.length : indexA;
+    const orderB = indexB === -1 ? statusOrder.length : indexB;
+
+    return orderA - orderB;
+  });
+
   const priceRange = `< ${formatPrice(lead.requirements.maxPrice)}`;
   const bedroomsText = lead.requirements.bedrooms ? `${lead.requirements.bedrooms}-комн.` : null;
 
@@ -220,7 +231,7 @@ export const LeadPage: FC = () => {
         Смотреть рекомендации
       </Button>
 
-      {matches.length > 0 && <Matches type="lead" matches={matches} />}
+      {sortedMatches.length > 0 && <Matches type="lead" matches={sortedMatches} />}
     </div>
   );
 };

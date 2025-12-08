@@ -9,6 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { getMatchLogs } from '@/requests/matches';
 import { AppRoutes, MATCH_TYPES } from '@/navigation/routePaths';
 
+const COMMON_STATUS = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  WAIT_LEAD: 'WAIT_LEAD',
+  WAIT_ESTATE: 'WAIT_ESTATE',
+}
+
 const STATUS = {
   MATCH: 'MATCH',
   NEED_ANSWER: 'NEED_ANSWER',
@@ -49,47 +56,28 @@ const getStatusStyle = (status: StatusKey | null): string => {
 };
 
 const getMatchStatusKey = (match: ObjectMatch | LeadMatch, type: EntityType): StatusKey | null => {
-  const matchLogs = matchLogStore.getLogsByMatch(match.id);
-
-  if (!matchLogs) {
-    return null;
-  }
-
-  const logs = matchLogs.slice().sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-  const lastLeadStatus = logs.filter(log => log.userType == 'lead').at(0)?.status || match.leadStatus || 'UNDEFINED';
-  const lastObjectStatus = logs.filter(log => log.userType == 'object').at(0)?.status || match.estateStatus || 'UNDEFINED';
-
-  if (lastObjectStatus === 'LIKED' && lastLeadStatus === 'LIKED') {
+  if (match.commonStatus === COMMON_STATUS.SUCCESS) {
     return STATUS.MATCH;
   }
-
-  if (lastObjectStatus === 'ACCEPTED' || lastLeadStatus === 'ACCEPTED') {
-    return STATUS.MATCH;
+  if (match.commonStatus === COMMON_STATUS.FAILED) {
+    return STATUS.DECLINED;
   }
-
   if (type === 'lead') {
-    switch (true) {
-      case lastLeadStatus === 'UNDEFINED' || lastObjectStatus === 'COMMISSION':
-        return STATUS.NEED_ANSWER;
-      case lastObjectStatus === 'UNDEFINED':
-        return STATUS.WAITING;
-      case lastObjectStatus === 'DECLINED' || lastObjectStatus === 'DISLIKED':
-        return STATUS.DECLINED;
+    if (match.commonStatus === COMMON_STATUS.WAIT_ESTATE) {
+      return STATUS.WAITING;
+    }
+    if (match.commonStatus === COMMON_STATUS.WAIT_LEAD) {
+      return STATUS.NEED_ANSWER;
     }
   }
-
   if (type === 'object') {
-    switch (true) {
-      case lastObjectStatus === 'UNDEFINED' || lastLeadStatus === 'COMMISSION':
-        return STATUS.NEED_ANSWER;
-      case lastLeadStatus === 'UNDEFINED':
-        return STATUS.WAITING;
-      case lastLeadStatus === 'DECLINED' || lastLeadStatus === 'DISLIKED':
-        return STATUS.DECLINED;
+    if (match.commonStatus === COMMON_STATUS.WAIT_ESTATE) {
+      return STATUS.NEED_ANSWER;
+    }
+    if (match.commonStatus === COMMON_STATUS.WAIT_LEAD) {
+      return STATUS.WAITING;
     }
   }
-
   return null;
 };
 
@@ -181,4 +169,4 @@ export const Matches: FC<MatchesProps> = ({ type, matches }) => {
     </div>
   );
 }
-;
+  ;
