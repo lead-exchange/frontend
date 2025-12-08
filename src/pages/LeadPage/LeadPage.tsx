@@ -1,5 +1,5 @@
 import { getLeadById, deleteLead, archiveLead, unarchiveLead } from '@/requests/entities';
-import { Lead } from '@/types/entity';
+import { Lead, LeadRequirements } from '@/types/entity';
 import { FC, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Spinner, Chip, Button } from '@telegram-apps/telegram-ui';
@@ -26,6 +26,14 @@ const formatPrice = (price: number): string => {
   }
   return `${price.toLocaleString('ru-RU')} ₽`;
 };
+
+const formatPriceRange = (req: LeadRequirements): string => {
+  return `${formatPrice(req.minPrice)} - ${formatPrice(req.maxPrice)}`;
+}
+
+const formatAreaRange = (req: LeadRequirements): string => {
+  return `${req.minArea} - ${req.maxArea} кв. м.`;
+}
 
 export const LeadPage: FC = () => {
   const { leadId } = useParams<{ leadId: string }>();
@@ -84,7 +92,8 @@ export const LeadPage: FC = () => {
     return orderA - orderB;
   });
 
-  const priceRange = `< ${formatPrice(lead.requirements.maxPrice)}`;
+  const priceRange = formatPriceRange(lead.requirements);
+  const areaRange = formatAreaRange(lead.requirements);
   const bedroomsText = lead.requirements.bedrooms ? `${lead.requirements.bedrooms}-комн.` : null;
 
   const handleArchive = async () => {
@@ -147,6 +156,8 @@ export const LeadPage: FC = () => {
         {bedroomsText && <Chip mode="mono">{bedroomsText}</Chip>}
         <Chip mode="mono">{priceRange}</Chip>
 
+        <Chip mode='mono'>{areaRange}</Chip>
+
         {lead.requirements.locations.map((location, index) => (
           <Chip key={`${location}-${index}`} mode="mono">
             {location}
@@ -154,7 +165,7 @@ export const LeadPage: FC = () => {
         ))}
       </div>
 
-      {/* Локации */}
+      {lead.requirements.description && <div>{lead.requirements.description}</div>}
 
       <div className={`comission-bids-container ${styles.commissionContainer}`}>
         <div
