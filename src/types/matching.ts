@@ -6,6 +6,7 @@ export interface Match {
   estateId: string;
   leadStatus: MatchStatus;
   estateStatus: MatchStatus;
+  commonStatus: string;
   leadCommission: number;
   userType: string;
 }

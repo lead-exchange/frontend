@@ -86,6 +86,17 @@ export const EstatePage: FC = () => {
 
   const matches = objectMatchesStore.getMatchesByEntity(estateId!);
 
+  const statusOrder = ['SUCCESS', 'WAIT_LEAD', 'WAIT_ESTATE', 'FAILED'];
+  const sortedMatches = [...matches].sort((a, b) => {
+    const indexA = statusOrder.indexOf(a.commonStatus);
+    const indexB = statusOrder.indexOf(b.commonStatus);
+
+    const orderA = indexA === -1 ? statusOrder.length : indexA;
+    const orderB = indexB === -1 ? statusOrder.length : indexB;
+
+    return orderA - orderB;
+  });
+
   const priceText = formatPrice(estate.attributes.price);
   const bedroomsText = estate.attributes.rooms ? `${estate.attributes.rooms}-комн.` : null;
   const addressText = formatAddress(estate.attributes.address);
@@ -179,7 +190,7 @@ export const EstatePage: FC = () => {
         Смотреть рекомендации
       </Button>
 
-      {matches.length > 0 && <Matches type="object" matches={matches} />}
+      {sortedMatches.length > 0 && <Matches type="object" matches={sortedMatches} />}
     </div>
   );
 };
