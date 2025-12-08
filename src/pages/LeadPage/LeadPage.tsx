@@ -80,9 +80,9 @@ export const LeadPage: FC = () => {
     if (!leadId) return;
 
     try {
-      await archiveLead(leadId);
+      const newLead = await archiveLead(leadId);
       console.log('Lead archived successfully');
-      navigate(0);
+      setLead(newLead);
     } catch (error) {
       console.error('Failed to archive lead:', error);
       alert('Ошибка при архивировании лида');
@@ -93,9 +93,9 @@ export const LeadPage: FC = () => {
     if (!leadId) return;
 
     try {
-      await unarchiveLead(leadId);
+      const newLead = await unarchiveLead(leadId);
       console.log('Lead unarchived successfully');
-      navigate(0,);
+      setLead(newLead);
     } catch (error) {
       console.error('Failed to unarchive lead:', error);
       alert('Ошибка при разархивировании лида');
