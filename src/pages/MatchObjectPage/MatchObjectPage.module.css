@@ -1,0 +1,69 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.notFoundContainer {
+  padding: var(--spacing-l);
+  text-align: center;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-m);
+  padding-bottom: var(--spacing-l);
+  background-color: var(--tgui--bg_color);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.statusContent {
+  display: flex;
+  align-items: left;
+  padding: 0 var(--spacing-l);
+  gap: var(--spacing-s);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 500;
+}
+
+.matchAccepted {
+  color: var(--tgui--link_color);
+}
+
+.waitForAnswer {
+  color: var(--warning-color);
+}
+
+.declined {
+  color: var(--tgui--destructive_text_color);
+}
+
+.statusIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.matchAccepted .statusIcon {
+  color: var(--tgui--link_color);
+}
+
+.waitForAnswer .statusIcon {
+  color: var(--warning-color);
+}
+
+.declined .statusIcon {
+  color: var(--tgui--destructive_text_color);
+}
