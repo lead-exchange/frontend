@@ -14,6 +14,7 @@ import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
 import { userStore } from '@/stores/userStore';
 import { objectMatchesStore } from '@/stores/matchesByEntitiesStore';
 import { getEstateById } from '@/requests/entities';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 enum MatchStatusEnum {
   OK,
@@ -46,14 +47,14 @@ const getMatchStatus = (match: Match) => {
   return MatchStatusEnum.BIDS;
 };
 
-const getActualComissionValues = (
+const getActualCommissionValues = (
   matchId: string,
   sourceEntity: RealEstateObject
-): { objectUserComission?: number } => {
+): { objectUserCommission?: number } => {
   const matchLogs = matchLogStore.getLogsByMatch(matchId);
 
   const result = {
-    objectUserComission: sourceEntity.commissionShare,
+    objectUserCommission: sourceEntity.commissionShare,
   };
 
   if (!matchLogs) {
@@ -67,7 +68,7 @@ const getActualComissionValues = (
   const lastObject = logs.filter(log => log.userType == 'object').at(0);
 
   if (lastObject) {
-    result.objectUserComission = lastObject.leadCommission;
+    result.objectUserCommission = lastObject.leadCommission;
   }
 
   return result;
@@ -76,48 +77,54 @@ const getActualComissionValues = (
 export const MatchLeadPage: FC = observer(() => {
   const { id } = useParams<{ id: string }>();
 
-  const [sourceEntity, setSourceEntity] = useState<RealEstateObject | null>(null);
+  const [isCommissionModalOpen, setIsCommissionModalOpen] = useState(false);
 
-  const [isComissionModalOpen, setIsComissionModalOpen] = useState(false);
+  const { data: matchData, isLoading: matchLoading } = useQuery({
+    queryKey: ['match', id],
+    queryFn: () => getMatchById(id!),
+    enabled: !!id,
+  });
 
-  const [loading, setLoading] = useState(true);
+  const { data: matchLogs, isLoading: matchLogsLoading } = useQuery({
+    queryKey: ['matchLogs', id],
+    queryFn: () => getMatchLogs(id!),
+    enabled: !!id,
+  });
 
-  const matchesStore = objectMatchesStore;
+  const { data: objectData, isLoading: objectLoading } = useQuery({
+    queryKey: ['object', matchData?.estateId],
+    queryFn: () => getEstateById(matchData!.estateId),
+    enabled: !!matchData?.estateId,
+  });
+
+  const updateMatchMutation = useMutation({
+    mutationFn: (params: { status: MatchStatus; commission: number }) => 
+      updateMatch({
+        id: id!,
+        status: params.status,
+        leadCommission: params.commission && 100 - params.commission,
+        updatedBy: userStore.user!.id,
+      }),
+    onSuccess: (match) => {
+      if (objectData) {
+        objectMatchesStore.putMatch(objectData.id, match as ObjectMatch);
+      }
+    },
+  });
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!id) return;
+    if (matchLogs && id) {
+      matchLogStore.setLogs(id, matchLogs);
+    }
+  }, [matchLogs, id]);
 
-      setLoading(true);
+  useEffect(() => {
+    if (matchData) {
+      objectMatchesStore.putMatch(matchData?.leadId, matchData as ObjectMatch);
+    }
+  }, [matchData]);
 
-      try {
-        const matchResp = await getMatchById(id);
-        console.log({ matchResp });
-
-        objectMatchesStore.putMatch(matchResp?.leadId, matchResp as ObjectMatch);
-
-        const matchLogs = await getMatchLogs(id);
-
-        console.log({ matchLogs });
-        matchLogStore.setLogs(id, matchLogs || []);
-
-        const object = await getEstateById(matchResp.estateId);
-
-        console.log({object});
-
-        if (!object) {
-          return;
-        }
-        setSourceEntity(object);
-      } catch (error) {
-        console.error('Failed to load data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [id]);
+  const loading = matchLoading || objectLoading || matchLogsLoading;
 
   if (loading || !id) {
     return (
@@ -127,21 +134,20 @@ export const MatchLeadPage: FC = observer(() => {
     );
   }
 
-  if (!sourceEntity) {
-    console.log('sourceEntity ==========');
+  if (!objectData) {
     return (
       <div className={styles.notFoundContainer}>
-        <p>Сущность не найдена</p>
+        <p>Сущность объекта не найдена</p>
       </div>
     );
   }
 
-  const match = matchesStore.getMatchById(sourceEntity.id, id);
+  const match = matchData as ObjectMatch;
 
   if (!match) {
     return (
       <div className={styles.notFoundContainer}>
-        <p>Сущность не найдена</p>
+        <p>Сущность мэтча не найдена</p>
       </div>
     );
   }
@@ -150,40 +156,27 @@ export const MatchLeadPage: FC = observer(() => {
 
   const otherStatus = match.leadStatus;
 
-  const { objectUserComission } = getActualComissionValues(id, sourceEntity);
+  const { objectUserCommission } = getActualCommissionValues(id, objectData);
 
   const updateMatchAction = async (status: MatchStatus, commission: number) => {
-    const match = await updateMatch({
-      id: id,
-      status: status,
-      leadCommission: commission && 100 - commission,
-      updatedBy: userStore.user!.id,
-    });
-
-    objectMatchesStore.putMatch(sourceEntity.id, match as ObjectMatch);
+    updateMatchMutation.mutate({ status, commission });
   };
+
+  console.log({ objectData })
 
   return (
     <>
-      <ComissionModal
-        onOpenChange={open => setIsComissionModalOpen(open)}
-        open={isComissionModalOpen}
-        onComissionSubmit={async comission => {
-          updateMatchAction('COMMISSION', comission);
-        }}
-      />
-
       <div className={styles.container}>
         <div className={styles.content}>
-          {/* <ObjectMatchCard
-            data={sourceEntity as RealEstateObject}
+          <ObjectMatchCard
+            data={objectData as RealEstateObject}
             displayComission={matchStatus !== MatchStatusEnum.BIDS}
-          /> */}
+          />
 
           {matchStatus === MatchStatusEnum.BIDS && (
             <ComissionBids
-              yours={objectUserComission ?? sourceEntity.commissionShare}
-              theirs={sourceEntity.commissionShare != null ? 100 - sourceEntity.commissionShare : 0}
+              yours={objectUserCommission ?? objectData.commissionShare}
+              theirs={objectData.commissionShare != null ? 100 - objectData.commissionShare : 0}
             />
           )}
         </div>
@@ -201,19 +194,27 @@ export const MatchLeadPage: FC = observer(() => {
             onLike={() => {
               updateMatchAction(
                 otherStatus === 'COMMISSION' ? 'ACCEPTED' : 'LIKED',
-                objectUserComission || sourceEntity.commissionShare
+                objectUserCommission || objectData.commissionShare
               );
             }}
-            onComission={() => setIsComissionModalOpen(true)}
+            onComission={() => setIsCommissionModalOpen(true)}
             onDislike={() => {
               updateMatchAction(
                 otherStatus === 'COMMISSION' ? 'DECLINED' : 'DISLIKED',
-                objectUserComission || sourceEntity.commissionShare
+                objectUserCommission || objectData.commissionShare
               );
             }}
           />
         )}
       </div>
+
+      <ComissionModal
+        onOpenChange={open => setIsCommissionModalOpen(open)}
+        open={isCommissionModalOpen}
+        onComissionSubmit={async comission => {
+          updateMatchAction('COMMISSION', comission);
+        }}
+      />
     </>
   );
 });
