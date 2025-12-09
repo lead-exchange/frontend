@@ -1,55 +1,141 @@
 .matchHistory {
-  margin-top: var(--spacing-l);
-  padding: var(--spacing-l);
+    background-color: var(--tg-theme-bg-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    border: 1px solid var(--tgui--border_color);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
 .title {
-  font-family: var(--font-family-roboto);
-  font-size: var(--font-size-headline);
-  font-weight: 600;
-  margin: 0 0 var(--spacing-m) 0;
-  color: var(--tgui--text_color);
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tgui--text_color);
+}
+
+.toggleButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--tgui--border_color);
+    color: var(--tgui--link_color);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.toggleButton:hover {
+    background-color: rgba(36, 129, 204, 0.08);
+    border-color: var(--tgui--link_color);
+}
+
+.toggleButton:active {
+    transform: scale(0.98);
 }
 
 .logsList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-m);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logsList:not(.expanded) {
+    max-height: 200px;
+    overflow: hidden;
+}
+
+.logItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background-color: var(--tgui--bg_color);
+    border-radius: 10px;
+    border-left: 3px solid var(--tgui--link_color);
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+.logItem:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .logContent {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.logText {
-  font-family: var(--font-family-roboto);
-  font-size: var(--font-size-caption);
-  font-weight: 400;
-  color: var(--tgui--text_color);
-}
-
-.commissionFirst {
-    color: var(--tgui--destructive_text_color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .dialogIcon {
-  color: var(--tgui--hint_color);
-  flex-shrink: 0;
+    color: var(--tgui--hint_color);
+    flex-shrink: 0;
+}
+
+.logText {
+    font-size: 14px;
+    color: var(--tgui--text_color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-weight: 400;
+}
+
+.logText span {
+    font-weight: 500;
 }
 
 .logDate {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font-family: var(--font-family-roboto);
-  font-size: var(--font-size-caption);
-  color: var(--tgui--hint_color);
-  margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--tgui--hint_color);
+    margin-left: 24px;
 }
 
 .calendarIcon {
-  color: var(--tgui--hint_color);
+    color: var(--tgui--hint_color);
+    flex-shrink: 0;
 }
 
+.moreItemsIndicator {
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+    color: var(--tgui--hint_color);
+    background-color: var(--tgui--bg_color);
+    border-radius: 10px;
+    margin-top: 4px;
+    border: 1px solid var(--tgui--border_color);
+    font-weight: 500;
+}
+
+/* Анимация появления элементов */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logItem {
+    animation: fadeIn 0.3s ease-out;
+}

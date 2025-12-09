@@ -16,6 +16,7 @@ import {leadMatchesStore} from '@/stores/matchesByEntitiesStore';
 import {getLeadById} from '@/requests/entities';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {getMatchStatusKey, STATUS, StatusKey} from "@/components/Matches/Matches.tsx";
+import {ComissionBids} from "@/components/Comission/ComissionBids.tsx";
 
 // Константы
 const COMMISSION_TOTAL = 100;
@@ -32,7 +33,7 @@ const getStatusMessage = (status: StatusKey | null) => {
         case STATUS.MATCH:
             return {
                 icon: <CheckCircle className={styles.statusIcon} size={20}/>,
-                text: 'Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.'
+                text: 'Успешный мэтч!'
             };
         case STATUS.WAITING:
             return {
@@ -171,17 +172,21 @@ export const MatchObjectPage: FC = () => {
           <LeadMatchCard
             data={leadData as Lead}
           />
+            <ComissionBids
+                yours={COMMISSION_TOTAL - match.leadCommission}
+            />
+            {statusMessage && (
+                <div className={classNames(styles.statusContent, getStatusClassName(matchStatus))}>
+                    {statusMessage.icon}
+                    <span>{statusMessage.text}</span>
+                </div>
+            )}
 
-          <MatchHistory matchLogs={matchLogs || []} />
+
+            <MatchHistory matchLogs={matchLogs || []} />
 
         </div>
 
-        {statusMessage && (
-          <div className={classNames(styles.statusContent, getStatusClassName(matchStatus))}>
-            {statusMessage.icon}
-            <span>{statusMessage.text}</span>
-          </div>
-        )}
 
         {showControls && (
           <MatchControls
