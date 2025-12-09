@@ -36,7 +36,7 @@ const formatRegion = (address: RealEstateObject['attributes']['address']): strin
   if (typeof address.cityName === 'string') {
     return address.cityName;
   } else {
-    return address.regionName + (address.regionType ? ' ' + address.regionType : '')
+    return address.regionName + (address.regionType ? ' ' + address.regionType : '');
   }
 };
 
@@ -130,7 +130,7 @@ export const EstatePage: FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Название объекта */}
+      <div className={styles.estatePageText}>{estate.attributes.title}</div>
       <div className={styles.topInfo}>
         <Image
           src={
@@ -143,7 +143,9 @@ export const EstatePage: FC = () => {
         <div className={styles.topInfoText}>
           <div>{regionText}</div>
           <div>{addressText}</div>
-          <div>{bedroomsText} {propertyTypeLabels[estate.attributes.realtyType].toLowerCase()}</div>
+          <div>
+            {bedroomsText} {propertyTypeLabels[estate.attributes.realtyType].toLowerCase()}
+          </div>
           <div>{priceText} руб.</div>
           <div>{estate.attributes.areaCommon} кв. м.</div>
         </div>
@@ -160,11 +162,7 @@ export const EstatePage: FC = () => {
       </div>
 
       {/* Описание */}
-      {estate.attributes.description && (
-        <div className={styles.description}>
-          {estate.attributes.description}
-        </div>
-      )}
+      {estate.attributes.description && <div className={styles.description}>{estate.attributes.description}</div>}
 
       {/* Кнопки действий */}
       <div

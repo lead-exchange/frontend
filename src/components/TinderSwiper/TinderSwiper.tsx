@@ -30,6 +30,8 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
   const [moveOffset, setMoveOffset] = useState(0);
 
+  const [matchItems, setMatchItems] = useState<(Lead | RealEstateObject)[]>([]);
+
   const currentCardRef = useRef<HTMLDivElement>(null);
   const nextCardRef = useRef<HTMLDivElement>(null);
 
