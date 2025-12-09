@@ -9,6 +9,14 @@
   margin: 0;
 }
 
+.title {
+    padding: 0 var(--spacing-l);
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tgui--text_color);
+}
+
 .commissionDisplayYours {
   color: var(--tgui--accent_text_color);
   margin-top: 5px;
