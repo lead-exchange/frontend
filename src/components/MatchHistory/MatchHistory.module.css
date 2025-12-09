@@ -30,6 +30,10 @@
   color: var(--tgui--text_color);
 }
 
+.commissionFirst {
+    color: var(--tgui--destructive_text_color);
+}
+
 .dialogIcon {
   color: var(--tgui--hint_color);
   flex-shrink: 0;

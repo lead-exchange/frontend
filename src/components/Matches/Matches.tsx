@@ -16,14 +16,13 @@ const COMMON_STATUS = {
   WAIT_ESTATE: 'WAIT_ESTATE',
 }
 
-const STATUS = {
+export const STATUS = {
   MATCH: 'MATCH',
   NEED_ANSWER: 'NEED_ANSWER',
   WAITING: 'WAITING',
   DECLINED: 'DECLINED',
-} as const;
-
-type StatusKey = (typeof STATUS)[keyof typeof STATUS];
+};
+export type StatusKey = (typeof STATUS)[keyof typeof STATUS];
 
 const statusToClass: Record<StatusKey, string> = {
   [STATUS.MATCH]: styles.statusMatch,
@@ -55,7 +54,7 @@ const getStatusStyle = (status: StatusKey | null): string => {
   return status ? statusToClass[status] : '';
 };
 
-const getMatchStatusKey = (match: ObjectMatch | LeadMatch, type: EntityType): StatusKey | null => {
+export const getMatchStatusKey = (match: ObjectMatch | LeadMatch, type: EntityType): StatusKey | null => {
   if (match.commonStatus === COMMON_STATUS.SUCCESS) {
     return STATUS.MATCH;
   }
@@ -81,7 +80,7 @@ const getMatchStatusKey = (match: ObjectMatch | LeadMatch, type: EntityType): St
   return null;
 };
 
-const getMatchStatusText = (status: StatusKey | null): string => {
+export const getMatchStatusText = (status: StatusKey | null): string => {
   return status ? statusTextByKey[status] : '';
 };
 

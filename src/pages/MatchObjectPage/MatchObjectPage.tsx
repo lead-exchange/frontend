@@ -1,122 +1,73 @@
-import { ComissionBids } from '@/components/Comission/ComissionBids';
-import { LeadMatchCard } from '@/components/MatchCard/LeadMatchCard';
-import { MatchHistory } from '@/components/MatchHistory';
-import { MatchControls } from '@/components/MatchControls/MatchControls';
-import { Lead } from '@/types/entity';
-import { Match, MatchStatus, LeadMatch } from '@/types/matching';
-import { Spinner } from '@telegram-apps/telegram-ui';
-import { FC, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {LeadMatchCard} from '@/components/MatchCard/LeadMatchCard';
+import {MatchHistory} from '@/components/MatchHistory';
+import {MatchControls} from '@/components/MatchControls/MatchControls';
+import {Lead} from '@/types/entity';
+import {LeadMatch, Match, MatchStatus} from '@/types/matching';
+import {Spinner} from '@telegram-apps/telegram-ui';
+import {FC, useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import classNames from 'classnames';
-import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import {CheckCircle, Clock, XCircle} from 'lucide-react';
 import styles from './MatchObjectPage.module.css';
-import { matchLogStore } from '@/stores/matchLogStore';
-import { ComissionModal } from '@/components/Comission/ComissionModal';
-import { updateMatch, getMatchById, getMatchLogs } from '@/requests/matches';
-import { leadMatchesStore } from '@/stores/matchesByEntitiesStore';
-import { getLeadById } from '@/requests/entities';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import {matchLogStore} from '@/stores/matchLogStore';
+import {ComissionModal} from '@/components/Comission/ComissionModal';
+import {getMatchById, getMatchLogs, updateMatch} from '@/requests/matches';
+import {leadMatchesStore} from '@/stores/matchesByEntitiesStore';
+import {getLeadById} from '@/requests/entities';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {getMatchStatusKey, STATUS, StatusKey} from "@/components/Matches/Matches.tsx";
 
 // Константы
 const COMMISSION_TOTAL = 100;
 
-// Хелперы
-const getCommissionValues = (leadCommission: number, userCommission?: number) => {
-  const yours = userCommission ?? leadCommission;
-  const theirs = leadCommission != null ? COMMISSION_TOTAL - leadCommission : 0;
-  return { yours, theirs };
-};
-
-const getStatusClassName = (status: MatchStatusEnum) => ({
-  [styles.matchAccepted]: status === MatchStatusEnum.OK,
-  [styles.waitForAnswer]: status === MatchStatusEnum.WAIT_FOR_ANSWER,
-  [styles.declined]: status === MatchStatusEnum.DECLINED,
+const getStatusClassName = (status: StatusKey | null) => ({
+    [styles.matchAccepted]: status === STATUS.MATCH,
+    [styles.needAnswer]: status === STATUS.NEED_ANSWER,
+    [styles.waitForAnswer]: status === STATUS.WAITING,
+    [styles.declined]: status === STATUS.DECLINED,
 });
 
-const getStatusMessage = (status: MatchStatusEnum) => {
-  switch (status) {
-    case MatchStatusEnum.OK:
-      return {
-        icon: <CheckCircle className={styles.statusIcon} size={20} />,
-        text: 'Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.'
-      };
-    case MatchStatusEnum.WAIT_FOR_ANSWER:
-      return {
-        icon: <Clock className={styles.statusIcon} size={20} />,
-        text: 'Ждем ответа от покупателя'
-      };
-    case MatchStatusEnum.DECLINED:
-      return {
-        icon: <XCircle className={styles.statusIcon} size={20} />,
-        text: 'Покупатель отказался от сделки'
-      };
-    default:
-      return null;
-  }
-};
-
-enum MatchStatusEnum {
-  OK,
-  BIDS,
-  WAIT_FOR_ANSWER,
-  DECLINED,
-}
-
-const getMatchStatus = (match: Match) => {
-  if (match?.estateStatus === 'UNDEFINED') {
-    return MatchStatusEnum.WAIT_FOR_ANSWER;
-  }
-
-  if (
-    (match?.leadStatus === 'COMMISSION' && match.estateStatus === 'ACCEPTED') ||
-    (match.leadStatus === 'ACCEPTED' && match.estateStatus === 'COMMISSION')
-  ) {
-    return MatchStatusEnum.OK;
-  }
-
-  if (
-    match?.leadStatus === 'DISLIKED' ||
-    match.estateStatus === 'DISLIKED' ||
-    match.leadStatus === 'DECLINED' ||
-    match.estateStatus === 'DECLINED'
-  ) {
-    return MatchStatusEnum.DECLINED;
-  }
-
-  return MatchStatusEnum.BIDS;
+const getStatusMessage = (status: StatusKey | null) => {
+    switch (status) {
+        case STATUS.MATCH:
+            return {
+                icon: <CheckCircle className={styles.statusIcon} size={20}/>,
+                text: 'Успешный мэтч! Контакты риэлтора будут отправлены в сообщения Telegram бота.'
+            };
+        case STATUS.WAITING:
+            return {
+                icon: <Clock className={styles.statusIcon} size={20}/>,
+                text: 'Ждем ответа от риэлтора'
+            };
+        case STATUS.NEED_ANSWER:
+            return {
+                icon: <Clock className={styles.statusIcon} size={20}/>,
+                text: 'Нужен ваш ответ'
+            };
+        case STATUS.DECLINED:
+            return {
+                icon: <XCircle className={styles.statusIcon} size={20}/>,
+                text: 'Риэлтор отказался от сделки'
+            };
+        default:
+            return null;
+    }
 };
 
 const getActualCommissionValues = (
-  matchId: string,
-  sourceEntity: Lead
-): { leadUserCommission?: number } => {
-  const matchLogs = matchLogStore.getLogsByMatch(matchId);
-
-  const result = {
-    leadUserCommission: sourceEntity.commissionShare,
-  };
-
-  if (!matchLogs) {
-    return result;
-  }
-
-  const logs = matchLogs.slice().sort((a, b) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  });
-
-  const lastLead = logs.filter(log => log.userType === 'lead').at(0);
-
-  if (lastLead) {
-    result.leadUserCommission = lastLead.leadCommission;
-  }
-
-  return result;
+  match: Match
+): { leadCommission?: number } => {
+    return {
+        leadCommission: COMMISSION_TOTAL - match.leadCommission
+    };
 };
 
 export const MatchObjectPage: FC = () => {
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
 
   const [isCommissionModalOpen, setIsCommissionModalOpen] = useState(false);
+  const [showControls, setShowControls] = useState(false);
 
   const { data: matchData, isLoading: matchLoading } = useQuery({
     queryKey: ['match', id],
@@ -124,11 +75,15 @@ export const MatchObjectPage: FC = () => {
     enabled: !!id,
   });
 
-  const { data: matchLogs, isLoading: matchLogsLoading } = useQuery({
-    queryKey: ['matchLogs', id],
-    queryFn: () => getMatchLogs(id!),
-    enabled: !!id,
-  });
+    const {
+        data: matchLogs,
+        isLoading: matchLogsLoading,
+        refetch: refetchMatchLogs,
+    } = useQuery({
+        queryKey: ['matchLogs', id],
+        queryFn: () => getMatchLogs(id!),
+        enabled: !!id,
+    });
 
   const { data: leadData, isLoading: leadLoading } = useQuery({
     queryKey: ['lead', matchData?.leadId],
@@ -143,10 +98,14 @@ export const MatchObjectPage: FC = () => {
         status: params.status,
         leadCommission: params.commission && COMMISSION_TOTAL - params.commission,
       }),
-    onSuccess: (match) => {
+    onSuccess: async (match) => {
       if (leadData) {
         leadMatchesStore.putMatch(leadData.id, match as LeadMatch);
       }
+        queryClient.setQueryData(['match', id], match);
+        queryClient.invalidateQueries({queryKey: ['matchLogs', id]});
+        await refetchMatchLogs();
+        setShowControls(false);
     },
   });
 
@@ -163,6 +122,11 @@ export const MatchObjectPage: FC = () => {
   }, [matchData]);
 
   const loading = matchLoading || leadLoading || matchLogsLoading;
+    useEffect(() => {
+        if (matchData) {
+            setShowControls(matchData.commonStatus === 'WAIT_ESTATE');
+        }
+    }, [matchData]);
 
   if (loading || !id) {
     return (
@@ -190,18 +154,15 @@ export const MatchObjectPage: FC = () => {
     );
   }
 
-  const matchStatus = getMatchStatus(match);
+  const matchStatus = getMatchStatusKey(match, 'object');
   const otherStatus = match.estateStatus;
-  const { leadUserCommission } = getActualCommissionValues(id, leadData);
+  const { leadCommission } = getActualCommissionValues(match);
 
   const updateMatchAction = (status: MatchStatus, commission: number) => {
     updateMatchMutation.mutate({ status, commission });
   };
 
   const statusMessage = getStatusMessage(matchStatus);
-  const commissionValues = getCommissionValues(leadData.commissionShare, leadUserCommission);
-  const showControls = match.commonStatus === 'WAIT_ESTATE' || match.commonStatus === 'WAIT_LEAD';
-  const showCommissionBids = matchStatus === MatchStatusEnum.BIDS;
 
   return (
     <>
@@ -209,17 +170,10 @@ export const MatchObjectPage: FC = () => {
         <div className={styles.content}>
           <LeadMatchCard
             data={leadData as Lead}
-            displayComission={matchStatus !== MatchStatusEnum.BIDS}
           />
 
           <MatchHistory matchLogs={matchLogs || []} />
 
-          {showCommissionBids && (
-            <ComissionBids
-              yours={commissionValues.yours}
-              theirs={commissionValues.theirs}
-            />
-          )}
         </div>
 
         {statusMessage && (
@@ -234,14 +188,14 @@ export const MatchObjectPage: FC = () => {
             onLike={() => {
               updateMatchAction(
                 otherStatus === 'COMMISSION' ? 'ACCEPTED' : 'LIKED',
-                leadUserCommission || leadData.commissionShare
+                leadCommission || leadData.commissionShare
               );
             }}
             onComission={() => setIsCommissionModalOpen(true)}
             onDislike={() => {
               updateMatchAction(
                 otherStatus === 'COMMISSION' ? 'DECLINED' : 'DISLIKED',
-                leadUserCommission || leadData.commissionShare
+                leadCommission || leadData.commissionShare
               );
             }}
           />
