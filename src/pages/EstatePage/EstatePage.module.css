@@ -15,6 +15,9 @@
 
 .topInfoText {
   margin: 5px;
+  color: var(--tgui--text_color);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
 }
 
 .loadingContainer {
@@ -44,6 +47,9 @@
 }
 
 .commissionItem {
+  color: var(--tgui--text_color);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
   padding: 0 var(--spacing-xs);
 }
 
@@ -52,4 +58,11 @@
   font-size: 15px;
   line-height: 20px;
   margin-bottom: var(--spacing-l);
+}
+
+.estatePageTitle {
+  color: var(--tgui--text_color);
+  font-family: var(--font-family-roboto);
+  font-size: var(--font-size-body);
+  font-weight: 600;
 }

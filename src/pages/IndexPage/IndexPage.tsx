@@ -17,6 +17,7 @@ import { getLeads, getRealEstateObjects } from '@/requests/entities';
 import { getEstateName } from '@/utils/estateHelpers';
 import { useDevMode } from '@/hooks/useDevMode';
 import { isInsideMiniApp } from '@/index';
+import { indexTabStore } from '@/stores/tabStore';
 
 import './IndexPage.css';
 
@@ -44,13 +45,10 @@ const requestContactAction = async (): Promise<string> => {
   }
 };
 
-type TabType = 'leads' | 'objects';
-
 export const IndexPage: FC = observer(() => {
   const debug = useDevMode();
 
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabType>('leads');
 
   const [isOfferSigned, setIsOfferSigned] = useState<boolean>(false);
   const [isOfferCheckboxSelected, setIsOfferCheckboxSelected] = useState<boolean>(false);
@@ -58,6 +56,8 @@ export const IndexPage: FC = observer(() => {
   const [isPhoneProvided, setIsPhoneProvided] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(true);
+
+  const activeTab = indexTabStore.tab;
 
   useEffect(() => {
     const signTerms = async () => {
@@ -218,10 +218,10 @@ export const IndexPage: FC = observer(() => {
   return (
     <>
       <TabsList className="tab-header">
-        <TabsList.Item selected={activeTab === 'leads'} onClick={() => setActiveTab('leads')}>
+        <TabsList.Item selected={activeTab === 'leads'} onClick={() => indexTabStore.setTab('leads')}>
           Лиды
         </TabsList.Item>
-        <TabsList.Item selected={activeTab === 'objects'} onClick={() => setActiveTab('objects')}>
+        <TabsList.Item selected={activeTab === 'objects'} onClick={() => indexTabStore.setTab('objects')}>
           Объекты
         </TabsList.Item>
       </TabsList>

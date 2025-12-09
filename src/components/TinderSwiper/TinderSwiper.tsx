@@ -6,8 +6,11 @@ import { LeadMatchCard } from '../MatchCard/LeadMatchCard';
 import './TinderSwiper.css';
 import { MatchControls } from '../MatchControls/MatchControls';
 import { ComissionModal } from '../Comission/ComissionModal';
+import { getLeadsForObject, getObjectsForLead } from '@/requests/tinder';
+import { Spinner } from '@telegram-apps/telegram-ui';
 
 interface TinderSwiperProps {
+  sourceEntity: Lead | RealEstateObject;
   items: (Lead | RealEstateObject)[];
   onLike: (item: Lead | RealEstateObject) => void;
   onDislike: (item: Lead | RealEstateObject) => void;
@@ -21,8 +24,17 @@ const nextItemInitialScale = 0.6;
 
 const swipeActionThreshold = 100;
 
-export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, onCustomShare, onFinish }) => {
+export const TinderSwiper: FC<TinderSwiperProps> = ({
+  sourceEntity,
+  items: initialItems,
+  onLike,
+  onDislike,
+  onCustomShare,
+  onFinish,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [loading, setLoading] = useState<boolean>();
 
   const [isComissionModalOpen, setIsComissionModalOpen] = useState(false);
 
@@ -30,26 +42,64 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
 
   const [moveOffset, setMoveOffset] = useState(0);
 
+  const [items, setItems] = useState<(Lead | RealEstateObject)[]>(initialItems);
+
   const currentCardRef = useRef<HTMLDivElement>(null);
   const nextCardRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
-    if (currentIndex === items.length) {
+  const fetchNextPage = async () => {
+    setLoading(true);
+    try {
+      if (sourceEntity.type === 'object') {
+        return await getLeadsForObject(sourceEntity.id);
+      } else {
+        return await getObjectsForLead(sourceEntity.id);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadNextPageOrFinish = async () => {
+    const newPage = await fetchNextPage();
+
+    if (newPage.length === 0) {
       onFinish();
     }
 
-    if (!currentCardRef.current) {
-      return;
-    }
+    setItems(newPage);
+    setCurrentIndex(0);
+  };
 
-    currentCardRef.current.style.transition = '';
-    currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
-    currentCardRef.current.style.opacity = '1';
+  useLayoutEffect(() => {
+    const action = async () => {
+      if (currentIndex === items.length) {
+        loadNextPageOrFinish();
+      }
 
-    if (nextCardRef.current) {
-      nextCardRef.current.style.transition = '';
-    }
+      if (!currentCardRef.current) {
+        return;
+      }
+
+      currentCardRef.current.style.transition = '';
+      currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
+      currentCardRef.current.style.opacity = '1';
+
+      if (nextCardRef.current) {
+        nextCardRef.current.style.transition = '';
+      }
+    };
+
+    action();
   }, [currentIndex, items.length]);
+
+  if (loading) {
+    return (
+      <div className="loadingContainer">
+        <Spinner size="l" />
+      </div>
+    );
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (currentCardRef.current) {
@@ -129,7 +179,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({ items, onLike, onDislike, 
       }
 
       if (currentIndex + 1 === items.length) {
-        onFinish();
+        loadNextPageOrFinish();
       }
 
       setTimeout(() => {
