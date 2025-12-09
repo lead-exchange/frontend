@@ -46,6 +46,10 @@
   color: var(--warning-color);
 }
 
+.needAnswer {
+    color: var(--warning-color);
+}
+
 .declined {
   color: var(--tgui--destructive_text_color);
 }
