@@ -9,42 +9,19 @@ import styles from './EstatePage.module.css';
 import { Matches } from '@/components/Matches/Matches';
 import { getObjectMatches } from '@/requests/matches';
 import { objectMatchesStore } from '@/stores/matchesByEntitiesStore';
-
-const propertyTypeLabels: Record<string, string> = {
-  flat: 'Квартира',
-  room: 'Комната',
-  commerce: 'Коммерция',
-  house: 'Загородка',
-  land: 'Участок',
-  garage: 'Машиноместо/гараж',
-};
-
-const formatPrice = (price: number): string => {
-  return `${price.toLocaleString('ru-RU')}`;
-};
-
-const formatAddress = (address: RealEstateObject['attributes']['address']): string => {
-  const parts = [
-    address.streetName && (address.streetType ? address.streetType + ' ' : '') + address.streetName,
-    address.house ? 'д. ' + address.house : '',
-  ].filter(Boolean);
-
-  return parts.join(', ');
-};
-
-const formatRegion = (address: RealEstateObject['attributes']['address']): string => {
-  if (typeof address.cityName === 'string') {
-    return address.cityName;
-  } else {
-    return address.regionName + (address.regionType ? ' ' + address.regionType : '');
-  }
-};
+import { formatPrice, getAddressParts, getEstateChipValues } from '@/utils/estateHelpers';
+import { Chips } from '@/components/Chips';
 
 export const EstatePage: FC = () => {
   const { estateId } = useParams<{ estateId: string }>();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [estate, setEstate] = useState<RealEstateObject | null>(null);
+
+  const addressParts = estate ? getAddressParts(estate.attributes.address) : [];
+  const chipValues = estate ? getEstateChipValues(estate.attributes) : [];
+  const formattedPrice = estate ? formatPrice(estate.attributes.price, estate.attributes.pricePerMeter) : '';
 
   useEffect(() => {
     const loadData = async () => {
@@ -97,11 +74,6 @@ export const EstatePage: FC = () => {
     return orderA - orderB;
   });
 
-  const priceText = formatPrice(estate.attributes.price);
-  const bedroomsText = estate.attributes.rooms ? `${estate.attributes.rooms}-комн.` : null;
-  const addressText = formatAddress(estate.attributes.address);
-  const regionText = formatRegion(estate.attributes.address);
-
   const handleArchive = async () => {
     if (!estateId) return;
 
@@ -130,7 +102,7 @@ export const EstatePage: FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.estatePageText}>{estate.attributes.title}</div>
+      <div className={styles.estatePageTitle}>{estate.attributes.title}</div>
       <div className={styles.topInfo}>
         <Image
           src={
@@ -140,16 +112,18 @@ export const EstatePage: FC = () => {
           size={96}
         />
 
-        <div className={styles.topInfoText}>
-          <div>{regionText}</div>
-          <div>{addressText}</div>
-          <div>
-            {bedroomsText} {propertyTypeLabels[estate.attributes.realtyType].toLowerCase()}
-          </div>
-          <div>{priceText} руб.</div>
-          <div>{estate.attributes.areaCommon} кв. м.</div>
+        <div className={styles.matchCardInfo}>
+          {addressParts.length > 0 && <p className={styles.matchCardAddress}>{addressParts.join(', ')}</p>}
+
+          <p className={styles.matchCardPrice}>{formattedPrice}</p>
+
+          {estate.attributes.description && (
+            <div className={styles.matchCardDescriptionSmall}>{estate.attributes.description}</div>
+          )}
         </div>
       </div>
+
+      {chipValues.length > 0 && <Chips values={chipValues} />}
 
       <div className={`comission-bids-container ${styles.commissionContainer}`}>
         <div className={`comission-bids comission-bids__yours ${styles.commissionItem}`}>
@@ -160,9 +134,6 @@ export const EstatePage: FC = () => {
           <span className="comission-bids__value">Агент покупателя: {100 - estate.commissionShare}%</span>
         </div>
       </div>
-
-      {/* Описание */}
-      {estate.attributes.description && <div className={styles.description}>{estate.attributes.description}</div>}
 
       {/* Кнопки действий */}
       <div

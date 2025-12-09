@@ -134,6 +134,7 @@ export const TinderPage: FC = observer(() => {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <TinderSwiper
+        sourceEntity={sourceEntity}
         items={matchItems}
         onLike={handleLike}
         onDislike={handleDislike}

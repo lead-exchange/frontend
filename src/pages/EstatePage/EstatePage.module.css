@@ -60,8 +60,9 @@
   margin-bottom: var(--spacing-l);
 }
 
-.estatePageText {
+.estatePageTitle {
   color: var(--tgui--text_color);
   font-family: var(--font-family-roboto);
   font-size: var(--font-size-body);
+  font-weight: 600;
 }
