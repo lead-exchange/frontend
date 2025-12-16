@@ -40,6 +40,9 @@ export const LeadEditPage: FC = () => {
     maxPrice: lead.requirements.maxPrice,
     minArea: lead.requirements.minArea,
     maxArea: lead.requirements.maxArea,
+    minKitchenArea: lead.requirements.minKitchenArea,
+    maxKitchenArea: lead.requirements.maxKitchenArea,
+    renovationType: lead.requirements.renovation || 'ANY',
     locations: lead.requirements.locations.join(', '),
     bedrooms: lead.requirements.bedrooms || undefined,
     description: lead.requirements.description || '',
@@ -57,6 +60,9 @@ export const LeadEditPage: FC = () => {
         maxPrice: data.maxPrice || 0,
         minArea: data.minArea || 0,
         maxArea: data.maxArea || 0,
+        minKitchenArea: data.minKitchenArea || undefined,
+        maxKitchenArea: data.maxKitchenArea || undefined,
+        renovation: data.renovationType,
         locations: data.locations
           .split(',')
           .map(loc => loc.trim())

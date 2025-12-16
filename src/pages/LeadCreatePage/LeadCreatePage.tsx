@@ -1,6 +1,5 @@
 import { AppRoutes } from '@/navigation/routePaths';
 import { createLead } from '@/requests/entities';
-import { USER_ID } from '@/services/entityService';
 import { leadStore } from '@/stores/leadStore';
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,16 +11,18 @@ export const LeadCreatePage: FC = () => {
 
   const onSubmit = async (data: LeadFormData) => {
     const leadData = {
-      userId: USER_ID,
       name: data.name.trim(),
       commissionShare: data.commissionShare,
-      description: data.description || undefined,
       requirements: {
+        description: data.description || undefined,
         propertyType: data.propertyType,
         minPrice: data.minPrice || 0,
         maxPrice: data.maxPrice || 0,
         minArea: data.minArea || 0,
         maxArea: data.maxArea || 0,
+        minKitchenArea: data.minKitchenArea || undefined,
+        maxKitchenArea: data.maxKitchenArea || undefined,
+        renovation: data.renovationType,
         locations: data.locations
           .split(',')
           .map(loc => loc.trim())

@@ -9,6 +9,9 @@ export interface LeadRequirements {
   maxPrice: number;
   minArea: number;
   maxArea: number;
+  minKitchenArea?: number;
+  maxKitchenArea?: number;
+  renovation: 'ANY' | 'NO_RENOVATION' | 'FINISHING' | 'NEEDS_REPAIR' | 'COSMETIC_REPAIR' | 'EURO_REPAIR',
   locations: string[];
   bedrooms?: number | null;
   repairType?: string[];
@@ -19,12 +22,10 @@ export interface LeadRequirements {
 }
 
 export interface CreateLeadDto {
-  userId: string;
   name?: string;
   phone?: string;
   requirements: LeadRequirements;
   commissionShare: number;
-  description?: string;
 }
 
 export interface UpdateLeadDto {
@@ -37,7 +38,6 @@ export interface UpdateLeadDto {
 
 export interface Lead extends Entity {
   type: 'lead';
-  userId: string;
   phone?: string;
   requirements: LeadRequirements;
   status: 'ACTIVE' | 'ARCHIVE';
