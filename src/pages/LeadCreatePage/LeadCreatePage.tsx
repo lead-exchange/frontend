@@ -13,8 +13,8 @@ export const LeadCreatePage: FC = () => {
     const leadData = {
       name: data.name.trim(),
       commissionShare: data.commissionShare,
-      description: data.description || undefined,
       requirements: {
+        description: data.description || undefined,
         propertyType: data.propertyType,
         minPrice: data.minPrice || 0,
         maxPrice: data.maxPrice || 0,

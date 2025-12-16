@@ -26,7 +26,6 @@ export interface CreateLeadDto {
   phone?: string;
   requirements: LeadRequirements;
   commissionShare: number;
-  description?: string;
 }
 
 export interface UpdateLeadDto {
