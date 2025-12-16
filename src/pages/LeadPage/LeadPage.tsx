@@ -20,6 +20,15 @@ const propertyTypeLabels: Record<string, string> = {
   garage: 'Машиноместо/гараж',
 };
 
+const renovationTypeLabels: Record<string, string> = {
+  ANY: 'Ремонт не важен',
+  NO_RENOVATION: 'Без ремонта',
+  FINISHING: 'Чистовая отделка',
+  NEEDS_REPAIR: 'Требует ремонта',
+  COSMETIC_REPAIR: 'Косметический ремонт',
+  EURO_REPAIR: 'Евроремонт',
+};
+
 const formatPrice = (price: number): string => {
   if (price >= 1000000) {
     return `${(price / 1000000).toFixed(0)} млн.`;
@@ -33,6 +42,19 @@ const formatPriceRange = (req: LeadRequirements): string => {
 
 const formatAreaRange = (req: LeadRequirements): string => {
   return `${req.minArea} - ${req.maxArea} кв. м.`;
+}
+
+const formatKitchenAreaRange = (req: LeadRequirements): string | null => {
+  if (!req.minKitchenArea && !req.maxKitchenArea) {
+    return null;
+  }
+  if (!req.minKitchenArea) {
+    return `Кухня до ${req.maxKitchenArea} кв. м.`;
+  }
+  if (!req.maxKitchenArea) {
+    return `Кухня от ${req.minKitchenArea} кв. м.`;
+  }
+  return ` Кухня ${req.minKitchenArea} - ${req.maxKitchenArea} кв. м.`;
 }
 
 export const LeadPage: FC = () => {
@@ -94,6 +116,7 @@ export const LeadPage: FC = () => {
 
   const priceRange = formatPriceRange(lead.requirements);
   const areaRange = formatAreaRange(lead.requirements);
+  const kitchenAreaRange = formatKitchenAreaRange(lead.requirements);
   const bedroomsText = lead.requirements.bedrooms ? `${lead.requirements.bedrooms}-комн.` : null;
 
   const handleArchive = async () => {
@@ -153,10 +176,14 @@ export const LeadPage: FC = () => {
       <div className={styles.chipsContainer}>
         <Chip mode="mono">{propertyTypeLabels[lead.requirements.propertyType]}</Chip>
 
+        {lead.requirements.renovation && <Chip mode="mono">{renovationTypeLabels[lead.requirements.renovation]}</Chip>}
+
         {bedroomsText && <Chip mode="mono">{bedroomsText}</Chip>}
         <Chip mode="mono">{priceRange}</Chip>
 
         <Chip mode='mono'>{areaRange}</Chip>
+
+        {kitchenAreaRange && <Chip mode='mono'>{kitchenAreaRange}</Chip>}
 
         {lead.requirements.locations.map((location, index) => (
           <Chip key={`${location}-${index}`} mode="mono">

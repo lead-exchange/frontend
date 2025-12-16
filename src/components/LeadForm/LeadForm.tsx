@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@telegram-apps/telegram-ui';
 import { Plus } from 'lucide-react';
-import { LeadFormData, leadSchema, NUMERIC_FIELDS, propertyTypeOptions } from './schema';
+import { LeadFormData, leadSchema, NUMERIC_FIELDS, propertyTypeOptions, renovationTypeOptions } from './schema';
 import { formatNumber, parseNumber } from '@/utils/numberFormat';
 import { CustomInput } from '../CustomInput/CustomInput';
 import { CustomSelect } from '../CustomSelect/CustomSelect';
@@ -17,11 +17,11 @@ interface LeadFormProps {
   isLoading?: boolean;
 }
 
-export const LeadForm: FC<LeadFormProps> = ({ 
-  initialValues, 
-  onSubmit, 
+export const LeadForm: FC<LeadFormProps> = ({
+  initialValues,
+  onSubmit,
   submitText = 'Создать лида',
-  isLoading = false 
+  isLoading = false
 }) => {
   const {
     control,
@@ -44,13 +44,13 @@ export const LeadForm: FC<LeadFormProps> = ({
 
   const handleFormSubmit = async (event?: React.BaseSyntheticEvent) => {
     event?.preventDefault();
-    
+
     const isValid = await trigger();
-    
+
     if (!isValid) {
       return;
     }
-    
+
     const data = getValues();
     await onSubmit(data as LeadFormData);
   };
@@ -84,8 +84,8 @@ export const LeadForm: FC<LeadFormProps> = ({
               const num = parseNumber(e.target.value);
               field.onChange(num);
             }}
-            label="Агент покупателя"
-            placeholder="70"
+            label="Процент комиссии агенту покупателя"
+            placeholder="30"
             type="text"
             inputMode="numeric"
             hasError={!!errors.commissionShare}
@@ -106,6 +106,25 @@ export const LeadForm: FC<LeadFormProps> = ({
             errorMessage={errors.propertyType?.message}
           >
             {propertyTypeOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </CustomSelect>
+        )}
+      />
+
+      <Controller
+        name="renovationType"
+        control={control}
+        render={({ field }) => (
+          <CustomSelect
+            {...field}
+            label="Наличие ремонта"
+            hasError={!!errors.renovationType}
+            errorMessage={errors.renovationType?.message}
+          >
+            {renovationTypeOptions.map(option => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -160,10 +179,10 @@ export const LeadForm: FC<LeadFormProps> = ({
             {...field}
             value={field.value !== null ? formatNumber(field.value) : ''}
             onChange={(e) => {
-                const num = parseNumber(e.target.value);
-                field.onChange(num);
+              const num = parseNumber(e.target.value);
+              field.onChange(num);
             }}
-            label="Количество спален"
+            label="Количество комнат"
             placeholder="2"
             type="text"
             inputMode="numeric"
