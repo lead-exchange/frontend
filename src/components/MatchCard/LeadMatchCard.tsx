@@ -24,8 +24,6 @@ export const LeadMatchCard: FC<LeadMatchCardProps> = ({ data, displayComission }
   return (
     <div className={`${styles.matchCardContent} ${styles.matchCardContentWithTopPadding}`}>
       <div className={styles.matchCardInfo}>
-        <h3 className={styles.matchCardTitle}>{name}</h3>
-
         <p className={styles.matchCardSubtitle}>
           Ищет {requirements.bedrooms ? `${requirements.bedrooms}-комн.` : ''} {propertyTypeMap[requirements.propertyType]}
         </p>
