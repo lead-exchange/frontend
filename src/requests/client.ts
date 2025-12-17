@@ -40,7 +40,7 @@ class ApiClient {
 
     if (!resp.ok) {
       let errorMessage = `Expected 2xx response for ${path}, but got: ${resp.status}`;
-      
+
       try {
         const errorData = await resp.json();
         if (errorData.message) {
@@ -49,7 +49,7 @@ class ApiClient {
       } catch {
         // Если не удалось распарсить JSON, используем стандартное сообщение
       }
-      
+
       throw new Error(errorMessage);
     }
 

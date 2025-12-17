@@ -1,7 +1,7 @@
 import WebApp from '@twa-dev/sdk';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 import { type FC, useEffect } from 'react';
-import { Navigate, Route, BrowserRouter, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate, HashRouter } from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
 
@@ -26,7 +26,7 @@ const BackButtonManipulator = () => {
       }
       return;
     }
-    
+
     if (!WebApp.BackButton.isVisible) {
       WebApp.BackButton.show();
     }
@@ -37,7 +37,7 @@ const BackButtonManipulator = () => {
 
 export const App: FC = () => (
   <AppRoot appearance={WebApp.colorScheme} platform={['macos', 'ios'].includes(WebApp.platform) ? 'ios' : 'base'}>
-    <BrowserRouter basename="/frontend">
+    <HashRouter basename="/">
       <BackButtonManipulator />
       <Routes>
         {routes.map(route => (
@@ -45,6 +45,6 @@ export const App: FC = () => (
         ))}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </AppRoot>
 );
