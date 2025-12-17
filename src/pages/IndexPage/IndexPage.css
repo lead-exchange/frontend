@@ -17,6 +17,11 @@
   max-width: 80%;
 }
 
+.terms-link {
+    text-decoration: 'underline';
+    cursor: pointer;
+}
+
 .terms-modal-content {
   display: flex;
   gap: var(--spacing-xs);
@@ -50,4 +55,3 @@
   padding: var(--spacing-m);
   padding-bottom: var(--spacing-l);
 }
-

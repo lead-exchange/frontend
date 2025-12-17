@@ -192,11 +192,11 @@ export const IndexPage: FC = observer(() => {
             <span>
               {' '}
               Я прочитал(a) и согласен(на) с{' '}
-              <a style={{ textDecoration: 'underline' }} onClick={() => WebApp.openLink('https://aiplus.ru/privacy')}>
+              <a className="terms-link" onClick={() => WebApp.openLink('https://aiplus.ru/privacy')}>
                 публичной офертой
               </a>{' '}
               и{' '}
-              <a style={{ textDecoration: 'underline' }} onClick={() => WebApp.openLink('https://aiplus.ru/agreement')}>
+              <a className="terms-link" onClick={() => WebApp.openLink('https://aiplus.ru/agreement')}>
                 согласием на обработку персональных данных
               </a>
             </span>
