@@ -12,6 +12,7 @@ import { leadStore } from '@/stores/leadStore';
 import { realEstateStore } from '@/stores/realEstateStore';
 import { getLeadsForObject, getObjectsForLead } from '@/requests/tinder';
 import { observer } from 'mobx-react-lite';
+import { tinderResultsStore } from '@/stores/tinderResultsStore';
 
 export const TinderPage: FC = observer(() => {
   const { type, id } = useParams<{ type: EntityType; id: string }>();
@@ -23,9 +24,9 @@ export const TinderPage: FC = observer(() => {
   const [matchItems, setMatchItems] = useState<(Lead | RealEstateObject)[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [likedItems, setLikedItems] = useState<(Lead | RealEstateObject)[]>([]);
-  const [dislikedItems, setDislikedItems] = useState<(Lead | RealEstateObject)[]>([]);
-  const [customShareItems, setCustomShareItems] = useState<(Lead | RealEstateObject)[]>([]);
+  useEffect(() => {
+    tinderResultsStore.clear();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -102,19 +103,19 @@ export const TinderPage: FC = observer(() => {
   const handleLike = async (item: Lead | RealEstateObject) => {
     await addMatch(item, 'LIKED', item.commissionShare);
 
-    setLikedItems(prev => [...prev, item]);
+    tinderResultsStore.addLiked(item);
   };
 
   const handleDislike = async (item: Lead | RealEstateObject) => {
     await addMatch(item, 'DISLIKED', item.commissionShare);
 
-    setDislikedItems(prev => [...prev, item]);
+    tinderResultsStore.addDisliked(item);
   };
 
   const handleCustomShare = async (item: Lead | RealEstateObject, comission: number) => {
     await addMatch(item, 'COMMISSION', comission);
 
-    setCustomShareItems(prev => [...prev, item]);
+    tinderResultsStore.addCustomShare(item);
   };
 
   const handleFinish = () => {
@@ -123,10 +124,6 @@ export const TinderPage: FC = observer(() => {
       state: {
         entityName: sourceEntity.type === 'lead' ? sourceEntity.name : getEstateName(sourceEntity.attributes),
         entityType: sourceEntity.type,
-        total: matchItems.length,
-        liked: likedItems,
-        disliked: dislikedItems,
-        customShare: customShareItems,
       },
     });
   };
