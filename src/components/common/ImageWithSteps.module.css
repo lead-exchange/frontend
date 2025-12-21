@@ -13,6 +13,8 @@
 .imagePlaceholder {
   overflow: hidden;
   position: relative;
+  width: auto;
+  height: 99%;
   border: 1px solid var(--tgui--link_color);
   background: var(--tgui--tertiary_bg_color);
 }

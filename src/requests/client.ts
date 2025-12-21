@@ -25,12 +25,12 @@ class ApiClient {
     const headers: HeadersInit = body ? { 'Content-Type': 'application/json' } : {};
 
     // Для демо-режима добавляем заголовок X-Api-Token
-    if (shouldUseDemoAuth()) {
-      // Если в DEV режиме или демо-режиме и не в Telegram, используем тестовый токен
-      headers['X-Api-Token'] = JSON.stringify(getCurrentDemoUser());
-    } else {
-      headers.Authorization = `tma ${WebApp.initData}`;
-    }
+    // if (shouldUseDemoAuth()) {
+    // Если в DEV режиме или демо-режиме и не в Telegram, используем тестовый токен
+    headers['X-Api-Token'] = JSON.stringify(getCurrentDemoUser());
+    // } else {
+    //   headers.Authorization = `tma ${WebApp.initData}`;
+    // }
 
     const resp = await fetch(`${this.#apiURL}${path}`, {
       method: method,

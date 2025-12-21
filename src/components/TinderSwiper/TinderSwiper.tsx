@@ -24,6 +24,8 @@ const nextItemInitialScale = 0.6;
 
 const swipeActionThreshold = 100;
 
+const defaultTransition = 'outline-color 0.4s ease';
+
 export const TinderSwiper: FC<TinderSwiperProps> = ({
   sourceEntity,
   items: initialItems,
@@ -86,6 +88,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
         return;
       }
 
+      currentCardRef.current.style.outlineColor = 'transparent';
       currentCardRef.current.style.transition = '';
       currentCardRef.current.style.transform = 'translateX(0) rotate(0)';
       currentCardRef.current.style.opacity = '1';
@@ -106,23 +109,20 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
     );
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = (touchStart: { x: number; y: number }) => {
     if (currentCardRef.current) {
-      currentCardRef.current.style.transition = 'none';
+      currentCardRef.current.style.transition = defaultTransition;
     }
 
-    setTouchStart({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-    });
+    setTouchStart(touchStart);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (clientX: number) => {
     if (!currentCardRef.current || !touchStart) {
       return;
     }
 
-    const deltaX = e.touches[0].clientX - touchStart?.x;
+    const deltaX = clientX - touchStart?.x;
 
     let currentMoveOffset = moveOffset; // workaround because set state happens only on next rerender
 
@@ -138,6 +138,16 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
 
     currentCardRef.current.style.transform = `translateX(${moveX}px)`;
 
+    if (Math.abs(deltaX) > swipeActionThreshold) {
+      if (deltaX > 0) {
+        currentCardRef.current.style.outlineColor = 'green';
+      } else {
+        currentCardRef.current.style.outlineColor = 'red';
+      }
+    } else {
+      currentCardRef.current.style.outlineColor = 'transparent';
+    }
+
     if (!nextCardRef.current) {
       return;
     }
@@ -150,16 +160,11 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
     nextCardRef.current.style.transform = `scale(${scale}, ${scale})`;
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  const handleTouchEnd = (touchEnd: { x: number; y: number }) => {
     if (!currentCardRef.current || !touchStart) return;
 
     setMoveOffset(0);
     setTouchStart(null);
-
-    const touchEnd = {
-      x: e.changedTouches[0].clientX,
-      y: e.changedTouches[0].clientY,
-    };
 
     const deltaX = touchEnd.x - touchStart.x;
 
@@ -177,7 +182,7 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
         nextCardRef.current.style.transform = 'scale(1, 1)';
       }
 
-      if (deltaX < 0) {
+      if (deltaX > 0) {
         onLike(currentItem);
       } else {
         onDislike(currentItem);
@@ -237,9 +242,24 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
       )}
 
       <div
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onTouchStart={(e: React.TouchEvent) => {
+          handleTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+        }}
+        onTouchMove={(e: React.TouchEvent) => {
+          handleTouchMove(e.touches[0].clientX);
+        }}
+        onTouchEnd={(e: React.TouchEvent) => {
+          handleTouchEnd({ x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY });
+        }}
+        onMouseDown={(e: React.MouseEvent) => {
+          handleTouchStart({ x: e.clientX, y: e.clientY });
+        }}
+        onMouseMove={(e: React.MouseEvent) => {
+          handleTouchMove(e.clientX);
+        }}
+        onMouseUp={(e: React.MouseEvent) => {
+          handleTouchEnd({ x: e.clientX, y: e.clientY });
+        }}
         className="tinder-swiper"
         ref={currentCardRef}
       >

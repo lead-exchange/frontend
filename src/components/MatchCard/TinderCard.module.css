@@ -13,6 +13,7 @@
 .matchCardImageContainer {
   height: 66vh;
   overflow: hidden;
+  margin-top: 5px;
 }
 
 .matchCardInfo {
