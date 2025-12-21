@@ -9,7 +9,6 @@ import { CustomInput } from '../CustomInput/CustomInput';
 import { CustomSelect } from '../CustomSelect/CustomSelect';
 import { CustomTextarea } from '../CustomTextarea/CustomTextarea';
 import styles from './LeadForm.module.css';
-import { boolean } from 'yup';
 
 interface LeadFormProps {
   initialValues?: Partial<LeadFormData>;
