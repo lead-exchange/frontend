@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from '@telegram-apps/telegram-ui';
@@ -17,12 +17,9 @@ interface LeadFormProps {
   isLoading?: boolean;
 }
 
-export const LeadForm: FC<LeadFormProps> = ({
-  initialValues,
-  onSubmit,
-  submitText = 'Создать лида',
-  isLoading = false
-}) => {
+export const LeadForm: FC<LeadFormProps> = ({ initialValues, onSubmit, submitText = 'Создать лида', isLoading = false }) => {
+  const [isPressed, setIsPressed] = useState<boolean>(false);
+
   const {
     control,
     reset,
@@ -51,8 +48,15 @@ export const LeadForm: FC<LeadFormProps> = ({
       return;
     }
 
+    setIsPressed(true);
+
     const data = getValues();
-    await onSubmit(data as LeadFormData);
+    try {
+      await onSubmit(data as LeadFormData);
+    } catch (e) {
+      console.log(e);
+      setIsPressed(false);
+    }
   };
 
   return (
@@ -80,7 +84,7 @@ export const LeadForm: FC<LeadFormProps> = ({
           <CustomInput
             {...field}
             value={field.value != null ? formatNumber(field.value) : ''}
-            onChange={(e) => {
+            onChange={e => {
               const num = parseNumber(e.target.value);
               field.onChange(num);
             }}
@@ -142,7 +146,7 @@ export const LeadForm: FC<LeadFormProps> = ({
             <CustomInput
               {...field}
               value={field.value !== null ? formatNumber(field.value as number) : ''}
-              onChange={(e) => {
+              onChange={e => {
                 const num = parseNumber(e.target.value);
                 field.onChange(num);
               }}
@@ -178,7 +182,7 @@ export const LeadForm: FC<LeadFormProps> = ({
           <CustomInput
             {...field}
             value={field.value !== null ? formatNumber(field.value) : ''}
-            onChange={(e) => {
+            onChange={e => {
               const num = parseNumber(e.target.value);
               field.onChange(num);
             }}
@@ -210,6 +214,7 @@ export const LeadForm: FC<LeadFormProps> = ({
       <div className={styles.buttonContainer}>
         <span className={styles.text}>Заполните информацию о клиенте</span>
         <Button
+          disabled={isPressed}
           size="l"
           stretched
           onClick={handleFormSubmit}

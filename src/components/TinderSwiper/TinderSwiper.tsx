@@ -61,14 +61,19 @@ export const TinderSwiper: FC<TinderSwiperProps> = ({
   };
 
   const loadNextPageOrFinish = async () => {
-    const newPage = await fetchNextPage();
+    try {
+      const newPage = await fetchNextPage();
 
-    if (newPage.length === 0) {
+      if (newPage.length === 0) {
+        onFinish();
+      }
+
+      setItems(newPage);
+      setCurrentIndex(0);
+    } catch (e) {
       onFinish();
+      console.log(e);
     }
-
-    setItems(newPage);
-    setCurrentIndex(0);
   };
 
   useLayoutEffect(() => {
