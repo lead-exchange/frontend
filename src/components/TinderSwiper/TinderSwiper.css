@@ -8,6 +8,9 @@
   gap: 12px;
   position: relative;
   background: var(--tgui--bg_color);
+  outline: 5px solid transparent;
+  outline-offset: -5px;
+  border-radius: 10px;
 }
 
 .tinder-swiper__card-container {
