@@ -30,42 +30,28 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-  build:
-    name: Build project
-    runs-on: ubuntu-latest
+  build-prod:
     needs: lint
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+    uses: ./.github/workflows/build.yml
+    with:
+      backend-url: ${{ vars.BACKEND_URL }}
+      artifact-name: build-output
 
-      - name: Setup node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 20
+  build-dev:
+    needs: lint
+    uses: ./.github/workflows/build.yml
+    with:
+      backend-url: http://localhost:8080
+      artifact-name: build-dev-output
 
-      - name: Install deps
-        run: npm ci
-
-      - name: Build
-        env:
-          VITE_BACKEND_URL: ${{ vars.BACKEND_URL }}
-        run: npm run build
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: build-output
-          path: ./dist
-          retention-days: 1
-
-  deploy:
+  deploy-prod:
     if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
     name: Deploy to GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-prod
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v5
@@ -84,3 +70,25 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-dev:
+    if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+    name: Deploy to dev stand
+    runs-on: ubuntu-latest
+    needs: build-dev
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: build-dev-output
+          path: ./dist
+
+      - name: Copy dists to server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ vars.DEV_VM_HOSTNAME }}
+          username: ${{ vars.DEV_VM_USERNAME }}
+          key: ${{ secrets.DEV_VM_SSH_KEY }}
+          source: "./dist"
+          target: "/home/${{ vars.DEV_VM_USERNAME }}/frontend"
+          rm: true
