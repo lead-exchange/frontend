@@ -3,7 +3,7 @@ import { type FC, useEffect, useState } from 'react';
 import { User as UserIcon, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
-import { requestContact, init, isTMA } from '@telegram-apps/sdk';
+import { requestContact, isTMA } from '@telegram-apps/sdk';
 
 import { Link } from '@/components/Link/Link.tsx';
 import type { Lead, RealEstateObject } from '@/types/entity';
@@ -16,14 +16,9 @@ import { userStore } from '@/stores/userStore';
 import { getLeads, getRealEstateObjects } from '@/requests/entities';
 import { getEstateName } from '@/utils/estateHelpers';
 import { useDevMode } from '@/hooks/useDevMode';
-import { isInsideMiniApp } from '@/index';
 import { indexTabStore } from '@/stores/tabStore';
 
 import './IndexPage.css';
-
-if (isTMA()) {
-  init();
-}
 
 type RequestedContact = Awaited<ReturnType<typeof requestContact>>;
 
@@ -33,7 +28,7 @@ const requestContactAction = async (): Promise<string> => {
       setTimeout(() => reject(new Error('Request timeout - user likely clicked outside')), 30000);
     });
 
-    if (isInsideMiniApp) {
+    if (isTMA()) {
       const contacts = await Promise.race([requestContact(), timeoutPromise]);
       return contacts.contact.phone_number;
     } else {

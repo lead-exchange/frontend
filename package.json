@@ -7,6 +7,7 @@
   "scripts": {
     "start": "vite",
     "start:dev": "VITE_DEV_MODE=true vite",
+    "start:e2e": "VITE_E2E_MODE=true vite",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

@@ -1,12 +1,14 @@
 import WebApp from '@twa-dev/sdk';
 import { getCurrentDemoUser } from '@/utils/demoUsers';
 
+const isE2E: 'true' | 'false' | undefined = import.meta.env.VITE_E2E_MODE;
+
 const isDevMode = (): boolean => {
   return import.meta.env.VITE_DEV_MODE === 'true' || WebApp.initDataUnsafe.start_param === 'debug';
 };
 
 const shouldUseDemoAuth = (): boolean => {
-  return isDevMode() && !WebApp.initData?.trim();
+  return (isDevMode() && !WebApp.initData?.trim()) || isE2E === 'true';
 };
 
 class ApiClient {
